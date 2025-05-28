@@ -1,6 +1,6 @@
-# Audience Forecasting Tool
+# Audience Engine 
 
-A full-stack application that uses AI to analyze marketing messages across different audience personas.
+An application to build audience insights based on AI. 
 
 ## Features
 
