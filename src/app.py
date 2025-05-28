@@ -1,278 +1,83 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, send_from_directory
 from flask_cors import CORS
-import openai
-import os
-from datetime import datetime
 from config import config
+from utils.history_manager import HistoryManager
+from utils.logger import app_logger
+
+# Import blueprint factories
+from routes.analyze import create_analyze_blueprint
+from routes.history import create_history_blueprint
+from routes.presets import create_presets_blueprint
+from routes.summary import create_summary_blueprint
+from routes.focus_group import create_focus_group_blueprint
+
+# Ensure openai_service is imported to configure API key at startup
+try:
+    import services.openai_service # This will run the API key configuration
+    app_logger.info("OpenAI service imported, API key should be configured if present.")
+except ImportError as e:
+    app_logger.error(f"Could not import openai_service for initial API key config: {e}")
+except Exception as e:
+    app_logger.error(f"Error during initial openai_service import: {e}")
 
 # Initialize Flask app with configuration
+app_logger.info("Flask app initialization started.")
 app = Flask(__name__, static_folder=config['default'].FRONTEND_DIR)
 CORS(app, resources={r"/api/*": {"origins": config['default'].CORS_ORIGINS}})
 
-# Configure OpenAI
-openai.api_key = config['default'].OPENAI_API_KEY
+# Initialize HistoryManager
+history_manager = HistoryManager()
+app_logger.info("HistoryManager initialized.")
 
-# In-memory storage for response history
-response_history = []
+# Create and register blueprints
+analyze_bp = create_analyze_blueprint(history_manager)
+app.register_blueprint(analyze_bp)
+app_logger.info("Analyze blueprint registered.")
 
-def analyze_image(image_data, persona_details, model=config['default'].DEFAULT_VISION_MODEL, temperature=config['default'].DEFAULT_TEMPERATURE):
-    """
-    Analyze an image using GPT-4 Vision and generate a persona's reaction.
-    """
-    prompt = (
-        f"Persona Profile: {persona_details}\n"
-        "You are a real person with this background. Give yourself a name and be conversational in response. "
-        "Give your genuine reaction to this image and explain why you feel this way as if you are talking to a friend. "
-        "Include specific details about what you notice and why they matter to you based on your background and values. "
-        "Feel free to share personal anecdotes or experiences that relate to what you see. "
-        "Be authentic and honest about both positive and negative aspects that catch your attention. "
-        "Give recommendations on how you would improve the creative shown to you as if you are talking to your friend."
-    )
-    
-    try:
-        response = openai.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "user", "content": [
-                    {"type": "text", "text": prompt},
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": f"data:image/jpeg;base64,{image_data}"
-                        }
-                    }
-                ]}
-            ],
-            max_tokens=500,
-            temperature=temperature
-        )
-        return response.choices[0].message.content
-    except Exception as e:
-        print(f"OpenAI API Error: {str(e)}")
-        if "model_not_found" in str(e):
-            return "Error: The image analysis model is not available. Please try again later or contact support."
-        return f"Error analyzing image: {str(e)}"
+history_bp = create_history_blueprint(history_manager)
+app.register_blueprint(history_bp)
+app_logger.info("History blueprint registered.")
 
-def generate_persona_response(message, persona_details, model=config['default'].DEFAULT_TEXT_MODEL, temperature=config['default'].DEFAULT_TEMPERATURE):
-    """
-    Generate a response from a synthetic persona based on a marketing message.
-    """
-    prompt = (
-        f"Persona Profile: {persona_details}\n"
-        f"Marketing Message: \"{message}\"\n"
-        "You are a real person with this background. Give yourself a name and be conversational in response. "
-        "Give your genuine reaction to this marketing message and explain why you feel this way as if you are talking to a friend. "
-        "Include specific details about what resonates with you or puts you off based on your background and values. "
-        "Feel free to share personal anecdotes or experiences that relate to the message. "
-        "Be authentic and honest about both positive and negative aspects that catch your attention. "
-        "Give recommendations on how you would improve the message as if you are talking to your friend."
-    )
-    
-    try:
-        response = openai.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": "You are a consumer simulator."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=temperature
-        )
-        return response.choices[0].message.content
-    except Exception as e:
-        print(f"OpenAI API Error: {str(e)}")
-        if "model_not_found" in str(e):
-            return "Error: The text analysis model is not available. Please try again later or contact support."
-        return f"Error generating response: {str(e)}"
+presets_bp = create_presets_blueprint()
+app.register_blueprint(presets_bp)
+app_logger.info("Presets blueprint registered.")
 
-def generate_summary(responses):
-    """
-    Generate a summary of all persona responses.
-    """
-    prompt = (
-        "Based on the following persona responses, provide a comprehensive summary that includes:\n"
-        "1. Key themes and patterns across responses\n"
-        "2. Common positive and negative feedback\n"
-        "3. Specific recommendations for improvement\n"
-        "4. Notable demographic-specific insights\n\n"
-        "Responses:\n"
-    )
-    
-    for response in responses:
-        prompt += f"\nPersona: {response['persona']}\nResponse: {response['response']}\n"
-    
-    try:
-        response = openai.chat.completions.create(
-            model=config['default'].DEFAULT_TEXT_MODEL,
-            messages=[
-                {"role": "system", "content": "You are an expert at analyzing and summarizing consumer feedback."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=config['default'].DEFAULT_TEMPERATURE
-        )
-        return response.choices[0].message.content
-    except Exception as e:
-        print(f"OpenAI API Error: {str(e)}")
-        return f"Error generating summary: {str(e)}"
+summary_bp = create_summary_blueprint()
+app.register_blueprint(summary_bp)
+app_logger.info("Summary blueprint registered.")
 
-def analyze_combined(image_data, message, persona_details, model=config['default'].DEFAULT_VISION_MODEL, temperature=config['default'].DEFAULT_TEMPERATURE):
-    """
-    Analyze both an image and marketing message together using GPT-4 Vision and generate a persona's reaction.
-    """
-    prompt = (
-        f"Persona Profile: {persona_details}\n"
-        f"Marketing Message: \"{message}\"\n"
-        "You are a real person with this background. Give yourself a name and be conversational in response. "
-        "Give your genuine reaction to both the marketing message and the image, explaining how they work together or against each other. "
-        "Include specific details about what resonates with you or puts you off based on your background and values. "
-        "Feel free to share personal anecdotes or experiences that relate to what you see and read. "
-        "Be authentic and honest about both positive and negative aspects that catch your attention. "
-        "Give recommendations on how you would improve both the message and the creative as if you are talking to your friend."
-    )
-    
-    try:
-        response = openai.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "user", "content": [
-                    {"type": "text", "text": prompt},
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": f"data:image/jpeg;base64,{image_data}"
-                        }
-                    }
-                ]}
-            ],
-            max_tokens=500,
-            temperature=temperature
-        )
-        return response.choices[0].message.content
-    except Exception as e:
-        print(f"OpenAI API Error: {str(e)}")
-        if "model_not_found" in str(e):
-            return "Error: The combined analysis model is not available. Please try again later or contact support."
-        return f"Error analyzing combined input: {str(e)}"
+focus_group_bp = create_focus_group_blueprint()
+app.register_blueprint(focus_group_bp)
+app_logger.info("Focus Group blueprint registered.")
 
+# --- Frontend Serving Routes ---
+
+# Route for the main page (index.html)
 @app.route('/')
-def serve_frontend():
+def serve_frontend_main():
     return send_from_directory(app.static_folder, 'index.html')
 
+# Route for the new focus group tool page
+@app.route('/focus-group-tool')
+def focus_group_tool():
+    """Serve the focus group tool page."""
+    return send_from_directory(app.static_folder, 'focus_group_tool.html')
+
+# Route for the advanced focus group tool page
+@app.route('/focus-group-advanced')
+def focus_group_advanced():
+    """Serve the advanced focus group tool page."""
+    return send_from_directory(app.static_folder, 'focus_group_advanced.html')
+
+# Route for other static files (CSS, JS, images) in the frontend directory
 @app.route('/<path:filename>')
-def serve_static(filename):
+def serve_static_files_in_frontend(filename):
     return send_from_directory(app.static_folder, filename)
 
-@app.route('/api/analyze', methods=['POST'])
-def analyze_message():
-    try:
-        data = request.get_json()
-        if not data:
-            return jsonify({
-                'error': 'No data provided',
-                'status': 'error'
-            }), 400
-
-        message = data.get('message')
-        personas = data.get('personas', [])
-        image_data = data.get('image')
-        
-        if not personas:
-            return jsonify({
-                'error': 'Personas are required',
-                'status': 'error'
-            }), 400
-        
-        if not message and not image_data:
-            return jsonify({
-                'error': 'Either message or image is required',
-                'status': 'error'
-            }), 400
-        
-        results = []
-        for persona in personas:
-            if image_data and message:
-                response = analyze_combined(image_data, message, persona)
-            elif image_data:
-                response = analyze_image(image_data, persona)
-            else:
-                response = generate_persona_response(message, persona)
-            
-            results.append({
-                'persona': persona,
-                'response': response
-            })
-        
-        # Store in history
-        history_entry = {
-            'timestamp': datetime.now().isoformat(),
-            'message': message,
-            'image': bool(image_data),
-            'personas': personas,
-            'results': results
-        }
-        response_history.append(history_entry)
-        
-        return jsonify({
-            'results': results,
-            'status': 'success'
-        })
-    
-    except Exception as e:
-        print(f"Error in analyze_message: {str(e)}")
-        return jsonify({
-            'error': str(e),
-            'status': 'error'
-        }), 500
-
-@app.route('/api/history', methods=['GET'])
-def get_history():
-    try:
-        return jsonify(response_history)
-    except Exception as e:
-        print(f"Error in get_history: {str(e)}")
-        return jsonify({
-            'error': str(e),
-            'status': 'error'
-        }), 500
-
-@app.route('/api/summary', methods=['POST'])
-def generate_response_summary():
-    try:
-        data = request.get_json()
-        if not data or 'responses' not in data:
-            return jsonify({
-                'error': 'No responses provided',
-                'status': 'error'
-            }), 400
-
-        summary = generate_summary(data['responses'])
-        return jsonify({
-            'summary': summary,
-            'status': 'success'
-        })
-    except Exception as e:
-        print(f"Error in generate_response_summary: {str(e)}")
-        return jsonify({
-            'error': str(e),
-            'status': 'error'
-        }), 500
-
-@app.route('/api/presets', methods=['GET'])
-def get_presets():
-    try:
-        return jsonify({
-            'status': 'success',
-            'presets': config['default'].PERSONA_PRESETS
-        })
-    except Exception as e:
-        print(f"Error in get_presets: {str(e)}")
-        return jsonify({
-            'error': str(e),
-            'status': 'error'
-        }), 500
-
 if __name__ == '__main__':
+    app_logger.info(f"Starting Flask app on {config['default'].HOST}:{config['default'].PORT} with debug={config['default'].DEBUG}")
     app.run(
         debug=config['default'].DEBUG,
         host=config['default'].HOST,
-        port=config['default'].PORT
+        port=int(config['default'].PORT)
     ) 

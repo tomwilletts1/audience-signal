@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Focus Group Tool - Tribera</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .tribera-gradient {
+            background: linear-gradient(135deg, #1a1333 0%, #2d1b4d 100%);
+        }
+        .tribera-title {
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 0.1em;
+        }
+        
+        /* Sticky Navigation */
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+        
+        /* Collapsible Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 300px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 50;
+        }
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        
+        /* Content with sidebar offset */
+        .main-content {
+            transition: margin-left 0.3s ease;
+        }
+        .main-content.with-sidebar {
+            margin-left: 300px;
+        }
+        
+        /* Breadcrumb */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        .breadcrumb-separator::before {
+            content: '›';
+            margin: 0 0.5rem;
+        }
+        
+        /* Sentiment indicators */
+        .sentiment-positive { color: #10b981; background-color: #d1fae5; }
+        .sentiment-negative { color: #ef4444; background-color: #fee2e2; }
+        .sentiment-neutral { color: #6b7280; background-color: #f3f4f6; }
+        
+        /* Consensus highlighting */
+        .consensus-strong { border-left: 4px solid #10b981; background-color: #f0fdf4; }
+        .consensus-mixed { border-left: 4px solid #f59e0b; background-color: #fffbeb; }
+        .consensus-disagreement { border-left: 4px solid #ef4444; background-color: #fef2f2; }
+        
+        /* Live controls */
+        .live-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 1rem;
+            z-index: 30;
+        }
+        
+        /* Persona style indicators */
+        .persona-style-agreeable { border-color: #10b981; }
+        .persona-style-contrarian { border-color: #ef4444; }
+        .persona-style-analytical { border-color: #3b82f6; }
+        .persona-style-emotional { border-color: #f59e0b; }
+        .persona-style-neutral { border-color: #6b7280; }
+        
+        /* Topic tags */
+        .topic-tag {
+            display: inline-block;
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            margin: 0.125rem;
+        }
+        
+        /* Collapsible sections */
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .collapsible-content.open {
+            max-height: 1000px;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="tribera-gradient text-white py-8 shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <h1 class="tribera-title text-4xl font-bold mb-2">TRIBERA</h1>
+                <p class="text-sm opacity-80">Advanced Focus Group Simulation Tool</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sticky Navigation -->
+    <nav class="sticky-nav border-b shadow-sm">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <button id="sidebarToggle" class="p-2 rounded-md hover:bg-gray-100">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                <div class="breadcrumb">
+                    <a href="/" class="hover:text-indigo-600">Home</a>
+                    <span class="breadcrumb-separator"></span>
+                    <span class="text-gray-900 font-medium">Advanced Focus Group</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div id="simulationStatus" class="text-sm px-3 py-1 rounded-full bg-gray-100 text-gray-600">
+                    Ready
+                </div>
+                <a href="/" class="text-indigo-600 hover:text-indigo-800 font-medium px-3 py-2 rounded-md text-sm">
+                    Single Analysis Tool
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Collapsible Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <div class="p-4 border-b">
+            <h3 class="font-semibold text-gray-900">Quick Navigation</h3>
+        </div>
+        <nav class="p-4 space-y-2">
+            <a href="#personas" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-sm">📋 Personas</a>
+            <a href="#stimulus" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-sm">💬 Stimulus</a>
+            <a href="#settings" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-sm">⚙️ Settings</a>
+            <a href="#moderator" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-sm">🎯 Moderator</a>
+            <a href="#results" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-sm">📊 Results</a>
+            <a href="#analytics" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-sm">📈 Analytics</a>
+        </nav>
+        <div class="absolute bottom-4 left-4 right-4">
+            <button id="sidebarClose" class="w-full text-left px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
+                ← Hide Sidebar
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="mainContent" class="main-content container mx-auto px-4 py-8 max-w-6xl">
+        
+        <!-- Personas Section -->
+        <section id="personas" class="bg-white rounded-xl shadow-sm p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-800">Define Personas</h2>
+            
+            <div id="personasContainer" class="space-y-4">
+                <!-- Persona entries will be added here -->
+            </div>
+            
+            <div class="flex gap-4 mt-6">
+                <button id="addPersonaBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
+                    + Add Persona
+                </button>
+                <button id="loadPresetPersonas" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition">
+                    Load Presets
+                </button>
+            </div>
+        </section>
+
+        <!-- Stimulus Section -->
+        <section id="stimulus" class="bg-white rounded-xl shadow-sm p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-800">Stimulus Material</h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Marketing Message</label>
+                    <textarea id="stimulusMessage" rows="4" 
+                             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                             placeholder="Enter your marketing message..."></textarea>
+                    <div class="text-sm text-gray-500 mt-1">
+                        <span id="messageCharCount">0</span> characters
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Image (Optional)</label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-400 transition">
+                        <input type="file" id="stimulusImage" accept="image/*" class="hidden">
+                        <button onclick="document.getElementById('stimulusImage').click()" 
+                                class="text-indigo-600 hover:text-indigo-800">
+                            <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            Click to upload image
+                        </button>
+                    </div>
+                    <div id="imagePreview" class="mt-4 hidden">
+                        <img id="previewImg" class="max-h-32 rounded-lg">
+                        <button id="removeImage" class="mt-2 text-sm text-red-600 hover:text-red-800">Remove</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="bg-white rounded-xl shadow-sm p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-800">Simulation Settings</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Simulation Mode</label>
+                    <select id="simulationMode" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500">
+                        <option value="standard">Standard (All Rounds)</option>
+                        <option value="live">Live Control</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Discussion Rounds</label>
+                    <input type="number" id="numRounds" value="2" min="0" max="10" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Response Style</label>
+                    <select id="globalPersonaStyle" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500">
+                        <option value="mixed">Mixed Styles</option>
+                        <option value="neutral">All Neutral</option>
+                        <option value="agreeable">All Agreeable</option>
+                        <option value="contrarian">All Contrarian</option>
+                        <option value="analytical">All Analytical</option>
+                        <option value="emotional">All Emotional</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Moderator Questions Section -->
+        <section id="moderator" class="bg-white rounded-xl shadow-sm p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-800">Moderator Questions</h2>
+            
+            <div id="moderatorQuestionsContainer" class="space-y-4 mb-4">
+                <!-- Moderator questions will be added here -->
+            </div>
+            
+            <div class="flex gap-4">
+                <button id="addModeratorQuestion" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">
+                    + Add Question
+                </button>
+                <div id="liveQuestionInput" class="hidden flex-1 flex gap-2">
+                    <input type="text" id="liveQuestion" placeholder="Type question to inject..." 
+                           class="flex-1 px-3 py-2 border border-gray-300 rounded-md">
+                    <button id="injectQuestion" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                        Inject
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Simulation Controls -->
+        <div class="text-center mb-8">
+            <button id="startSimulation" class="bg-indigo-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition shadow-lg">
+                🚀 Start Simulation
+            </button>
+        </div>
+
+        <!-- Results Section -->
+        <section id="results" class="bg-white rounded-xl shadow-sm p-6 mb-8 hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-gray-800">Simulation Results</h2>
+                <div class="flex gap-2">
+                    <button id="exportResults" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 text-sm">
+                        📄 Export
+                    </button>
+                    <button id="toggleRoundView" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm">
+                        📋 Round View
+                    </button>
+                </div>
+            </div>
+            
+            <div id="transcriptContainer" class="space-y-4">
+                <!-- Transcript will be displayed here -->
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics" class="bg-white rounded-xl shadow-sm p-6 mb-8 hidden">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-800">Analytics Dashboard</h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h3 class="font-medium text-gray-700 mb-2">Sentiment Overview</h3>
+                    <div id="sentimentChart" class="space-y-2">
+                        <!-- Sentiment chart will be here -->
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h3 class="font-medium text-gray-700 mb-2">Consensus Level</h3>
+                    <div id="consensusIndicator" class="text-center">
+                        <!-- Consensus indicator will be here -->
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <h3 class="font-medium text-gray-700 mb-2">Key Topics</h3>
+                    <div id="topicsContainer">
+                        <!-- Topics will be here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Round-by-Round Analysis -->
+            <div class="border rounded-lg overflow-hidden">
+                <button id="toggleRoundAnalysis" class="w-full px-4 py-3 bg-gray-50 text-left font-medium hover:bg-gray-100 transition">
+                    📊 Round-by-Round Analysis
+                    <span class="float-right">▼</span>
+                </button>
+                <div id="roundAnalysisContent" class="collapsible-content p-4">
+                    <!-- Round analysis will be here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Live Controls (Fixed Position) -->
+    <div id="liveControls" class="live-controls hidden">
+        <h3 class="font-semibold mb-3">Live Controls</h3>
+        <div class="flex flex-col gap-2">
+            <button id="pauseSimulation" class="bg-yellow-600 text-white px-3 py-1 rounded text-sm hover:bg-yellow-700">
+                ⏸️ Pause
+            </button>
+            <button id="resumeSimulation" class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 hidden">
+                ▶️ Resume
+            </button>
+            <button id="nextRound" class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
+                ➡️ Next Round
+            </button>
+            <button id="completeSimulation" class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700">
+                🏁 Complete
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-6 text-center text-gray-600 text-sm mt-12">
+        <p>&copy; 2025 Tribera. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Application State
+        let currentSimulationId = null;
+        let personaCounter = 0;
+        let moderatorQuestionCounter = 0;
+        let currentImageBase64 = null;
+        let isLiveMode = false;
+        let simulationData = null;
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeUI();
+            setupEventListeners();
+            addInitialPersona();
+        });
+
+        function initializeUI() {
+            // Character counter for message
+            const messageInput = document.getElementById('stimulusMessage');
+            const charCount = document.getElementById('messageCharCount');
+            messageInput.addEventListener('input', () => {
+                charCount.textContent = messageInput.value.length;
+            });
+        }
+
+        function setupEventListeners() {
+            // Sidebar controls
+            document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
+            document.getElementById('sidebarClose').addEventListener('click', toggleSidebar);
+            
+            // Persona management
+            document.getElementById('addPersonaBtn').addEventListener('click', addPersona);
+            document.getElementById('loadPresetPersonas').addEventListener('click', loadPresetPersonas);
+            
+            // Image handling
+            document.getElementById('stimulusImage').addEventListener('change', handleImageUpload);
+            document.getElementById('removeImage').addEventListener('click', removeImage);
+            
+            // Moderator questions
+            document.getElementById('addModeratorQuestion').addEventListener('click', addModeratorQuestion);
+            document.getElementById('injectQuestion').addEventListener('click', injectLiveQuestion);
+            
+            // Simulation controls
+            document.getElementById('startSimulation').addEventListener('click', startSimulation);
+            document.getElementById('pauseSimulation').addEventListener('click', pauseSimulation);
+            document.getElementById('resumeSimulation').addEventListener('click', resumeSimulation);
+            document.getElementById('nextRound').addEventListener('click', nextRound);
+            document.getElementById('completeSimulation').addEventListener('click', completeSimulation);
+            
+            // Simulation mode change
+            document.getElementById('simulationMode').addEventListener('change', onSimulationModeChange);
+            
+            // Export and view controls
+            document.getElementById('exportResults').addEventListener('click', exportResults);
+            document.getElementById('toggleRoundView').addEventListener('click', toggleRoundView);
+            document.getElementById('toggleRoundAnalysis').addEventListener('click', toggleRoundAnalysis);
+            
+            // Sidebar navigation
+            document.querySelectorAll('.sidebar a[href^="#"]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const target = document.querySelector(link.getAttribute('href'));
+                    target.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            sidebar.classList.toggle('open');
+            mainContent.classList.toggle('with-sidebar');
+        }
+
+        function addPersona() {
+            personaCounter++;
+            const container = document.getElementById('personasContainer');
+            
+            const personaDiv = document.createElement('div');
+            personaDiv.className = 'persona-entry border border-gray-200 rounded-lg p-4';
+            personaDiv.innerHTML = `
+                <div class="flex justify-between items-start mb-3">
+                    <h3 class="font-medium text-gray-900">Persona ${personaCounter}</h3>
+                    <div class="flex gap-2">
+                        <select class="persona-style-select text-sm border border-gray-300 rounded px-2 py-1">
+                            <option value="neutral">Neutral</option>
+                            <option value="agreeable">Agreeable</option>
+                            <option value="contrarian">Contrarian</option>
+                            <option value="analytical">Analytical</option>
+                            <option value="emotional">Emotional</option>
+                        </select>
+                        <button class="remove-persona text-red-600 hover:text-red-800 text-sm">Remove</button>
+                    </div>
+                </div>
+                <textarea class="persona-details w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500" 
+                         rows="3" placeholder="Describe this persona (age, interests, values, background...)"></textarea>
+            `;
+            
+            // Add remove functionality
+            personaDiv.querySelector('.remove-persona').addEventListener('click', () => {
+                personaDiv.remove();
+            });
+            
+            container.appendChild(personaDiv);
+        }
+
+        function addInitialPersona() {
+            addPersona();
+        }
+
+        function loadPresetPersonas() {
+            // Add some preset personas
+            const presets = [
+                { style: 'analytical', details: 'Sarah, 32, Data Analyst\nHighly analytical, values evidence-based decisions, skeptical of marketing claims without proof.' },
+                { style: 'emotional', details: 'Mike, 28, Artist\nEmotional responder, values authenticity and creativity, influenced by brand storytelling.' },
+                { style: 'contrarian', details: 'Janet, 45, Business Executive\nCritical thinker, often plays devil\'s advocate, focuses on practical concerns and ROI.' }
+            ];
+            
+            presets.forEach(preset => {
+                addPersona();
+                const entries = document.querySelectorAll('.persona-entry');
+                const lastEntry = entries[entries.length - 1];
+                lastEntry.querySelector('.persona-details').value = preset.details;
+                lastEntry.querySelector('.persona-style-select').value = preset.style;
+            });
+        }
+
+        function addModeratorQuestion() {
+            moderatorQuestionCounter++;
+            const container = document.getElementById('moderatorQuestionsContainer');
+            
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'moderator-question border border-gray-200 rounded-lg p-4';
+            questionDiv.innerHTML = `
+                <div class="flex justify-between items-start mb-3">
+                    <h4 class="font-medium text-gray-900">Question ${moderatorQuestionCounter}</h4>
+                    <button class="remove-question text-red-600 hover:text-red-800 text-sm">Remove</button>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="md:col-span-2">
+                        <input type="text" class="question-text w-full px-3 py-2 border border-gray-300 rounded-md" 
+                               placeholder="Enter moderator question...">
+                    </div>
+                    <div>
+                        <select class="after-round w-full px-3 py-2 border border-gray-300 rounded-md">
+                            <option value="0">After initial reactions</option>
+                            <option value="1">After round 1</option>
+                            <option value="2">After round 2</option>
+                            <option value="3">After round 3</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            questionDiv.querySelector('.remove-question').addEventListener('click', () => {
+                questionDiv.remove();
+            });
+            
+            container.appendChild(questionDiv);
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    currentImageBase64 = e.target.result.split(',')[1];
+                    document.getElementById('previewImg').src = e.target.result;
+                    document.getElementById('imagePreview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage() {
+            document.getElementById('stimulusImage').value = '';
+            document.getElementById('imagePreview').classList.add('hidden');
+            currentImageBase64 = null;
+        }
+
+        function onSimulationModeChange() {
+            const mode = document.getElementById('simulationMode').value;
+            isLiveMode = mode === 'live';
+            
+            const liveQuestionInput = document.getElementById('liveQuestionInput');
+            if (isLiveMode) {
+                liveQuestionInput.classList.remove('hidden');
+            } else {
+                liveQuestionInput.classList.add('hidden');
+            }
+        }
+
+        async function startSimulation() {
+            try {
+                updateStatus('Preparing simulation...');
+                
+                // Collect data
+                const personas = collectPersonaData();
+                const message = document.getElementById('stimulusMessage').value.trim();
+                const numRounds = parseInt(document.getElementById('numRounds').value);
+                const moderatorQuestions = collectModeratorQuestions();
+                
+                if (personas.length === 0) {
+                    alert('Please add at least one persona');
+                    return;
+                }
+                
+                if (!message && !currentImageBase64) {
+                    alert('Please provide a stimulus message or image');
+                    return;
+                }
+                
+                const requestData = {
+                    personas: personas.map(p => p.details),
+                    message: message || null,
+                    image_data: currentImageBase64,
+                    num_discussion_rounds: numRounds,
+                    persona_styles: personas.reduce((acc, p, idx) => {
+                        acc[idx] = p.style;
+                        return acc;
+                    }, {}),
+                    moderator_questions: moderatorQuestions
+                };
+                
+                let endpoint, resultHandler;
+                
+                if (isLiveMode) {
+                    endpoint = '/api/focus_group/start_live';
+                    resultHandler = handleLiveSimulationStart;
+                } else {
+                    endpoint = '/api/focus_group/simulate';
+                    resultHandler = handleStandardSimulationResult;
+                }
+                
+                updateStatus('Running simulation...');
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success' || result.status === 'completed' || result.status === 'live_started') {
+                    currentSimulationId = result.simulation_id;
+                    simulationData = result;
+                    resultHandler(result);
+                    updateStatus('Simulation completed');
+                } else {
+                    updateStatus('Error occurred');
+                    alert('Error: ' + (result.error || 'Unknown error'));
+                }
+                
+            } catch (error) {
+                updateStatus('Error occurred');
+                console.error('Simulation error:', error);
+                alert('Error running simulation: ' + error.message);
+            }
+        }
+
+        function collectPersonaData() {
+            const personas = [];
+            document.querySelectorAll('.persona-entry').forEach(entry => {
+                const details = entry.querySelector('.persona-details').value.trim();
+                const style = entry.querySelector('.persona-style-select').value;
+                if (details) {
+                    personas.push({ details, style });
+                }
+            });
+            return personas;
+        }
+
+        function collectModeratorQuestions() {
+            const questions = [];
+            document.querySelectorAll('.moderator-question').forEach(entry => {
+                const text = entry.querySelector('.question-text').value.trim();
+                const afterRound = parseInt(entry.querySelector('.after-round').value);
+                if (text) {
+                    questions.push({ question: text, after_round: afterRound });
+                }
+            });
+            return questions;
+        }
+
+        function handleStandardSimulationResult(result) {
+            displayResults(result.transcript);
+            if (result.analytics) {
+                displayAnalytics(result.analytics);
+            }
+        }
+
+        function handleLiveSimulationStart(result) {
+            displayResults(result.initial_transcript);
+            showLiveControls();
+            updateStatus('Live simulation active');
+        }
+
+        function showLiveControls() {
+            document.getElementById('liveControls').classList.remove('hidden');
+        }
+
+        function hideLiveControls() {
+            document.getElementById('liveControls').classList.add('hidden');
+        }
+
+        function displayResults(transcript) {
+            const container = document.getElementById('transcriptContainer');
+            const resultsSection = document.getElementById('results');
+            
+            resultsSection.classList.remove('hidden');
+            container.innerHTML = '';
+            
+            let currentRound = -1;
+            let roundContainer = null;
+            
+            transcript.forEach((entry, index) => {
+                if (entry.round !== currentRound) {
+                    currentRound = entry.round;
+                    
+                    const roundDiv = document.createElement('div');
+                    roundDiv.className = 'round-section mb-6';
+                    roundDiv.innerHTML = `
+                        <h3 class="font-semibold text-lg mb-3 text-gray-800">
+                            ${currentRound === 0 ? 'Initial Reactions' : `Discussion Round ${currentRound}`}
+                        </h3>
+                        <div class="round-content space-y-3"></div>
+                    `;
+                    
+                    container.appendChild(roundDiv);
+                    roundContainer = roundDiv.querySelector('.round-content');
+                }
+                
+                if (entry.type === 'moderator') {
+                    const moderatorDiv = document.createElement('div');
+                    moderatorDiv.className = 'moderator-entry bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg';
+                    moderatorDiv.innerHTML = `
+                        <div class="font-semibold text-blue-800 mb-2">🎯 Moderator</div>
+                        <div class="text-blue-700">${entry.question}</div>
+                    `;
+                    roundContainer.appendChild(moderatorDiv);
+                } else {
+                    const sentiment = entry.sentiment || {};
+                    const sentimentClass = `sentiment-${sentiment.sentiment || 'neutral'}`;
+                    
+                    const responseDiv = document.createElement('div');
+                    responseDiv.className = `persona-response border rounded-lg p-4 ${sentimentClass}`;
+                    responseDiv.innerHTML = `
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="font-medium">
+                                Persona ${entry.persona_index + 1}
+                                ${sentiment.sentiment ? `<span class="ml-2 text-xs px-2 py-1 rounded-full bg-white">${sentiment.sentiment}</span>` : ''}
+                            </div>
+                            <div class="text-xs text-gray-500">
+                                ${entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : ''}
+                            </div>
+                        </div>
+                        <div class="text-gray-800 whitespace-pre-wrap">${entry.response_text}</div>
+                    `;
+                    
+                    roundContainer.appendChild(responseDiv);
+                }
+            });
+        }
+
+        function displayAnalytics(analytics) {
+            const analyticsSection = document.getElementById('analytics');
+            analyticsSection.classList.remove('hidden');
+            
+            // Sentiment Chart
+            const sentimentChart = document.getElementById('sentimentChart');
+            const sentiment = analytics.sentiment_summary;
+            sentimentChart.innerHTML = `
+                <div class="flex justify-between text-sm">
+                    <span>Positive: ${sentiment.positive_responses}</span>
+                    <span>Neutral: ${sentiment.neutral_responses}</span>
+                    <span>Negative: ${sentiment.negative_responses}</span>
+                </div>
+                <div class="flex h-4 bg-gray-200 rounded overflow-hidden">
+                    <div class="bg-green-500" style="width: ${(sentiment.positive_responses / analytics.total_responses) * 100}%"></div>
+                    <div class="bg-gray-400" style="width: ${(sentiment.neutral_responses / analytics.total_responses) * 100}%"></div>
+                    <div class="bg-red-500" style="width: ${(sentiment.negative_responses / analytics.total_responses) * 100}%"></div>
+                </div>
+            `;
+            
+            // Consensus Indicator
+            const consensusIndicator = document.getElementById('consensusIndicator');
+            const consensus = analytics.consensus_analysis;
+            const consensusColor = consensus.consensus_level === 'strong_positive' ? 'green' :
+                                 consensus.consensus_level === 'strong_negative' ? 'red' :
+                                 consensus.consensus_level === 'mixed_opinions' ? 'yellow' : 'gray';
+            
+            consensusIndicator.innerHTML = `
+                <div class="text-2xl font-bold text-${consensusColor}-600">${Math.round(consensus.agreement_score * 100)}%</div>
+                <div class="text-sm text-gray-600">${consensus.consensus_level.replace('_', ' ')}</div>
+            `;
+            
+            // Topics
+            const topicsContainer = document.getElementById('topicsContainer');
+            if (analytics.topics_identified && analytics.topics_identified.length > 0) {
+                topicsContainer.innerHTML = analytics.topics_identified
+                    .map(topic => `<span class="topic-tag">${topic}</span>`)
+                    .join('');
+            } else {
+                topicsContainer.innerHTML = '<span class="text-gray-500 text-sm">No specific topics identified</span>';
+            }
+            
+            // Round Analysis
+            const roundAnalysisContent = document.getElementById('roundAnalysisContent');
+            let roundAnalysisHTML = '<div class="space-y-4">';
+            
+            Object.entries(analytics.rounds_analysis || {}).forEach(([roundKey, roundData]) => {
+                const roundNum = roundKey.replace('round_', '');
+                roundAnalysisHTML += `
+                    <div class="border rounded p-3">
+                        <h4 class="font-medium mb-2">${roundNum === '0' ? 'Initial Reactions' : `Round ${roundNum}`}</h4>
+                        <div class="grid grid-cols-3 gap-4 text-sm">
+                            <div>Responses: ${roundData.response_count}</div>
+                            <div>Avg Confidence: ${Math.round(roundData.avg_sentiment_confidence * 100)}%</div>
+                            <div>Dominant: ${roundData.dominant_sentiment}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            roundAnalysisHTML += '</div>';
+            roundAnalysisContent.innerHTML = roundAnalysisHTML;
+        }
+
+        async function pauseSimulation() {
+            if (!currentSimulationId) return;
+            
+            try {
+                const response = await fetch(`/api/focus_group/${currentSimulationId}/pause`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    updateStatus('Simulation paused');
+                    document.getElementById('pauseSimulation').classList.add('hidden');
+                    document.getElementById('resumeSimulation').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error pausing simulation:', error);
+            }
+        }
+
+        async function resumeSimulation() {
+            if (!currentSimulationId) return;
+            
+            try {
+                const response = await fetch(`/api/focus_group/${currentSimulationId}/resume`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    updateStatus('Simulation resumed');
+                    document.getElementById('pauseSimulation').classList.remove('hidden');
+                    document.getElementById('resumeSimulation').classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('Error resuming simulation:', error);
+            }
+        }
+
+        async function nextRound() {
+            if (!currentSimulationId) return;
+            
+            try {
+                updateStatus('Continuing to next round...');
+                const response = await fetch(`/api/focus_group/${currentSimulationId}/continue_round`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    // Update transcript with new data
+                    if (result.result && result.result.transcript) {
+                        displayResults(result.result.transcript);
+                        if (result.result.analytics) {
+                            displayAnalytics(result.result.analytics);
+                        }
+                    }
+                    
+                    updateStatus('Round completed');
+                    
+                    // If simulation is completed, hide live controls
+                    if (result.result && result.result.status === 'completed') {
+                        hideLiveControls();
+                        updateStatus('Simulation completed');
+                    }
+                }
+            } catch (error) {
+                console.error('Error continuing round:', error);
+                updateStatus('Error occurred');
+            }
+        }
+
+        async function injectLiveQuestion() {
+            if (!currentSimulationId) return;
+            
+            const question = document.getElementById('liveQuestion').value.trim();
+            if (!question) return;
+            
+            try {
+                updateStatus('Injecting question...');
+                const response = await fetch(`/api/focus_group/${currentSimulationId}/inject_question`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question })
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    // Update transcript to show the new question and responses
+                    const state = await getSimulationState();
+                    if (state && state.transcript) {
+                        displayResults(state.transcript);
+                    }
+                    
+                    document.getElementById('liveQuestion').value = '';
+                    updateStatus('Question injected');
+                }
+            } catch (error) {
+                console.error('Error injecting question:', error);
+                updateStatus('Error occurred');
+            }
+        }
+
+        async function completeSimulation() {
+            if (!currentSimulationId) return;
+            
+            try {
+                const response = await fetch(`/api/focus_group/${currentSimulationId}/complete`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    hideLiveControls();
+                    updateStatus('Simulation completed');
+                    currentSimulationId = null;
+                    
+                    if (result.final_analytics) {
+                        displayAnalytics(result.final_analytics);
+                    }
+                }
+            } catch (error) {
+                console.error('Error completing simulation:', error);
+            }
+        }
+
+        async function getSimulationState() {
+            if (!currentSimulationId) return null;
+            
+            try {
+                const response = await fetch(`/api/focus_group/${currentSimulationId}/state`);
+                const result = await response.json();
+                return result.status === 'success' ? result : null;
+            } catch (error) {
+                console.error('Error getting simulation state:', error);
+                return null;
+            }
+        }
+
+        function exportResults() {
+            if (!simulationData) return;
+            
+            const transcript = simulationData.transcript || [];
+            let exportText = 'Focus Group Simulation Results\n';
+            exportText += '================================\n\n';
+            
+            let currentRound = -1;
+            
+            transcript.forEach(entry => {
+                if (entry.round !== currentRound) {
+                    currentRound = entry.round;
+                    exportText += `\n--- ${currentRound === 0 ? 'Initial Reactions' : `Discussion Round ${currentRound}`} ---\n\n`;
+                }
+                
+                if (entry.type === 'moderator') {
+                    exportText += `MODERATOR: ${entry.question}\n\n`;
+                } else {
+                    exportText += `Persona ${entry.persona_index + 1}: ${entry.response_text}\n\n`;
+                }
+            });
+            
+            const blob = new Blob([exportText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'focus_group_results.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function toggleRoundView() {
+            // Toggle between expanded and collapsed round view
+            const rounds = document.querySelectorAll('.round-section');
+            rounds.forEach(round => {
+                const content = round.querySelector('.round-content');
+                content.classList.toggle('collapsible-content');
+            });
+        }
+
+        function toggleRoundAnalysis() {
+            const content = document.getElementById('roundAnalysisContent');
+            const button = document.getElementById('toggleRoundAnalysis');
+            
+            content.classList.toggle('open');
+            
+            const arrow = button.querySelector('span');
+            arrow.textContent = content.classList.contains('open') ? '▲' : '▼';
+        }
+
+        function updateStatus(message) {
+            document.getElementById('simulationStatus').textContent = message;
+        }
+    </script>
+</body>
+</html> 
