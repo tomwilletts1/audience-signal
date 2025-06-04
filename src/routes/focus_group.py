@@ -1,6 +1,6 @@
 # src/routes/focus_group.py
-from flask import Blueprint, request, jsonify, session
-from services.focus_group_service import FocusGroupSimulator, PersonaStyle, SimulationState
+from flask import Blueprint, request, jsonify
+from services.focus_group_service import FocusGroupSimulator, PersonaStyle
 from utils.logger import app_logger
 import uuid
 # from utils.history_manager import HistoryManager # Not using history_manager for focus groups yet
@@ -105,7 +105,7 @@ def create_focus_group_blueprint(): # Removed history_manager_instance for now
                     persona_idx = int(persona_idx_str)
                     style = PersonaStyle(style_str)
                     simulator.set_persona_style(persona_idx, style)
-                except (ValueError, KeyError) as e:
+                except (ValueError, KeyError):
                     app_logger.warning(f"Invalid persona style: {persona_idx_str}={style_str}")
             
             # Generate simulation ID and store

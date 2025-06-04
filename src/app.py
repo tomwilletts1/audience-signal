@@ -13,7 +13,7 @@ from routes.focus_group import create_focus_group_blueprint
 
 # Ensure openai_service is imported to configure API key at startup
 try:
-    import services.openai_service # This will run the API key configuration
+    import services.openai_service  # noqa: F401  # This will run the API key configuration
     app_logger.info("OpenAI service imported, API key should be configured if present.")
 except ImportError as e:
     app_logger.error(f"Could not import openai_service for initial API key config: {e}")
