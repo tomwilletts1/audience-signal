@@ -25,12 +25,7 @@ def analyze_image(image_data, persona_details, model=config['default'].DEFAULT_V
         )
         return response['data'][0]['url']
     except Exception as e:
-        print(f"OpenAI API Error: {str(e)}")
+        app_logger.error(f"OpenAI API Error: {str(e)}")
         if "model_not_found" in str(e):
             return "Error: The image analysis model is not available. Please try again later or contact support."
         return f"Error analyzing image: {str(e)}"
-
-def analyze_combined(image_data, message, persona_details, model=config['default'].DEFAULT_VISION_MODEL, temperature=config['default'].DEFAULT_TEMPERATURE):
-    # This function is now removed from this file.
-    # It has been moved to src/services/persona.py
-    pass 
