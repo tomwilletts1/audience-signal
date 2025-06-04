@@ -45,6 +45,6 @@ def create_analyze_blueprint(history_manager_instance: HistoryManager):
 
         except Exception as e:
             app_logger.error(f"Error in /api/analyze route: {str(e)}", exc_info=True)
-            return jsonify({'error': f'An internal error occurred.', 'status': 'error'}), 500
+            return jsonify({'error': 'An internal error occurred.', 'status': 'error'}), 500
             
     return analyze_bp 

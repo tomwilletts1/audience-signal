@@ -1,9 +1,7 @@
 # src/services/focus_group_service.py
 import openai
-import re
-import json
 from enum import Enum
-from typing import Dict, List, Optional, Tuple
+from typing import List
 from config import config
 from utils.logger import app_logger
 
@@ -454,7 +452,7 @@ class FocusGroupSimulator:
         for question_data in self.moderator_questions:
             if question_data['after_round'] == round_num and not question_data['asked']:
                 try:
-                    result = self.inject_question(question_data['question'])
+                    self.inject_question(question_data['question'])
                     question_data['asked'] = True
                     app_logger.info(f"Asked moderator question after round {round_num}")
                 except Exception as e:
