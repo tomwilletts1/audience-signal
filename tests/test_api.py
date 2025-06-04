@@ -13,7 +13,7 @@ class DummyImage:
     def create(self, *args, **kwargs):
         return {'data': [{'url': 'http://example.com/image.png'}]}
 
-dummy_openai = types.SimpleNamespace(chat=DummyChat(), Image=DummyImage())
+dummy_openai = types.SimpleNamespace(chat=DummyChat(), Image=DummyImage(), api_key=None)
 sys.modules.setdefault('openai', dummy_openai)
 
 from src.routes.analyze import create_analyze_blueprint
@@ -27,8 +27,11 @@ def app(monkeypatch):
     monkeypatch.setattr('src.services.persona.generate_persona_response', lambda message, persona_details, model=None, temperature=None: f"response for {persona_details}")
     monkeypatch.setattr('src.services.vision.analyze_image', lambda image_data, persona_details, model=None, temperature=None: "image response")
     monkeypatch.setattr('src.services.vision.analyze_combined', lambda image_data, message, persona_details, model=None, temperature=None: "combined response")
+    monkeypatch.setattr('src.routes.analyze.generate_persona_response', lambda message, persona_details, model=None, temperature=None: f"response for {persona_details}")
+    monkeypatch.setattr('src.routes.analyze.analyze_image', lambda image_data, persona_details, model=None, temperature=None: "image response")
+    monkeypatch.setattr('src.routes.analyze.analyze_combined', lambda image_data, message, persona_details, model=None, temperature=None: "combined response")
 
-    history_manager = HistoryManager()
+    history_manager = HistoryManager(db_path=':memory:')
     flask_app = Flask(__name__)
     flask_app.register_blueprint(create_analyze_blueprint(history_manager))
     flask_app.register_blueprint(create_history_blueprint(history_manager))
