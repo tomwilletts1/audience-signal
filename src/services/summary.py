@@ -3,7 +3,7 @@ import openai
 from config import config
 from utils.logger import app_logger
 
-if not openai.api_key and config['default'].OPENAI_API_KEY:
+if not getattr(openai, 'api_key', None) and config['default'].OPENAI_API_KEY:
     openai.api_key = config['default'].OPENAI_API_KEY
     app_logger.info("OpenAI API Key re-checked/set in summary service.")
 

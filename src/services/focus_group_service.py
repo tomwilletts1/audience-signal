@@ -5,10 +5,6 @@ from typing import List
 from config import config
 from utils.logger import app_logger
 
-if not openai.api_key and config['default'].OPENAI_API_KEY:
-    openai.api_key = config['default'].OPENAI_API_KEY
-    app_logger.info("OpenAI API Key re-checked/set in focus_group_service.")
-
 class PersonaStyle(Enum):
     AGREEABLE = "agreeable"
     CONTRARIAN = "contrarian"
@@ -264,6 +260,7 @@ class FocusGroupSimulator:
         app_logger.debug(f"Initial reaction prompt for {persona_details[:30]}... using model {model}: {str(messages)[:300]}...")
 
         try:
+            # OpenAI client is instantiated implicitly here if OPENAI_API_KEY is in env
             response = openai.chat.completions.create(
                 model=model,
                 messages=messages,
@@ -275,7 +272,8 @@ class FocusGroupSimulator:
             return content
         except Exception as e:
             app_logger.error(f"Error generating initial reaction for {persona_details[:30]}...: {str(e)}", exc_info=True)
-            return f"Error: Could not generate initial reaction. ({str(e)})"
+            # Re-raise the exception to be caught by the main simulation loop
+            raise
 
     def _get_llm_discussion_response(self, persona_details: str, conversation_history_str: str, persona_index: int) -> str:
         model = config['default'].DEFAULT_TEXT_MODEL
@@ -303,11 +301,13 @@ class FocusGroupSimulator:
             "What are your thoughts now? Please provide only your response as this persona."
         )
         app_logger.debug(f"Discussion prompt for {persona_details[:30]}...: {prompt[:300]}...")
+
         try:
+            # OpenAI client is instantiated implicitly here if OPENAI_API_KEY is in env
             response = openai.chat.completions.create(
                 model=model,
                 messages=[
-                    {"role": "system", "content": "You are simulating a focus group participant."},
+                    {"role": "system", "content": "You are a participant in a focus group discussion."},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=temperature,
@@ -318,7 +318,8 @@ class FocusGroupSimulator:
             return content
         except Exception as e:
             app_logger.error(f"Error generating discussion response for {persona_details[:30]}...: {str(e)}", exc_info=True)
-            return f"Error: Could not generate discussion response. ({str(e)})"
+            # Re-raise the exception to be caught by the main simulation loop
+            raise
 
     def _get_llm_moderator_response(self, persona_details: str, moderator_question: str, persona_index: int) -> str:
         """Generate response to a moderator question."""
@@ -343,6 +344,7 @@ class FocusGroupSimulator:
         )
 
         try:
+            # OpenAI client is instantiated implicitly here if OPENAI_API_KEY is in env
             response = openai.chat.completions.create(
                 model=model,
                 messages=[
@@ -357,95 +359,110 @@ class FocusGroupSimulator:
             return content
         except Exception as e:
             app_logger.error(f"Error generating moderator response for {persona_details[:30]}...: {str(e)}", exc_info=True)
-            return f"Error: Could not generate moderator response. ({str(e)})"
+            # Re-raise the exception to be caught by the main simulation loop
+            raise
 
     def run_simulation(self, num_discussion_rounds: int = 1) -> dict:
-        """Run the full simulation with enhanced analytics."""
-        self.transcript = []
-        self.state = SimulationState.RUNNING
         app_logger.info(f"Starting focus group simulation with {num_discussion_rounds} discussion round(s).")
-
+        self.current_round = 0
+        self.state = SimulationState.RUNNING
+        
         try:
-            # Initial reactions (Round 0)
-            round_responses = []
-            for idx, p_details in enumerate(self.personas_details):
+            # Round 0: Initial reactions
+            app_logger.info("Generating initial reactions (Round 0).")
+            initial_responses_current_round = []
+            for p_idx, p_details in enumerate(self.personas_details):
                 if self.state == SimulationState.PAUSED:
-                    return {'status': 'paused', 'transcript': self.transcript, 'current_round': self.current_round}
-                
-                app_logger.info(f"Generating initial reaction for persona {idx + 1}/{len(self.personas_details)}: {p_details.splitlines()[0][:50]}...")
-                initial_response_text = self._get_llm_initial_reaction(p_details, idx)
-                sentiment = self._analyze_sentiment(initial_response_text)
-                
-                turn_data = {
-                    'persona_index': idx, 
-                    'persona_details': p_details, 
-                    'response_text': initial_response_text, 
-                    'round': 0,
-                    'sentiment': sentiment,
-                    'timestamp': self._get_timestamp()
-                }
-                self.transcript.append(turn_data)
-                round_responses.append(turn_data)
+                    app_logger.info("Simulation paused during initial reactions.")
+                    return self._current_simulation_status("Paused during initial reactions")
 
-            # Check for moderator questions after round 0
+                app_logger.info(f"Generating initial reaction for persona {p_idx + 1}/{len(self.personas_details)}: {p_details[:50]}...")
+                reaction = self._get_llm_initial_reaction(p_details, p_idx)
+                entry = {
+                    'persona_index': p_idx,
+                    'persona_details': p_details,
+                    'response_text': reaction,
+                    'round': 0,
+                    'type': 'initial_reaction',
+                    'timestamp': self._get_timestamp(),
+                    'sentiment': self._analyze_sentiment(reaction)
+                }
+                self.transcript.append(entry)
+                initial_responses_current_round.append(entry)
+            
+            current_topics = self._extract_topics([resp['response_text'] for resp in initial_responses_current_round])
+            self.topics_identified.append({'round': 0, 'topics': current_topics})
+
             self._check_and_ask_moderator_questions(0)
 
             # Discussion rounds
             for i in range(num_discussion_rounds):
+                self.current_round = i + 1
                 if self.state == SimulationState.PAUSED:
-                    return {'status': 'paused', 'transcript': self.transcript, 'current_round': self.current_round}
+                    app_logger.info(f"Simulation paused before round {self.current_round}.")
+                    return self._current_simulation_status(f"Paused before round {self.current_round}")
                 
-                round_num = i + 1
-                self.current_round = round_num
-                app_logger.info(f"Starting discussion round {round_num}.")
-                
-                round_responses = []
+                app_logger.info(f"Starting discussion round {self.current_round}.")
+                round_responses = [] # Store responses for this round for topic/consensus analysis
+
+                # Build conversation history string for this round
+                conversation_history_str = "\n".join([
+                    f"In round {t['round']}, Persona {t['persona_index']+1} ('{t['persona_details'].split(',')[0]}') said: {t['response_text']}"
+                    for t in self.transcript
+                ])
+
                 for p_idx, p_details in enumerate(self.personas_details):
                     if self.state == SimulationState.PAUSED:
-                        return {'status': 'paused', 'transcript': self.transcript, 'current_round': self.current_round}
-                    
-                    app_logger.info(f"Round {round_num}, turn for persona {p_idx + 1}: {p_details.splitlines()[0][:50]}...")
-                    
-                    conversation_history_str = "\n".join([
-                        f"In round {t['round']}, Persona {t['persona_index']+1} ({t['persona_details'].splitlines()[0][:30]}...) said: {t['response_text']}" 
-                        for t in self.transcript if t.get('type') != 'moderator'
-                    ])
-                    if not conversation_history_str:
-                        conversation_history_str = "No prior discussion yet for you to consider beyond your initial thoughts."
+                        app_logger.info(f"Simulation paused during round {self.current_round}.")
+                        return self._current_simulation_status(f"Paused during round {self.current_round}")
 
+                    app_logger.info(f"Round {self.current_round}, turn for persona {p_idx + 1}: {p_details[:50]}...")
                     response_text = self._get_llm_discussion_response(p_details, conversation_history_str, p_idx)
-                    sentiment = self._analyze_sentiment(response_text)
-                    
-                    turn_data = {
-                        'persona_index': p_idx, 
-                        'persona_details': p_details, 
-                        'response_text': response_text, 
-                        'round': round_num,
-                        'sentiment': sentiment,
-                        'timestamp': self._get_timestamp()
+                    entry = {
+                        'persona_index': p_idx,
+                        'persona_details': p_details,
+                        'response_text': response_text,
+                        'round': self.current_round,
+                        'type': 'discussion_response',
+                        'timestamp': self._get_timestamp(),
+                        'sentiment': self._analyze_sentiment(response_text)
                     }
-                    self.transcript.append(turn_data)
-                    round_responses.append(turn_data)
+                    self.transcript.append(entry)
+                    round_responses.append(entry)
+                    # Update conversation history for the next persona in the same round
+                    conversation_history_str += f"\nIn round {self.current_round}, Persona {p_idx + 1} ('{p_details.split(',')[0]}') said: {response_text}"
+                
+                current_topics = self._extract_topics([resp['response_text'] for resp in round_responses])
+                self.topics_identified.append({'round': self.current_round, 'topics': current_topics})
+                self.sentiment_scores.append({'round': self.current_round, 'sentiments': [r['sentiment'] for r in round_responses]})
 
-                # Check for moderator questions after this round
-                self._check_and_ask_moderator_questions(round_num)
+                self._check_and_ask_moderator_questions(self.current_round)
 
             self.state = SimulationState.COMPLETED
-
-            # Generate final analytics
-            analytics = self._generate_analytics()
-
             app_logger.info(f"Focus group simulation completed. Total turns: {len(self.transcript)}")
             return {
                 'status': 'completed',
                 'transcript': self.transcript,
-                'analytics': analytics
+                'analytics': self._generate_analytics()
             }
-
-        except Exception as e:
+        except openai.APIError as e:
+            app_logger.error(f"OpenAI API Error during simulation: {str(e)}", exc_info=True)
             self.state = SimulationState.ERROR
-            app_logger.error(f"Error in simulation: {str(e)}", exc_info=True)
-            return {'status': 'error', 'error': str(e), 'transcript': self.transcript}
+            return {
+                'status': 'error',
+                'error_type': 'OpenAI API Error',
+                'message': str(e),
+                'transcript': self.transcript # Return partial transcript
+            }
+        except Exception as e:
+            app_logger.error(f"Unexpected error during simulation: {str(e)}", exc_info=True)
+            self.state = SimulationState.ERROR
+            return {
+                'status': 'error',
+                'error_type': 'Unexpected Simulation Error',
+                'message': str(e),
+                'transcript': self.transcript # Return partial transcript
+            }
 
     def _check_and_ask_moderator_questions(self, round_num: int):
         """Check and ask any moderator questions scheduled for this round."""
@@ -518,4 +535,13 @@ class FocusGroupSimulator:
             'total_transcript_entries': len(self.transcript),
             'moderator_questions_pending': sum(1 for q in self.moderator_questions if not q['asked']),
             'persona_count': len(self.personas_details)
+        }
+
+    def _current_simulation_status(self, message: str) -> dict:
+        """Return a current simulation status dictionary with the given message."""
+        return {
+            'status': 'paused',
+            'message': message,
+            'transcript': self.transcript,
+            'current_round': self.current_round
         } 

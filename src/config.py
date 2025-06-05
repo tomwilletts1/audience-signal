@@ -1,8 +1,17 @@
 import os
 from dotenv import load_dotenv
 
+# Determine the absolute path to the .env file in the project root
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+dotenv_path = os.path.join(project_root, '.env.txt')
+
 # Load environment variables
-load_dotenv()
+# Explicitly load the .env.txt file from the project root
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path=dotenv_path)
+else:
+    # This case should ideally log a warning if .env.txt is expected
+    pass
 
 class Config:
     # OpenAI Configuration

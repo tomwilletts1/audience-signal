@@ -3,17 +3,27 @@ from config import config
 from utils.logger import app_logger
 
 # Configure OpenAI API Key
-# This should be one of the first things to run, so services can rely on it.
-api_key = config['default'].OPENAI_API_KEY
-if api_key:
-    openai.api_key = api_key
-    app_logger.info("OpenAI API Key configured from openai_service.")
+# The openai library (v1.x+) will automatically pick up OPENAI_API_KEY from the environment.
+# The explicit assignment `openai.api_key = ...` is generally for older versions or specific client instances.
+# We ensure .env is loaded by config.py, which sets the environment variable.
+
+loaded_api_key = config['default'].OPENAI_API_KEY
+if loaded_api_key:
+    # No longer setting openai.api_key directly on the module here.
+    # The library will use the environment variable OPENAI_API_KEY.
+    app_logger.info("OPENAI_API_KEY is present in configuration and environment.")
 else:
-    app_logger.warning("OPENAI_API_KEY not found in configuration. OpenAI services might not work.")
+    app_logger.warning("OPENAI_API_KEY not found in configuration. OpenAI services might not work if not set elsewhere in environment.")
 
 # This file now primarily handles OpenAI API key configuration.
 # Other general OpenAI related utility functions that don't fit into
 # more specific services (persona, vision, summary) could reside here if needed in the future.
+
+# Note: The analyze_image function below uses openai.Image.create, 
+# which is for openai < v1.0. It will need to be updated to use the new API structure, e.g.,
+# client = openai.OpenAI() (client will auto-load key from env)
+# response = client.images.generate(...)
+# This is outside the scope of the current API key loading fix for focus groups.
 
 def analyze_image(image_data, persona_details, model=config['default'].DEFAULT_VISION_MODEL, temperature=config['default'].DEFAULT_TEMPERATURE):
     try:
