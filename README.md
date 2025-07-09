@@ -22,7 +22,7 @@ Install the dependencies listed in `requirements.txt` and start the Flask app:
 
 ```bash
 pip install -r requirements.txt
-python src/app.py
+ python src/app.py
 ```
 
 By default this launches the development configuration.  For a production

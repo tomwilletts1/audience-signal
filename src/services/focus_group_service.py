@@ -212,12 +212,17 @@ class FocusGroupSimulator:
         
         style_modifier = self._get_style_prompt_modifier(persona_index)
         
+        # Extract persona name (first part before comma)
+        persona_name = persona_details.split(',')[0].strip()
+        name_enforcement = config['default'].PERSONA_NAME_ENFORCEMENT_PROMPT.format(name=persona_name)
+        
         base_prompt_text = (
-            f"Persona Profile: {persona_details}\n\n"
-            f"Interaction Style: {style_modifier}\n\n"
+            f"Persona Profile: {persona_details}\n"
+            f"{name_enforcement}\n"
+            f"\nInteraction Style: {style_modifier}\n\n"
             "You are about to give your initial, independent thoughts for a focus group. "
             f"The topic is related to {stimulus_description_for_prompt}. "
-            "Give yourself a name and be conversational. What are your very first, independent reactions and thoughts as this persona? "
+            "Be conversational. What are your very first, independent reactions and thoughts as this persona? "
             "Please provide only your response as the persona."
         )
 
@@ -229,11 +234,12 @@ class FocusGroupSimulator:
             if self.stimulus_message: 
                 stimulus_description_for_prompt = f"an image and the message: \"{self.stimulus_message}\""
                 base_prompt_text_updated = (
-                    f"Persona Profile: {persona_details}\n\n"
-                    f"Interaction Style: {style_modifier}\n\n"
+                    f"Persona Profile: {persona_details}\n"
+                    f"{name_enforcement}\n"
+                    f"\nInteraction Style: {style_modifier}\n\n"
                     "You are about to give your initial, independent thoughts for a focus group. "
                     f"The topic is related to an image and the message: \"{self.stimulus_message}\". "
-                    "Give yourself a name and be conversational. What are your very first, independent reactions and thoughts as this persona? "
+                    "Be conversational. What are your very first, independent reactions and thoughts as this persona? "
                     "Please provide only your response as the persona."
                 )
                 content_list = [{"type": "text", "text": base_prompt_text_updated}]
@@ -247,11 +253,12 @@ class FocusGroupSimulator:
         else: 
             stimulus_description_for_prompt = f"the message: \"{self.stimulus_message}\""
             base_prompt_text_updated = (
-                f"Persona Profile: {persona_details}\n\n"
-                f"Interaction Style: {style_modifier}\n\n"
+                f"Persona Profile: {persona_details}\n"
+                f"{name_enforcement}\n"
+                f"\nInteraction Style: {style_modifier}\n\n"
                 "You are about to give your initial, independent thoughts for a focus group. "
                 f"The topic is related to the message: \"{self.stimulus_message}\". "
-                "Give yourself a name and be conversational. What are your very first, independent reactions and thoughts as this persona? "
+                "Be conversational. What are your very first, independent reactions and thoughts as this persona? "
                 "Please provide only your response as the persona."
             )
             messages.append({"role": "user", "content": base_prompt_text_updated})
@@ -289,13 +296,15 @@ class FocusGroupSimulator:
             stimulus_desc = f"the image and message: \"{self.stimulus_message}\" shown earlier"
 
         style_modifier = self._get_style_prompt_modifier(persona_index)
+        persona_name = persona_details.split(',')[0].strip()
+        name_enforcement = config['default'].PERSONA_NAME_ENFORCEMENT_PROMPT.format(name=persona_name)
 
         prompt = (
-            f"Persona Profile: {persona_details}\n\n"
-            f"Interaction Style: {style_modifier}\n\n"
+            f"Persona Profile: {persona_details}\n"
+            f"{name_enforcement}\n"
+            f"\nInteraction Style: {style_modifier}\n\n"
             f"You are in a focus group discussing {stimulus_desc}. "
-            "Give yourself a name (if you haven't already or want to reiterate) and be conversational. "
-            "Consider what has been said previously and build upon it or offer a counterpoint. Explain your reasoning.\n\n"
+            "Be conversational. Consider what has been said previously and build upon it or offer a counterpoint. Explain your reasoning.\n\n"
             "Conversation History:\n"
             f"{conversation_history_str}\n\n"
             "What are your thoughts now? Please provide only your response as this persona."
@@ -328,6 +337,8 @@ class FocusGroupSimulator:
         max_tokens = getattr(config['default'], 'DEFAULT_MAX_TOKENS_TEXT', 400)
 
         style_modifier = self._get_style_prompt_modifier(persona_index)
+        persona_name = persona_details.split(',')[0].strip()
+        name_enforcement = config['default'].PERSONA_NAME_ENFORCEMENT_PROMPT.format(name=persona_name)
 
         conversation_history_str = "\n".join([
             f"In round {t['round']}, Persona {t['persona_index']+1} said: {t['response_text']}" 
@@ -335,8 +346,9 @@ class FocusGroupSimulator:
         ])
 
         prompt = (
-            f"Persona Profile: {persona_details}\n\n"
-            f"Interaction Style: {style_modifier}\n\n"
+            f"Persona Profile: {persona_details}\n"
+            f"{name_enforcement}\n"
+            f"\nInteraction Style: {style_modifier}\n\n"
             f"You are in a focus group. The moderator has just asked: '{moderator_question}'\n\n"
             "Previous conversation context:\n"
             f"{conversation_history_str}\n\n"
@@ -406,9 +418,10 @@ class FocusGroupSimulator:
                 round_responses = [] # Store responses for this round for topic/consensus analysis
 
                 # Build conversation history string for this round
+                # Exclude moderator-only transcript entries to avoid KeyError when they lack 'persona_index'
                 conversation_history_str = "\n".join([
                     f"In round {t['round']}, Persona {t['persona_index']+1} ('{t['persona_details'].split(',')[0]}') said: {t['response_text']}"
-                    for t in self.transcript
+                    for t in self.transcript if t.get('type') != 'moderator'
                 ])
 
                 for p_idx, p_details in enumerate(self.personas_details):
@@ -450,18 +463,20 @@ class FocusGroupSimulator:
             self.state = SimulationState.ERROR
             return {
                 'status': 'error',
+                'error': str(e),
                 'error_type': 'OpenAI API Error',
                 'message': str(e),
-                'transcript': self.transcript # Return partial transcript
+                'transcript': self.transcript  # Return partial transcript
             }
         except Exception as e:
             app_logger.error(f"Unexpected error during simulation: {str(e)}", exc_info=True)
             self.state = SimulationState.ERROR
             return {
                 'status': 'error',
+                'error': str(e),
                 'error_type': 'Unexpected Simulation Error',
                 'message': str(e),
-                'transcript': self.transcript # Return partial transcript
+                'transcript': self.transcript  # Return partial transcript
             }
 
     def _check_and_ask_moderator_questions(self, round_num: int):
