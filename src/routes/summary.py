@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify
-# Import from the new services.summary module
-from services.summary import generate_summary_from_responses 
-from utils.logger import app_logger
+from src.services.summary import generate_summary_from_responses 
+from src.utils.logger import app_logger
 
 def create_summary_blueprint():
     summary_bp = Blueprint('summary_route', __name__, url_prefix='/api')

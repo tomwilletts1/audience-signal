@@ -2,8 +2,8 @@
 import openai
 from enum import Enum
 from typing import List
-from config import config
-from utils.logger import app_logger
+from src.config import config
+from src.utils.logger import app_logger
 
 class PersonaStyle(Enum):
     AGREEABLE = "agreeable"

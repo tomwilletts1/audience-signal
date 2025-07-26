@@ -32,7 +32,7 @@ class Config:
     DEFAULT_TEXT_MODEL = "gpt-4o"
     DEFAULT_VISION_MODEL = "gpt-4-vision-preview"
     DEFAULT_TEMPERATURE = 0.7
-    PERSONA_NAME_ENFORCEMENT_PROMPT = "Your name is {name}. Always refer to yourself as {name} in your responses."
+    PERSONA_NAME_ENFORCEMENT_PROMPT = "Your name is {name}. Always refer to yourself as {name} in your responses and in the first person."
     
     # Persona Presets
     PERSONA_PRESETS = {

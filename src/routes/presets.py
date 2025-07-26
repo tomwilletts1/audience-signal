@@ -1,7 +1,7 @@
 # src/routes/presets.py
 from flask import Blueprint, jsonify
-from config import config 
-from utils.logger import app_logger
+from src.config import config 
+from src.utils.logger import app_logger
 
 def create_presets_blueprint():
     presets_bp = Blueprint('presets', __name__, url_prefix='/api')

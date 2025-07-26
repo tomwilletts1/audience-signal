@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Focus Group Tool - Tribera</title>
+    <title>Focus Group - Audience Signal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&display=swap');
@@ -117,263 +117,300 @@
         }
     </style>
 </head>
-<body class="min-h-screen">
-    <!-- Header -->
-    <header class="tribera-gradient text-white py-8 shadow-lg">
-        <div class="container mx-auto px-4">
-            <div class="text-center">
-                <h1 class="tribera-title text-4xl font-bold mb-2">TRIBERA</h1>
-                <p class="text-sm opacity-80">Advanced Focus Group Simulation Tool</p>
-            </div>
-        </div>
-    </header>
-
-    <!-- Sticky Navigation -->
-    <nav class="sticky-nav border-b shadow-sm">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <button id="sidebarToggle" class="p-2 rounded-md hover:bg-gray-100">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
-                <div class="breadcrumb">
-                    <a href="/" class="hover:text-indigo-600">Home</a>
-                    <span class="breadcrumb-separator"></span>
-                    <span class="text-gray-900 font-medium">Advanced Focus Group</span>
-                </div>
-            </div>
-            <div class="flex items-center gap-4">
-                <div id="simulationStatus" class="text-sm px-3 py-1 rounded-full bg-gray-100 text-gray-600">
-                    Ready
-                </div>
-                <a href="/" class="text-indigo-600 hover:text-indigo-800 font-medium px-3 py-2 rounded-md text-sm">
-                    Single Analysis Tool
-                </a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Collapsible Sidebar -->
-    <div id="sidebar" class="sidebar">
-        <div class="p-4 border-b">
-            <h3 class="font-semibold text-gray-900">Quick Navigation</h3>
-        </div>
-        <nav class="p-4 space-y-2">
-            <a href="#personas" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-sm">📋 Personas</a>
-            <a href="#stimulus" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-sm">💬 Stimulus</a>
-            <a href="#settings" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-sm">⚙️ Settings</a>
-            <a href="#moderator" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-sm">🎯 Moderator</a>
-            <a href="#results" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-sm">📊 Results</a>
-            <a href="#analytics" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-sm">📈 Analytics</a>
+<body class="bg-gray-50 min-h-screen flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-lg flex flex-col py-8 px-6 min-h-screen">
+        <h1 class="text-2xl font-bold text-indigo-700 mb-8">Audience Signal</h1>
+        <nav class="flex-1 space-y-4">
+            <a href="/" class="block text-lg text-gray-700 hover:text-indigo-600">Home</a>
+            <a href="/focus-group-advanced" class="block text-lg font-semibold text-indigo-600">Focus Group</a>
+            <a href="/polling" class="block text-lg text-gray-700 hover:text-indigo-600">Polling</a>
+            <a href="/test-content" class="block text-lg text-gray-700 hover:text-indigo-600">Test Content</a>
+            <a href="/audiences" class="block text-lg text-gray-700 hover:text-indigo-600">Audiences</a>
+            <a href="/history" class="block text-lg text-gray-700 hover:text-indigo-600">History</a>
+            <a href="/faqs" class="block text-lg text-gray-400 cursor-not-allowed">FAQs</a>
         </nav>
-        <div class="absolute bottom-4 left-4 right-4">
-            <button id="sidebarClose" class="w-full text-left px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
-                ← Hide Sidebar
-            </button>
-        </div>
-    </div>
-
+        <div class="mt-12 text-xs text-gray-400">&copy; 2025 Audience Signal</div>
+    </aside>
     <!-- Main Content -->
-    <main id="mainContent" class="main-content container mx-auto px-4 py-8 max-w-6xl">
-        
-        <!-- Personas Section -->
-        <section id="personas" class="bg-white rounded-xl shadow-sm p-6 mb-8">
-            <h2 class="text-2xl font-semibold mb-6 text-gray-800">Define Personas</h2>
-            
-            <div id="personasContainer" class="space-y-4">
-                <!-- Persona entries will be added here -->
+    <main class="flex-1 bg-gray-50">
+        <!-- Header -->
+        <header class="tribera-gradient text-white py-8 shadow-lg">
+            <div class="container mx-auto px-4">
+                <div class="text-center">
+                    <h1 class="tribera-title text-4xl font-bold mb-2">TRIBERA</h1>
+                    <p class="text-sm opacity-80">Advanced Focus Group Simulation Tool</p>
+                </div>
             </div>
-            
-            <div class="flex gap-4 mt-6">
-                <button id="addPersonaBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
-                    + Add Persona
-                </button>
-                <button id="loadPresetPersonas" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition">
-                    Load Presets
-                </button>
-            </div>
-        </section>
+        </header>
 
-        <!-- Stimulus Section -->
-        <section id="stimulus" class="bg-white rounded-xl shadow-sm p-6 mb-8">
-            <h2 class="text-2xl font-semibold mb-6 text-gray-800">Stimulus Material</h2>
-            
-            <div class="grid md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Marketing Message</label>
-                    <textarea id="stimulusMessage" rows="4" 
-                             class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                             placeholder="Enter your marketing message..."></textarea>
-                    <div class="text-sm text-gray-500 mt-1">
-                        <span id="messageCharCount">0</span> characters
+        <!-- Sticky Navigation -->
+        <nav class="sticky-nav border-b shadow-sm">
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <button id="sidebarToggle" class="p-2 rounded-md hover:bg-gray-100">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <div class="breadcrumb">
+                        <a href="/" class="hover:text-indigo-600">Home</a>
+                        <span class="breadcrumb-separator"></span>
+                        <span class="text-gray-900 font-medium">Advanced Focus Group</span>
                     </div>
                 </div>
+                <div class="flex items-center gap-4">
+                    <div id="simulationStatus" class="text-sm px-3 py-1 rounded-full bg-gray-100 text-gray-600">
+                        Ready
+                    </div>
+                    <a href="/" class="text-indigo-600 hover:text-indigo-800 font-medium px-3 py-2 rounded-md text-sm">
+                        Single Analysis Tool
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Collapsible Sidebar -->
+        <div id="sidebar" class="sidebar">
+            <div class="p-4 border-b">
+                <h3 class="font-semibold text-gray-900">Quick Navigation</h3>
+            </div>
+            <nav class="p-4 space-y-2">
+                <a href="#personas" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-sm">📋 Personas</a>
+                <a href="#stimulus" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-sm">💬 Stimulus</a>
+                <a href="#settings" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-sm">⚙️ Settings</a>
+                <a href="#moderator" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-sm">🎯 Moderator</a>
+                <a href="#results" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-sm">📊 Results</a>
+                <a href="#analytics" class="block px-3 py-2 rounded-md hover:bg-gray-100 text-sm">📈 Analytics</a>
+            </nav>
+            <div class="absolute bottom-4 left-4 right-4">
+                <button id="sidebarClose" class="w-full text-left px-3 py-2 text-sm text-gray-500 hover:text-gray-700">
+                    ← Hide Sidebar
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main id="mainContent" class="main-content container mx-auto px-4 py-8 max-w-6xl">
+            
+            <!-- Personas Section -->
+            <section id="personas" class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-800">1. Select Your Audience</h2>
                 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Image (Optional)</label>
-                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-400 transition">
-                        <input type="file" id="stimulusImage" accept="image/*" class="hidden">
-                        <button onclick="document.getElementById('stimulusImage').click()" 
-                                class="text-indigo-600 hover:text-indigo-800">
-                            <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                            </svg>
-                            Click to upload image
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="audienceSelect" class="block text-sm font-medium text-gray-700 mb-2">Choose an Audience</label>
+                        <select id="audienceSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500">
+                            <option value="" disabled selected>Select an audience...</option>
+                            <option value="manchester">Manchester Residents</option>
+                            <option value="birmingham">Birmingham Residents</option>
+                            <option value="uk_shoppers">UK Shoppers</option>
+                            <option value="custom">Define Personas Manually (Legacy)</option>
+                        </select>
+                    </div>
+                    <div id="audience-preview" class="bg-gray-50 p-4 rounded-lg hidden">
+                        <h4 class="font-medium text-gray-800 mb-2">Audience Preview</h4>
+                        <p class="text-sm text-gray-600">This audience consists of a stratified sample of adults from the selected region, reflecting real-world demographics.</p>
+                    </div>
+                </div>
+
+                <!-- Manual Persona Definition (Hidden by default) -->
+                <div id="manualPersonaContainer" class="hidden mt-6">
+                    <h3 class="text-lg font-medium text-gray-800 mb-4">Define Personas Manually</h3>
+                    <div id="personasContainer" class="space-y-4">
+                        <!-- Persona entries will be added here -->
+                    </div>
+                    <div class="flex gap-4 mt-6">
+                        <button id="addPersonaBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
+                            + Add Persona
+                        </button>
+                        <button id="loadPresetPersonas" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition">
+                            Load Presets
                         </button>
                     </div>
-                    <div id="imagePreview" class="mt-4 hidden">
-                        <img id="previewImg" class="max-h-32 rounded-lg">
-                        <button id="removeImage" class="mt-2 text-sm text-red-600 hover:text-red-800">Remove</button>
+                </div>
+            </section>
+
+            <!-- Stimulus Section -->
+            <section id="stimulus" class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-800">2. Provide Stimulus Material</h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Marketing Message</label>
+                        <textarea id="stimulusMessage" rows="4" 
+                                 class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                 placeholder="Enter your marketing message..."></textarea>
+                        <div class="text-sm text-gray-500 mt-1">
+                            <span id="messageCharCount">0</span> characters
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Upload Image (Optional)</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-400 transition">
+                            <input type="file" id="stimulusImage" accept="image/*" class="hidden">
+                            <button onclick="document.getElementById('stimulusImage').click()" 
+                                    class="text-indigo-600 hover:text-indigo-800">
+                                <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
+                                Click to upload image
+                            </button>
+                        </div>
+                        <div id="imagePreview" class="mt-4 hidden">
+                            <img id="previewImg" class="max-h-32 rounded-lg">
+                            <button id="removeImage" class="mt-2 text-sm text-red-600 hover:text-red-800">Remove</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- Settings Section -->
-        <section id="settings" class="bg-white rounded-xl shadow-sm p-6 mb-8">
-            <h2 class="text-2xl font-semibold mb-6 text-gray-800">Simulation Settings</h2>
-            
-            <div class="grid md:grid-cols-3 gap-6">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Simulation Mode</label>
-                    <select id="simulationMode" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500">
-                        <option value="standard">Standard (All Rounds)</option>
-                        <option value="live">Live Control</option>
-                    </select>
+            <!-- Settings Section -->
+            <section id="settings" class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-800">Simulation Settings</h2>
+                
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Simulation Mode</label>
+                        <select id="simulationMode" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500">
+                            <option value="standard">Standard (All Rounds)</option>
+                            <option value="live">Live Control</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Discussion Rounds</label>
+                        <input type="number" id="numRounds" value="2" min="0" max="10" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Response Style</label>
+                        <select id="globalPersonaStyle" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500">
+                            <option value="mixed">Mixed Styles</option>
+                            <option value="neutral">All Neutral</option>
+                            <option value="agreeable">All Agreeable</option>
+                            <option value="contrarian">All Contrarian</option>
+                            <option value="analytical">All Analytical</option>
+                            <option value="emotional">All Emotional</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Moderator Questions Section -->
+            <section id="moderator" class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-800">Moderator Questions</h2>
+                
+                <div id="moderatorQuestionsContainer" class="space-y-4 mb-4">
+                    <!-- Moderator questions will be added here -->
                 </div>
                 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Discussion Rounds</label>
-                    <input type="number" id="numRounds" value="2" min="0" max="10" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Response Style</label>
-                    <select id="globalPersonaStyle" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500">
-                        <option value="mixed">Mixed Styles</option>
-                        <option value="neutral">All Neutral</option>
-                        <option value="agreeable">All Agreeable</option>
-                        <option value="contrarian">All Contrarian</option>
-                        <option value="analytical">All Analytical</option>
-                        <option value="emotional">All Emotional</option>
-                    </select>
-                </div>
-            </div>
-        </section>
-
-        <!-- Moderator Questions Section -->
-        <section id="moderator" class="bg-white rounded-xl shadow-sm p-6 mb-8">
-            <h2 class="text-2xl font-semibold mb-6 text-gray-800">Moderator Questions</h2>
-            
-            <div id="moderatorQuestionsContainer" class="space-y-4 mb-4">
-                <!-- Moderator questions will be added here -->
-            </div>
-            
-            <div class="flex gap-4">
-                <button id="addModeratorQuestion" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">
-                    + Add Question
-                </button>
-                <div id="liveQuestionInput" class="hidden flex-1 flex gap-2">
-                    <input type="text" id="liveQuestion" placeholder="Type question to inject..." 
-                           class="flex-1 px-3 py-2 border border-gray-300 rounded-md">
-                    <button id="injectQuestion" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                        Inject
+                <div class="flex gap-4">
+                    <button id="addModeratorQuestion" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">
+                        + Add Question
                     </button>
+                    <div id="liveQuestionInput" class="hidden flex-1 flex gap-2">
+                        <input type="text" id="liveQuestion" placeholder="Type question to inject..." 
+                               class="flex-1 px-3 py-2 border border-gray-300 rounded-md">
+                        <button id="injectQuestion" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                            Inject
+                        </button>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- Simulation Controls -->
-        <div class="text-center mb-8">
-            <button id="startSimulation" class="bg-indigo-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition shadow-lg">
-                🚀 Start Simulation
-            </button>
+            <!-- Simulation Controls -->
+            <div class="text-center mb-8">
+                <button id="startSimulation" class="bg-indigo-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition shadow-lg">
+                    🚀 Start Simulation
+                </button>
+            </div>
+
+            <!-- Results Section -->
+            <section id="results" class="bg-white rounded-xl shadow-sm p-6 mb-8 hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-semibold text-gray-800">Simulation Results</h2>
+                    <div class="flex gap-2">
+                        <button id="exportResults" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 text-sm">
+                            📄 Export
+                        </button>
+                        <button id="toggleRoundView" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm">
+                            📋 Round View
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="transcriptContainer" class="space-y-4">
+                    <!-- Transcript will be displayed here -->
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section id="analytics" class="bg-white rounded-xl shadow-sm p-6 mb-8 hidden">
+                <h2 class="text-2xl font-semibold mb-6 text-gray-800">Analytics Dashboard</h2>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-medium text-gray-700 mb-2">Sentiment Overview</h3>
+                        <div id="sentimentChart" class="space-y-2">
+                            <!-- Sentiment chart will be here -->
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-medium text-gray-700 mb-2">Consensus Level</h3>
+                        <div id="consensusIndicator" class="text-center">
+                            <!-- Consensus indicator will be here -->
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-medium text-gray-700 mb-2">Key Topics</h3>
+                        <div id="topicsContainer">
+                            <!-- Topics will be here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Round-by-Round Analysis -->
+                <div class="border rounded-lg overflow-hidden">
+                    <button id="toggleRoundAnalysis" class="w-full px-4 py-3 bg-gray-50 text-left font-medium hover:bg-gray-100 transition">
+                        📊 Round-by-Round Analysis
+                        <span class="float-right">▼</span>
+                    </button>
+                    <div id="roundAnalysisContent" class="collapsible-content p-4">
+                        <!-- Round analysis will be here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Live Controls (Fixed Position) -->
+        <div id="liveControls" class="live-controls hidden">
+            <h3 class="font-semibold mb-3">Live Controls</h3>
+            <div class="flex flex-col gap-2">
+                <button id="pauseSimulation" class="bg-yellow-600 text-white px-3 py-1 rounded text-sm hover:bg-yellow-700">
+                    ⏸️ Pause
+                </button>
+                <button id="resumeSimulation" class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 hidden">
+                    ▶️ Resume
+                </button>
+                <button id="nextRound" class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
+                    ➡️ Next Round
+                </button>
+                <button id="completeSimulation" class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700">
+                    🏁 Complete
+                </button>
+            </div>
         </div>
 
-        <!-- Results Section -->
-        <section id="results" class="bg-white rounded-xl shadow-sm p-6 mb-8 hidden">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-semibold text-gray-800">Simulation Results</h2>
-                <div class="flex gap-2">
-                    <button id="exportResults" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 text-sm">
-                        📄 Export
-                    </button>
-                    <button id="toggleRoundView" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm">
-                        📋 Round View
-                    </button>
-                </div>
-            </div>
-            
-            <div id="transcriptContainer" class="space-y-4">
-                <!-- Transcript will be displayed here -->
-            </div>
-        </section>
-
-        <!-- Analytics Section -->
-        <section id="analytics" class="bg-white rounded-xl shadow-sm p-6 mb-8 hidden">
-            <h2 class="text-2xl font-semibold mb-6 text-gray-800">Analytics Dashboard</h2>
-            
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h3 class="font-medium text-gray-700 mb-2">Sentiment Overview</h3>
-                    <div id="sentimentChart" class="space-y-2">
-                        <!-- Sentiment chart will be here -->
-                    </div>
-                </div>
-                
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h3 class="font-medium text-gray-700 mb-2">Consensus Level</h3>
-                    <div id="consensusIndicator" class="text-center">
-                        <!-- Consensus indicator will be here -->
-                    </div>
-                </div>
-                
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h3 class="font-medium text-gray-700 mb-2">Key Topics</h3>
-                    <div id="topicsContainer">
-                        <!-- Topics will be here -->
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Round-by-Round Analysis -->
-            <div class="border rounded-lg overflow-hidden">
-                <button id="toggleRoundAnalysis" class="w-full px-4 py-3 bg-gray-50 text-left font-medium hover:bg-gray-100 transition">
-                    📊 Round-by-Round Analysis
-                    <span class="float-right">▼</span>
-                </button>
-                <div id="roundAnalysisContent" class="collapsible-content p-4">
-                    <!-- Round analysis will be here -->
-                </div>
-            </div>
-        </section>
+        <!-- Footer -->
+        <footer class="py-6 text-center text-gray-600 text-sm mt-12">
+            <p>&copy; 2025 Tribera. All rights reserved.</p>
+        </footer>
     </main>
-
-    <!-- Live Controls (Fixed Position) -->
-    <div id="liveControls" class="live-controls hidden">
-        <h3 class="font-semibold mb-3">Live Controls</h3>
-        <div class="flex flex-col gap-2">
-            <button id="pauseSimulation" class="bg-yellow-600 text-white px-3 py-1 rounded text-sm hover:bg-yellow-700">
-                ⏸️ Pause
-            </button>
-            <button id="resumeSimulation" class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 hidden">
-                ▶️ Resume
-            </button>
-            <button id="nextRound" class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
-                ➡️ Next Round
-            </button>
-            <button id="completeSimulation" class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700">
-                🏁 Complete
-            </button>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="py-6 text-center text-gray-600 text-sm mt-12">
-        <p>&copy; 2025 Tribera. All rights reserved.</p>
-    </footer>
 
     <script>
         // Application State
@@ -388,7 +425,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             initializeUI();
             setupEventListeners();
-            addInitialPersona();
+            // addInitialPersona(); // Don't add a manual persona by default
         });
 
         function initializeUI() {
@@ -398,6 +435,28 @@
             messageInput.addEventListener('input', () => {
                 charCount.textContent = messageInput.value.length;
             });
+            document.getElementById('audienceSelect').addEventListener('change', handleAudienceChange);
+        }
+
+        function handleAudienceChange(event) {
+            const selectedValue = event.target.value;
+            const manualContainer = document.getElementById('manualPersonaContainer');
+            const audiencePreview = document.getElementById('audience-preview');
+
+            if (selectedValue === 'custom') {
+                manualContainer.classList.remove('hidden');
+                audiencePreview.classList.add('hidden');
+                if (document.getElementById('personasContainer').children.length === 0) {
+                    addInitialPersona(); // Add one manual persona if container is empty
+                }
+            } else {
+                manualContainer.classList.add('hidden');
+                if (selectedValue) {
+                    audiencePreview.classList.remove('hidden');
+                } else {
+                    audiencePreview.classList.add('hidden');
+                }
+            }
         }
 
         function setupEventListeners() {
@@ -572,14 +631,16 @@
             try {
                 updateStatus('Preparing simulation...');
                 
+                const audienceId = document.getElementById('audienceSelect').value;
+                
                 // Collect data
                 const personas = collectPersonaData();
                 const message = document.getElementById('stimulusMessage').value.trim();
                 const numRounds = parseInt(document.getElementById('numRounds').value);
                 const moderatorQuestions = collectModeratorQuestions();
                 
-                if (personas.length === 0) {
-                    alert('Please add at least one persona');
+                if (audienceId === 'custom' && personas.length === 0) {
+                    alert('Please add at least one persona for a custom simulation.');
                     return;
                 }
                 
@@ -589,14 +650,15 @@
                 }
                 
                 const requestData = {
-                    personas: personas.map(p => p.details),
+                    personas: audienceId === 'custom' ? personas.map(p => p.details) : null,
+                    audience_id: audienceId !== 'custom' ? audienceId : null,
                     message: message || null,
                     image_data: currentImageBase64,
                     num_discussion_rounds: numRounds,
-                    persona_styles: personas.reduce((acc, p, idx) => {
+                    persona_styles: audienceId === 'custom' ? personas.reduce((acc, p, idx) => {
                         acc[idx] = p.style;
                         return acc;
-                    }, {}),
+                    }, {}) : null,
                     moderator_questions: moderatorQuestions
                 };
                 

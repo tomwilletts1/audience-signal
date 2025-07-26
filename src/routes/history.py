@@ -1,7 +1,7 @@
 # src/routes/history.py
 from flask import Blueprint, jsonify
-from utils.history_manager import HistoryManager
-from utils.logger import app_logger
+from src.utils.history_manager import HistoryManager
+from src.utils.logger import app_logger
 
 def create_history_blueprint(history_manager_instance: HistoryManager):
     history_bp = Blueprint('history', __name__, url_prefix='/api')

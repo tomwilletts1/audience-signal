@@ -1,11 +1,14 @@
 # src/routes/focus_group.py
 from flask import Blueprint, request, jsonify
-from services.focus_group_service import FocusGroupSimulator, PersonaStyle
-from utils.logger import app_logger
+from src.services.focus_group_service import FocusGroupSimulator, PersonaStyle
+from src.utils.logger import app_logger
 import uuid
-# from utils.history_manager import HistoryManager # Not using history_manager for focus groups yet
+from src.services.audience_service import AudienceService
 
-def create_focus_group_blueprint(): # Removed history_manager_instance for now
+# Forward declaration for type hinting
+# AudienceService = Type('AudienceService')
+
+def create_focus_group_blueprint(audience_service: AudienceService):
     focus_group_bp = Blueprint('focus_group', __name__, url_prefix='/api/focus_group')
 
     # Store active simulations (in production, use Redis or database)
@@ -19,22 +22,26 @@ def create_focus_group_blueprint(): # Removed history_manager_instance for now
                 app_logger.warning("No data provided for focus group simulation.")
                 return jsonify({'error': 'No data provided', 'status': 'error'}), 400
 
-            personas_details = data.get('personas')
+            audience_id = data.get('audience_id')
+            personas_details = data.get('personas') # For legacy or direct persona input
+            
+            if not audience_id and not personas_details:
+                return jsonify({'error': 'Either audience_id or a list of personas is required.', 'status': 'error'}), 400
+
+            if audience_id:
+                app_logger.info(f"Simulating focus group for audience_id: {audience_id}")
+                personas_details = audience_service.sample_personas_from_audience(audience_id, count=8)
+
             stimulus_message = data.get('message')
             stimulus_image_data = data.get('image_data') 
             num_discussion_rounds = data.get('num_discussion_rounds', 1)
             num_discussion_rounds = int(num_discussion_rounds)
-            persona_styles = data.get('persona_styles', {})  # Map of persona_index -> style
-            moderator_questions = data.get('moderator_questions', [])  # List of {question, after_round}
+            persona_styles = data.get('persona_styles', {})
+            moderator_questions = data.get('moderator_questions', [])
 
-            if not personas_details or not isinstance(personas_details, list) or len(personas_details) == 0:
-                return jsonify({'error': 'A list of personas is required.', 'status': 'error'}), 400
-            
             if not stimulus_message and not stimulus_image_data:
                 return jsonify({'error': 'Either message or image_data is required for stimulus.', 'status': 'error'}), 400
-
-            app_logger.info(f"Request for focus group: {len(personas_details)} personas, msg: {bool(stimulus_message)}, img: {bool(stimulus_image_data)}, rounds: {num_discussion_rounds}.")
-
+            
             simulator = FocusGroupSimulator(
                 personas_details=personas_details,
                 stimulus_message=stimulus_message,
@@ -63,7 +70,8 @@ def create_focus_group_blueprint(): # Removed history_manager_instance for now
             
             # Clean up completed simulation
             if result.get('status') == 'completed':
-                del active_simulations[simulation_id]
+                if simulation_id in active_simulations:
+                    del active_simulations[simulation_id]
             
             result['simulation_id'] = simulation_id
             return jsonify(result)

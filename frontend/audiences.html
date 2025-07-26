@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audiences - Audience Signal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-lg flex flex-col py-8 px-6 min-h-screen">
+        <h1 class="text-2xl font-bold text-indigo-700 mb-8">Audience Signal</h1>
+        <nav class="flex-1 space-y-4">
+            <a href="/" class="block text-lg text-gray-700 hover:text-indigo-600">Home</a>
+            <a href="/focus-group-advanced" class="block text-lg text-gray-700 hover:text-indigo-600">Focus Group</a>
+            <a href="/polling" class="block text-lg text-gray-700 hover:text-indigo-600">Polling</a>
+            <a href="/test-content" class="block text-lg text-gray-700 hover:text-indigo-600">Test Content</a>
+            <a href="/audiences" class="block text-lg font-semibold text-indigo-600">Audiences</a>
+            <a href="/history" class="block text-lg text-gray-700 hover:text-indigo-600">History</a>
+            <a href="/faqs" class="block text-lg text-gray-400 cursor-not-allowed">FAQs</a>
+        </nav>
+        <div class="mt-12 text-xs text-gray-400">&copy; 2025 Audience Signal</div>
+    </aside>
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col items-center justify-center p-12">
+        <h2 class="text-3xl font-bold text-gray-800 mb-8">Audiences</h2>
+        <button class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold mb-8 hover:bg-blue-700">+ Create New Audience</button>
+        <div id="audienceList" class="w-full max-w-2xl space-y-4"></div>
+    </main>
+</body>
+</html> 

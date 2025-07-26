@@ -1,13 +1,20 @@
 # src/services/summary.py
 import openai
-from config import config
-from utils.logger import app_logger
+from src.config import config
+from src.utils.logger import app_logger
+
+class Summary:
+    def __init__(self, summary_text, summary_type, summary_source):
+        self.summary_text = summary_text
+        self.summary_type = summary_type
+        self.summary_source = summary_source
+        self.responses_data = responses_data
 
 if not getattr(openai, 'api_key', None) and config['default'].OPENAI_API_KEY:
     openai.api_key = config['default'].OPENAI_API_KEY
     app_logger.info("OpenAI API Key re-checked/set in summary service.")
 
-def generate_summary_from_responses(responses_data): # Renamed 'responses' to 'responses_data'
+def generate_summary_from_responses(self, responses_data): # Renamed 'responses' to 'responses_data'
     model = config['default'].DEFAULT_TEXT_MODEL # Summary usually uses a text model
     temperature = config['default'].DEFAULT_TEMPERATURE
     max_tokens = config['default'].DEFAULT_MAX_TOKENS_TEXT if hasattr(config['default'], 'DEFAULT_MAX_TOKENS_TEXT') else 1000 # Potentially longer for summaries

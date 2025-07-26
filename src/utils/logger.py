@@ -1,7 +1,7 @@
 # src/utils/logger.py
 import logging
 import sys
-from config import config # Import config to get log level
+from src.config import config # Import config to get log level
 
 def setup_logger(name='app_logger', level_str=None):
     """

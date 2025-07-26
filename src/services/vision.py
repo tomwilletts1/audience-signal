@@ -1,7 +1,15 @@
 # src/services/vision.py
 import openai
-from config import config
-from utils.logger import app_logger
+from src.config import config
+from src.utils.logger import app_logger
+
+class Vision:
+    def __init__(self, image_data, persona_details, model=None, temperature=None):
+        self.image_data = image_data
+        self.persona_details = persona_details
+        self.model = model
+        self.temperature = temperature
+        
 
 # Ensure OpenAI API key is configured
 if not getattr(openai, 'api_key', None) and config['default'].OPENAI_API_KEY:

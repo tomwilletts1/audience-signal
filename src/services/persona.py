@@ -1,7 +1,20 @@
 # src/services/persona.py
 import openai
-from config import config
-from utils.logger import app_logger # Import logger
+from src.config import config
+from src.utils.logger import app_logger # Import logger
+
+
+class Persona:
+    def __init__(self, name, description, values, preferences, style):
+        self.name = name
+        self.description = description
+        self.values = values
+        self.preferences = preferences
+        self.style = style
+        self.message = message
+        self.persona_details = persona_details
+        self.model = model
+        self.temperature = temperature
 
 # Ensure OpenAI API key is configured (idempotent check)
 # This relies on openai_service.py or app.py having configured it.
@@ -10,7 +23,7 @@ if not openai.api_key and config['default'].OPENAI_API_KEY:
     app_logger.info("OpenAI API Key re-checked/set in persona service.")
 
 
-def generate_persona_response(message, persona_details, model=None, temperature=None):
+def generate_persona_response(self,message, persona_details, model=None, temperature=None):
     model = model or config['default'].DEFAULT_TEXT_MODEL
     temperature = temperature or config['default'].DEFAULT_TEMPERATURE
     app_logger.debug(f"Generating persona response for: {persona_details[:50]} with model: {model}")
