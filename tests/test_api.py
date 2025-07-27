@@ -45,14 +45,23 @@ def client(app):
 # Tests ----------------------------------------------------------------------
 def test_analyze_endpoint(client):
     payload = {
-        'message': 'Hello',
-        'personas': ['Test Persona']
+        'personas': [
+            "Alice, 28, London, tech worker",
+            "Bob, 35, Manchester, designer",
+            "Carol, 32, Bristol, marketer"
+        ],
+        'message': 'Welcome to the focus group!',
+        'questions': [],
+        'group_size': 3,
+        'open_discussion': True
     }
     response = client.post('/api/analyze', data=json.dumps(payload), content_type='application/json')
     assert response.status_code == 200
     data = response.get_json()
     assert data['status'] == 'success'
-    assert data['results'][0]['response'] == 'response for Test Persona'
+    assert data['results'][0]['response'] == 'response for Alice, 28, London, tech worker'
+    assert data['results'][1]['response'] == 'response for Bob, 35, Manchester, designer'
+    assert data['results'][2]['response'] == 'response for Carol, 32, Bristol, marketer'
 
 def test_history_endpoint(client):
     payload = {

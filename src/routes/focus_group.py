@@ -24,13 +24,17 @@ def create_focus_group_blueprint(audience_service: AudienceService):
 
             audience_id = data.get('audience_id')
             personas_details = data.get('personas') # For legacy or direct persona input
+            questions = data.get('questions', [])
+            group_size = data.get('group_size')
+            open_discussion = data.get('open_discussion', False)
             
             if not audience_id and not personas_details:
                 return jsonify({'error': 'Either audience_id or a list of personas is required.', 'status': 'error'}), 400
 
             if audience_id:
                 app_logger.info(f"Simulating focus group for audience_id: {audience_id}")
-                personas_details = audience_service.sample_personas_from_audience(audience_id, count=8)
+                sample_count = int(group_size) if group_size else 8
+                personas_details = audience_service.sample_personas_from_audience(audience_id, count=sample_count)
 
             stimulus_message = data.get('message')
             stimulus_image_data = data.get('image_data') 
@@ -45,7 +49,10 @@ def create_focus_group_blueprint(audience_service: AudienceService):
             simulator = FocusGroupSimulator(
                 personas_details=personas_details,
                 stimulus_message=stimulus_message,
-                stimulus_image_data=stimulus_image_data
+                stimulus_image_data=stimulus_image_data,
+                questions=questions,
+                group_size=group_size,
+                open_discussion=open_discussion
             )
             
             # Set persona styles
@@ -57,7 +64,7 @@ def create_focus_group_blueprint(audience_service: AudienceService):
                 except (ValueError, KeyError) as e:
                     app_logger.warning(f"Invalid persona style: {persona_idx_str}={style_str}, error: {e}")
             
-            # Add moderator questions
+            # Add moderator questions (legacy)
             for mq in moderator_questions:
                 simulator.add_moderator_question(mq.get('question'), mq.get('after_round'))
             

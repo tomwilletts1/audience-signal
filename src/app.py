@@ -84,6 +84,14 @@ def serve_frontend_other(path):
     except:
         return send_from_directory(app.static_folder, 'index.html'), 404
 
+@app.route('/focus-group-advanced')
+def serve_focus_group():
+    return send_from_directory(app.static_folder, 'focus_group_advanced.html')
+
+@app.route('/data.html')
+def serve_data():
+    return send_from_directory(app.static_folder, 'data.html')
+
 # --- Main Execution ---
 if __name__ == '__main__':
     app_logger.info(f"Starting Flask app on {config['default'].HOST}:{config['default'].PORT}")

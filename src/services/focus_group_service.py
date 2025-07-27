@@ -19,7 +19,7 @@ class SimulationState(Enum):
     ERROR = "error"
 
 class FocusGroupSimulator:
-    def __init__(self, personas_details: list[str], stimulus_message: str = None, stimulus_image_data: str = None):
+    def __init__(self, personas_details: list[str], stimulus_message: str = None, stimulus_image_data: str = None, questions: list = None, group_size: int = None, open_discussion: bool = False):
         if not personas_details:
             raise ValueError("At least one persona is required for a focus group.")
         if not stimulus_message and not stimulus_image_data:
@@ -35,7 +35,13 @@ class FocusGroupSimulator:
         self.state = SimulationState.RUNNING
         self.sentiment_scores = []  # Track sentiment for each response
         self.topics_identified = []  # Track emerging topics
-        app_logger.info(f"FocusGroupSimulator initialized for {len(personas_details)} personas.")
+        self.group_size = group_size
+        self.open_discussion = open_discussion
+        # If questions are provided, add them as moderator questions for after_round=0
+        if questions:
+            for q in questions:
+                self.add_moderator_question(q, after_round=0)
+        app_logger.info(f"FocusGroupSimulator initialized for {len(personas_details)} personas. Group size: {group_size}, Open discussion: {open_discussion}, Questions: {len(questions) if questions else 0}")
 
     def set_persona_style(self, persona_index: int, style: PersonaStyle):
         """Set interaction style for a specific persona."""
@@ -220,10 +226,10 @@ class FocusGroupSimulator:
             f"Persona Profile: {persona_details}\n"
             f"{name_enforcement}\n"
             f"\nInteraction Style: {style_modifier}\n\n"
-            "You are about to give your initial, independent thoughts for a focus group. "
-            f"The topic is related to {stimulus_description_for_prompt}. "
-            "Be conversational. What are your very first, independent reactions and thoughts as this persona? "
-            "Please provide only your response as the persona."
+            "You are introducing yourself in a focus group. The moderator has just welcomed everyone. "
+            "Give a brief, natural introduction about yourself as this persona. "
+            "Keep it conversational and authentic to your character. "
+            "Please provide only your introduction as the persona."
         )
 
         if self.stimulus_image_data:
@@ -264,7 +270,8 @@ class FocusGroupSimulator:
             messages.append({"role": "user", "content": base_prompt_text_updated})
 
         max_tokens = getattr(config['default'], max_tokens_config_key, 300)
-        app_logger.debug(f"Initial reaction prompt for {persona_details[:30]}... using model {model}: {str(messages)[:300]}...")
+        prompt_str = str(messages)[:500]
+        app_logger.debug(f"Initial reaction prompt for {persona_details[:30]}... using model {model}: {prompt_str}...")
 
         try:
             # OpenAI client is instantiated implicitly here if OPENAI_API_KEY is in env
@@ -275,10 +282,10 @@ class FocusGroupSimulator:
                 max_tokens=max_tokens
             )
             content = response.choices[0].message.content.strip()
-            app_logger.info(f"Generated initial reaction for persona {persona_details[:30]}...")
+            app_logger.info(f"Generated initial reaction for persona {persona_details[:30]}... Output: {content[:300]}...")
             return content
         except Exception as e:
-            app_logger.error(f"Error generating initial reaction for {persona_details[:30]}...: {str(e)}", exc_info=True)
+            app_logger.error(f"Error generating initial reaction for {persona_details[:30]}... Prompt: {prompt_str}... Error: {str(e)}", exc_info=True)
             # Re-raise the exception to be caught by the main simulation loop
             raise
 
@@ -309,7 +316,8 @@ class FocusGroupSimulator:
             f"{conversation_history_str}\n\n"
             "What are your thoughts now? Please provide only your response as this persona."
         )
-        app_logger.debug(f"Discussion prompt for {persona_details[:30]}...: {prompt[:300]}...")
+        prompt_str = prompt[:500]
+        app_logger.debug(f"Discussion prompt for {persona_details[:30]}...: {prompt_str}...")
 
         try:
             # OpenAI client is instantiated implicitly here if OPENAI_API_KEY is in env
@@ -323,10 +331,10 @@ class FocusGroupSimulator:
                 max_tokens=max_tokens
             )
             content = response.choices[0].message.content.strip()
-            app_logger.info(f"Generated discussion response for persona {persona_details[:30]}...")
+            app_logger.info(f"Generated discussion response for persona {persona_details[:30]}... Output: {content[:300]}...")
             return content
         except Exception as e:
-            app_logger.error(f"Error generating discussion response for {persona_details[:30]}...: {str(e)}", exc_info=True)
+            app_logger.error(f"Error generating discussion response for {persona_details[:30]}... Prompt: {prompt_str}... Error: {str(e)}", exc_info=True)
             # Re-raise the exception to be caught by the main simulation loop
             raise
 
@@ -341,8 +349,8 @@ class FocusGroupSimulator:
         name_enforcement = config['default'].PERSONA_NAME_ENFORCEMENT_PROMPT.format(name=persona_name)
 
         conversation_history_str = "\n".join([
-            f"In round {t['round']}, Persona {t['persona_index']+1} said: {t['response_text']}" 
-            for t in self.transcript if t.get('type') != 'moderator'
+            f"{t['role'].title()}: {t['content']}" 
+            for t in self.transcript[-10:] if t.get('role') in ['moderator', 'persona']
         ])
 
         prompt = (
@@ -354,6 +362,8 @@ class FocusGroupSimulator:
             f"{conversation_history_str}\n\n"
             "How do you respond to the moderator's question as this persona? Be conversational and authentic."
         )
+        prompt_str = prompt[:500]
+        app_logger.debug(f"Moderator response prompt for {persona_details[:30]}...: {prompt_str}...")
 
         try:
             # OpenAI client is instantiated implicitly here if OPENAI_API_KEY is in env
@@ -367,10 +377,10 @@ class FocusGroupSimulator:
                 max_tokens=max_tokens
             )
             content = response.choices[0].message.content.strip()
-            app_logger.info(f"Generated moderator response for persona {persona_details[:30]}...")
+            app_logger.info(f"Generated moderator response for persona {persona_details[:30]}... Output: {content[:300]}...")
             return content
         except Exception as e:
-            app_logger.error(f"Error generating moderator response for {persona_details[:30]}...: {str(e)}", exc_info=True)
+            app_logger.error(f"Error generating moderator response for {persona_details[:30]}... Prompt: {prompt_str}... Error: {str(e)}", exc_info=True)
             # Re-raise the exception to be caught by the main simulation loop
             raise
 
@@ -378,36 +388,54 @@ class FocusGroupSimulator:
         app_logger.info(f"Starting focus group simulation with {num_discussion_rounds} discussion round(s).")
         self.current_round = 0
         self.state = SimulationState.RUNNING
-        
+
         try:
-            # Round 0: Initial reactions
+            # 1. Moderator Hello
+            self.transcript.append({
+                'role': 'moderator', 
+                'content': 'Hello and welcome to the focus group! Let\'s get started with some introductions.'
+            })
+
+            # 2. Initial Reactions (personas introduce themselves naturally)
             app_logger.info("Generating initial reactions (Round 0).")
-            initial_responses_current_round = []
             for p_idx, p_details in enumerate(self.personas_details):
-                if self.state == SimulationState.PAUSED:
-                    app_logger.info("Simulation paused during initial reactions.")
-                    return self._current_simulation_status("Paused during initial reactions")
-
-                app_logger.info(f"Generating initial reaction for persona {p_idx + 1}/{len(self.personas_details)}: {p_details[:50]}...")
                 reaction = self._get_llm_initial_reaction(p_details, p_idx)
-                entry = {
-                    'persona_index': p_idx,
-                    'persona_details': p_details,
-                    'response_text': reaction,
-                    'round': 0,
-                    'type': 'initial_reaction',
-                    'timestamp': self._get_timestamp(),
-                    'sentiment': self._analyze_sentiment(reaction)
-                }
-                self.transcript.append(entry)
-                initial_responses_current_round.append(entry)
-            
-            current_topics = self._extract_topics([resp['response_text'] for resp in initial_responses_current_round])
-            self.topics_identified.append({'round': 0, 'topics': current_topics})
+                persona_name = p_details.split(',')[0].strip()
+                if reaction and reaction != 'undefined':
+                    self.transcript.append({
+                        'role': 'persona',
+                        'content': reaction,
+                        'persona_index': p_idx,
+                        'persona_details': p_details,
+                        'persona_name': persona_name,
+                        'sentiment': self._analyze_sentiment(reaction)
+                    })
 
-            self._check_and_ask_moderator_questions(0)
+            # 3. Moderator Q&A (runs immediately after intros/reactions)
+            app_logger.info(f"Processing {len(self.moderator_questions)} moderator questions.")
+            for question_data in self.moderator_questions:
+                if not question_data.get('asked', False):
+                    question = question_data['question']
+                    app_logger.info(f"Asking moderator question: {question}")
+                    self.transcript.append({'role': 'moderator', 'content': question})
+                    
+                    # Get response from each persona
+                    for p_idx, p_details in enumerate(self.personas_details):
+                        app_logger.info(f"Getting response from persona {p_idx + 1} to question: {question[:50]}...")
+                        response = self._get_llm_moderator_response(p_details, question, p_idx)
+                        persona_name = p_details.split(',')[0].strip()
+                        if response and response != 'undefined':
+                            self.transcript.append({
+                                'role': 'persona',
+                                'content': response,
+                                'persona_index': p_idx,
+                                'persona_details': p_details,
+                                'persona_name': persona_name,
+                                'sentiment': self._analyze_sentiment(response)
+                            })
+                    question_data['asked'] = True
 
-            # Discussion rounds
+            # 4. Discussion Rounds (if any)
             for i in range(num_discussion_rounds):
                 self.current_round = i + 1
                 if self.state == SimulationState.PAUSED:
@@ -418,10 +446,9 @@ class FocusGroupSimulator:
                 round_responses = [] # Store responses for this round for topic/consensus analysis
 
                 # Build conversation history string for this round
-                # Exclude moderator-only transcript entries to avoid KeyError when they lack 'persona_index'
                 conversation_history_str = "\n".join([
-                    f"In round {t['round']}, Persona {t['persona_index']+1} ('{t['persona_details'].split(',')[0]}') said: {t['response_text']}"
-                    for t in self.transcript if t.get('type') != 'moderator'
+                    f"Persona {t.get('persona_index', '?')+1} ('{t.get('persona_details','').split(',')[0]}') said: {t.get('response_text','')}"
+                    for t in self.transcript if 'persona_index' in t and 'response_text' in t
                 ])
 
                 for p_idx, p_details in enumerate(self.personas_details):
@@ -440,8 +467,9 @@ class FocusGroupSimulator:
                         'timestamp': self._get_timestamp(),
                         'sentiment': self._analyze_sentiment(response_text)
                     }
-                    self.transcript.append(entry)
-                    round_responses.append(entry)
+                    if response_text and response_text != 'undefined':
+                        self.transcript.append(entry)
+                        round_responses.append(entry)
                     # Update conversation history for the next persona in the same round
                     conversation_history_str += f"\nIn round {self.current_round}, Persona {p_idx + 1} ('{p_details.split(',')[0]}') said: {response_text}"
                 
@@ -449,10 +477,8 @@ class FocusGroupSimulator:
                 self.topics_identified.append({'round': self.current_round, 'topics': current_topics})
                 self.sentiment_scores.append({'round': self.current_round, 'sentiments': [r['sentiment'] for r in round_responses]})
 
-                self._check_and_ask_moderator_questions(self.current_round)
-
             self.state = SimulationState.COMPLETED
-            app_logger.info(f"Focus group simulation completed. Total turns: {len(self.transcript)}")
+            app_logger.info("Focus group simulation completed.")
             return {
                 'status': 'completed',
                 'transcript': self.transcript,
@@ -479,59 +505,79 @@ class FocusGroupSimulator:
                 'transcript': self.transcript  # Return partial transcript
             }
 
-    def _check_and_ask_moderator_questions(self, round_num: int):
-        """Check and ask any moderator questions scheduled for this round."""
-        for question_data in self.moderator_questions:
-            if question_data['after_round'] == round_num and not question_data['asked']:
-                try:
-                    self.inject_question(question_data['question'])
-                    question_data['asked'] = True
-                    app_logger.info(f"Asked moderator question after round {round_num}")
-                except Exception as e:
-                    app_logger.error(f"Error asking moderator question: {str(e)}")
-
     def _generate_analytics(self) -> dict:
         """Generate comprehensive analytics for the simulation."""
-        # Filter out moderator entries for analysis
-        persona_responses = [t for t in self.transcript if t.get('type') != 'moderator']
+        # Only use fields that exist in the new transcript format
+        persona_responses = [t for t in self.transcript if t.get('role') == 'persona']
+        moderator_questions = [t for t in self.transcript if t.get('role') == 'moderator']
         
         if not persona_responses:
             return {'error': 'No persona responses to analyze'}
 
         # Sentiment analysis
-        sentiments = [r.get('sentiment', {}) for r in persona_responses]
+        sentiments = [r.get('sentiment', {}) for r in persona_responses if r.get('sentiment')]
         
-        # Topic extraction
-        response_texts = [r['response_text'] for r in persona_responses]
+        # Topic extraction from response content
+        response_texts = [r['content'] for r in persona_responses]
         topics = self._extract_topics(response_texts)
         
-        # Consensus analysis
-        consensus = self._analyze_consensus(persona_responses)
+        # Overall sentiment distribution
+        positive_count = sum(1 for s in sentiments if s.get('sentiment') == 'positive')
+        negative_count = sum(1 for s in sentiments if s.get('sentiment') == 'negative')
+        neutral_count = sum(1 for s in sentiments if s.get('sentiment') == 'neutral')
         
-        # Round-by-round analysis
-        rounds_analysis = {}
-        for round_num in set(r['round'] for r in persona_responses):
-            round_responses = [r for r in persona_responses if r['round'] == round_num]
-            rounds_analysis[f'round_{round_num}'] = {
-                'response_count': len(round_responses),
-                'avg_sentiment_confidence': sum(r.get('sentiment', {}).get('confidence', 0) for r in round_responses) / len(round_responses),
-                'dominant_sentiment': self._get_dominant_sentiment([r.get('sentiment', {}) for r in round_responses])
-            }
-
+        # Key themes and insights
+        all_content = ' '.join(response_texts)
+        themes = self._extract_key_themes(all_content)
+        
         return {
             'total_responses': len(persona_responses),
-            'total_rounds': max(r['round'] for r in persona_responses) + 1,
+            'total_questions': len(moderator_questions),
             'sentiment_summary': {
-                'positive_responses': sum(1 for s in sentiments if s.get('sentiment') == 'positive'),
-                'negative_responses': sum(1 for s in sentiments if s.get('sentiment') == 'negative'),
-                'neutral_responses': sum(1 for s in sentiments if s.get('sentiment') == 'neutral'),
-                'avg_confidence': sum(s.get('confidence', 0) for s in sentiments) / len(sentiments)
+                'positive_responses': positive_count,
+                'negative_responses': negative_count,
+                'neutral_responses': neutral_count,
+                'sentiment_distribution': {
+                    'positive': round((positive_count / len(sentiments)) * 100, 1) if sentiments else 0,
+                    'negative': round((negative_count / len(sentiments)) * 100, 1) if sentiments else 0,
+                    'neutral': round((neutral_count / len(sentiments)) * 100, 1) if sentiments else 0
+                },
+                'avg_confidence': round(sum(s.get('confidence', 0) for s in sentiments) / len(sentiments), 2) if sentiments else 0
             },
+            'key_themes': themes,
             'topics_identified': topics,
-            'consensus_analysis': consensus,
-            'rounds_analysis': rounds_analysis,
-            'persona_styles_used': {idx: style.value for idx, style in self.persona_styles.items()}
+            'personas_involved': list(set(r.get('persona_name', 'Unknown') for r in persona_responses)),
+            'response_lengths': {
+                'avg_words': round(sum(len(r['content'].split()) for r in persona_responses) / len(persona_responses), 1),
+                'longest_response': max(len(r['content'].split()) for r in persona_responses),
+                'shortest_response': min(len(r['content'].split()) for r in persona_responses)
+            }
         }
+
+    def _extract_key_themes(self, content: str) -> list:
+        """Extract key themes from focus group content using OpenAI."""
+        try:
+            response = openai.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {
+                        "role": "system", 
+                        "content": "You are analyzing focus group transcript content to identify key themes. Return only the top 5 themes as a simple list, one theme per line. Be concise."
+                    },
+                    {
+                        "role": "user", 
+                        "content": f"Identify the key themes discussed in this focus group content:\n\n{content[:3000]}"  # Limit content length
+                    }
+                ],
+                temperature=0.3,
+                max_tokens=200
+            )
+            themes_text = response.choices[0].message.content.strip()
+            themes = [theme.strip() for theme in themes_text.split('\n') if theme.strip()]
+            return themes[:5]  # Limit to top 5 themes
+        except Exception as e:
+            app_logger.error(f"Error extracting themes: {e}")
+            return ["Themes analysis unavailable"]
 
     def _get_dominant_sentiment(self, sentiments: List[dict]) -> str:
         """Get the dominant sentiment from a list of sentiment analyses."""

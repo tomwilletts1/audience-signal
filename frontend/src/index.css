@@ -1,3 +1,41 @@
 @tailwind base;
 @tailwind components;
-@tailwind utilities; 
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body {
+  font-family: 'Inter', 'Inter Fallback';
+  font-style: normal;
+}
+
+/* Chroma gradient backgrounds with noise overlay */
+.chroma-focus-group {
+  background: linear-gradient(135deg, #7f5af0 0%, #00c6fb 100%);
+  position: relative;
+  overflow: hidden;
+}
+.chroma-polling {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  position: relative;
+  overflow: hidden;
+}
+.chroma-test-content {
+  background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+  position: relative;
+  overflow: hidden;
+}
+.chroma-audiences {
+  background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.chroma-noise::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII='); /* subtle noise */
+  opacity: 0.12;
+  z-index: 1;
+} 

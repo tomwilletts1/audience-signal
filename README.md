@@ -36,3 +36,5 @@ Pytest is used for automated testing. After installing the dependencies you can 
 
 ```bash
 pytest
+
+```

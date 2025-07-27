@@ -58,6 +58,58 @@ class PersonaService:
         
         return {"id": persona_id, "description": description, "demographics": demographics}
 
+    def generate_ephemeral_persona(self, region: str) -> dict:
+        """
+        Generates a persona's data without storing it in the database.
+        This is ideal for on-the-fly sampling for focus groups.
+        """
+        app_logger.info(f"Generating ephemeral persona for {region}.")
+        
+        try:
+            demographics = self.ons_data_service.sample_profile(region)
+            
+            # Handle case where ONS service returns an error
+            if isinstance(demographics, dict) and "error" in demographics:
+                demographics = self._generate_fallback_demographics(region)
+            
+            # Ensure we have a name
+            if 'name' not in demographics or not demographics['name']:
+                import random
+                names = ['Alex', 'Sam', 'Jordan', 'Taylor', 'Casey', 'Morgan', 'Riley', 'Avery']
+                demographics['name'] = random.choice(names)
+            
+            description = self._generate_persona_description(demographics)
+            return {"description": description, "demographics": demographics}
+            
+        except Exception as e:
+            app_logger.error(f"Error generating ephemeral persona for {region}: {e}")
+            # Return a fallback persona to prevent simulation failure
+            return {
+                "description": "Alex, a 30-year-old professional living in the UK. They are a person with an income of £35000 per year.",
+                "demographics": {"name": "Alex", "age": 30, "occupation": "professional", "gender": "person", "region": region, "income": 35000}
+            }
+
+    def _generate_fallback_demographics(self, region: str) -> dict:
+        """Generate fallback demographics when ONS data is unavailable."""
+        import random
+        ages = [22, 25, 28, 32, 35, 38, 42, 45, 48, 52, 55, 58, 62, 65]
+        occupations = ['teacher', 'engineer', 'manager', 'designer', 'consultant', 'analyst', 'developer', 'nurse', 'accountant', 'chef', 'artist', 'lawyer']
+        genders = ['male', 'female']
+        
+        # Generate a unique name by combining first and last names
+        first_names = ['Alex', 'Sam', 'Jordan', 'Taylor', 'Casey', 'Morgan', 'Riley', 'Avery', 'Jamie', 'Blake', 'Cameron', 'Dana', 'Ellis', 'Finley', 'Harper', 'Jesse', 'Kelly', 'Logan', 'Max', 'Noel', 'Parker', 'Quinn', 'River', 'Sage', 'Tatum', 'Val', 'Wren', 'Zion', 'Adrian', 'Bailey', 'Chloe', 'Dylan', 'Emma', 'Felix', 'Grace', 'Henry', 'Iris', 'Jack']
+        last_names = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin']
+        name = f"{random.choice(first_names)} {random.choice(last_names)}"
+        
+        return {
+            'name': name,
+            'age': random.choice(ages),
+            'occupation': random.choice(occupations),
+            'gender': random.choice(genders),
+            'region': region,
+            'income': random.randint(25000, 65000)
+        }
+
     def _generate_persona_description(self, demographics: dict) -> str:
         """
         Creates a rich text description of a persona from demographic data.

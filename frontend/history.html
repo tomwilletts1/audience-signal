@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>History - Audience Signal</title>
+    <title>Transcripts - Audience Signal</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 min-h-screen flex">
@@ -23,8 +23,53 @@
     </aside>
     <!-- Main Content -->
     <main class="flex-1 flex flex-col items-center justify-center p-12">
-        <h2 class="text-3xl font-bold text-gray-800 mb-8">History</h2>
-        <div id="historyList" class="w-full max-w-2xl space-y-4"></div>
+        <h2 class="text-3xl font-bold text-gray-800 mb-8">Transcripts</h2>
+        <div id="transcriptList" class="w-full max-w-2xl space-y-4"></div>
+        <div id="transcriptModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+          <div class="bg-white rounded-xl shadow-lg p-8 max-w-2xl w-full relative">
+            <button onclick="closeTranscriptModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl">&times;</button>
+            <h3 class="text-xl font-bold mb-4" id="modalTitle"></h3>
+            <pre class="whitespace-pre-wrap text-gray-800 text-sm" id="modalContent"></pre>
+          </div>
+        </div>
     </main>
+    <script>
+      function renderTranscripts() {
+        const history = JSON.parse(localStorage.getItem('focusGroupHistory') || '[]');
+        const list = document.getElementById('transcriptList');
+        list.innerHTML = '';
+        if (history.length === 0) {
+          list.innerHTML = '<div class="text-gray-500 text-center">No transcripts found.</div>';
+          return;
+        }
+        history.slice().reverse().forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'bg-white rounded-lg shadow p-6 flex flex-col gap-2';
+          div.innerHTML = `
+            <div class="flex justify-between items-center">
+              <div>
+                <span class="font-semibold text-indigo-700">${item.date}</span>
+                <span class="ml-2 text-gray-500 text-sm">${item.analytics && item.analytics.personas_involved ? item.analytics.personas_involved.join(', ') : ''}</span>
+              </div>
+              <button class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 font-semibold" onclick="viewTranscript(${item.id})">View</button>
+            </div>
+            <div class="text-gray-700 text-sm truncate">${item.transcript && item.transcript.length ? item.transcript[0].content.slice(0, 100) + (item.transcript[0].content.length > 100 ? '...' : '') : ''}</div>
+          `;
+          list.appendChild(div);
+        });
+      }
+      function viewTranscript(id) {
+        const history = JSON.parse(localStorage.getItem('focusGroupHistory') || '[]');
+        const item = history.find(x => x.id === id);
+        if (!item) return;
+        document.getElementById('modalTitle').textContent = `Session: ${item.date}`;
+        document.getElementById('modalContent').textContent = item.transcript.map(entry => `${entry.role === 'moderator' ? 'Moderator' : entry.persona_name || 'Persona'}: ${entry.content}`).join('\n\n');
+        document.getElementById('transcriptModal').classList.remove('hidden');
+      }
+      function closeTranscriptModal() {
+        document.getElementById('transcriptModal').classList.add('hidden');
+      }
+      document.addEventListener('DOMContentLoaded', renderTranscripts);
+    </script>
 </body>
 </html> 

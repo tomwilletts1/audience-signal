@@ -80,15 +80,25 @@ class AudienceService:
 
     def sample_personas_from_audience(self, audience_id: str, count: int = 8):
         """
-        Samples a number of personas that fit the audience criteria.
-
-        Args:
-            audience_id (str): The ID of the audience to sample from.
-            count (int): The number of personas to sample.
-
-        Returns:
-            list: A list of persona detail dictionaries.
+        Samples a number of unique personas using the ephemeral generator.
         """
-        app_logger.info(f"Sampling {count} personas from audience {audience_id}.")
-        # TODO: Use criteria to sample real personas. For now, return placeholders.
-        return [f"Persona {i+1} for audience {audience_id}" for i in range(count)] 
+        app_logger.info(f"Sampling {count} unique personas for audience {audience_id}.")
+        
+        # In a real scenario, you'd use the audience_id to get criteria like region.
+        # For now, we'll just use a default region.
+        region = "United Kingdom" # Placeholder region
+
+        personas = []
+        for i in range(count):
+            try:
+                # Generate a unique persona without saving to the DB
+                persona_data = self.persona_service.generate_ephemeral_persona(region)
+                # Format a detailed string for the focus group simulator
+                persona_string = persona_data['description']
+                personas.append(persona_string)
+            except Exception as e:
+                app_logger.error(f"Could not generate ephemeral persona for audience {audience_id}: {e}")
+                # Fallback to a simpler placeholder if generation fails
+                personas.append(f"Unique Persona {i+1} for {audience_id}")
+
+        return personas 
