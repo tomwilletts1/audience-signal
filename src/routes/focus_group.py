@@ -8,7 +8,7 @@ from src.services.audience_service import AudienceService
 # Forward declaration for type hinting
 # AudienceService = Type('AudienceService')
 
-def create_focus_group_blueprint(audience_service: AudienceService):
+def create_focus_group_blueprint(audience_service: AudienceService, data_service):
     focus_group_bp = Blueprint('focus_group', __name__, url_prefix='/api/focus_group')
 
     # Store active simulations (in production, use Redis or database)
@@ -34,264 +34,133 @@ def create_focus_group_blueprint(audience_service: AudienceService):
             if audience_id:
                 app_logger.info(f"Simulating focus group for audience_id: {audience_id}")
                 sample_count = int(group_size) if group_size else 8
-                personas_details = audience_service.sample_personas_from_audience(audience_id, count=sample_count)
+                
+                # Check if this is a city audience
+                if audience_id in ["Manchester", "Birmingham", "Liverpool", "London", "Leeds", "Newcastle", "Cardiff", "Oxford", "Norwich"]:
+                    try:
+                        # Get city audience data using consolidated data service
+                        city_audience = data_service.create_city_audience(audience_id)
+                        # Use the personas from the city data
+                        personas_details = city_audience['personas']
+                        app_logger.info(f"Using city audience for {audience_id}: {len(personas_details)} personas")
+                    except Exception as e:
+                        app_logger.error(f"Error creating city audience for {audience_id}: {e}")
+                        return jsonify({'error': f'Failed to create city audience for {audience_id}', 'status': 'error'}), 500
+                else:
+                    # Use regular audience service
+                    personas_details = audience_service.sample_personas_from_audience(audience_id, count=sample_count)
 
-            stimulus_message = data.get('message')
-            stimulus_image_data = data.get('image_data') 
-            num_discussion_rounds = data.get('num_discussion_rounds', 1)
-            num_discussion_rounds = int(num_discussion_rounds)
-            persona_styles = data.get('persona_styles', {})
-            moderator_questions = data.get('moderator_questions', [])
+            if not personas_details:
+                return jsonify({'error': 'No personas could be generated for the audience.', 'status': 'error'}), 400
 
-            if not stimulus_message and not stimulus_image_data:
-                return jsonify({'error': 'Either message or image_data is required for stimulus.', 'status': 'error'}), 400
-            
+            app_logger.info(f"Starting focus group with {len(personas_details)} personas")
+
+            # Extract simulation parameters
+            stimulus_message = data.get('message', '')
+            stimulus_image_data = data.get('image_data')
+            moderator_questions = questions if questions else []
+            num_discussion_rounds = data.get('discussion_rounds', 1)
+
+            # Generate simulation ID
+            simulation_id = str(uuid.uuid4())
+
+            # Create simulator instance
             simulator = FocusGroupSimulator(
                 personas_details=personas_details,
                 stimulus_message=stimulus_message,
                 stimulus_image_data=stimulus_image_data,
-                questions=questions,
-                group_size=group_size,
+                moderator_questions=moderator_questions,
                 open_discussion=open_discussion
             )
-            
-            # Set persona styles
-            for persona_idx_str, style_str in persona_styles.items():
-                try:
-                    persona_idx = int(persona_idx_str)
-                    style = PersonaStyle(style_str)
-                    simulator.set_persona_style(persona_idx, style)
-                except (ValueError, KeyError) as e:
-                    app_logger.warning(f"Invalid persona style: {persona_idx_str}={style_str}, error: {e}")
-            
-            # Add moderator questions (legacy)
-            for mq in moderator_questions:
-                simulator.add_moderator_question(mq.get('question'), mq.get('after_round'))
-            
-            # Generate simulation ID and store for live control
-            simulation_id = str(uuid.uuid4())
+
+            # Store simulation for potential follow-up
             active_simulations[simulation_id] = simulator
-            
+
             # Run simulation
-            result = simulator.run_simulation(num_discussion_rounds=num_discussion_rounds)
-            
-            # Clean up completed simulation
-            if result.get('status') == 'completed':
-                if simulation_id in active_simulations:
-                    del active_simulations[simulation_id]
-            
-            result['simulation_id'] = simulation_id
-            return jsonify(result)
+            simulation_results = simulator.run_simulation(num_discussion_rounds=num_discussion_rounds)
 
-        except ValueError as ve:
-            app_logger.error(f"ValueError in focus group simulation: {str(ve)}", exc_info=True)
-            return jsonify({'error': str(ve), 'status': 'error'}), 400
-        except Exception as e:
-            app_logger.error(f"Error in /api/focus_group/simulate: {str(e)}", exc_info=True)
-            return jsonify({'error': 'Internal server error during focus group simulation.', 'status': 'error'}), 500
-            
-    @focus_group_bp.route('/start_live', methods=['POST'])
-    def start_live_simulation():
-        """Start a live simulation that can be controlled in real-time."""
-        try:
-            data = request.get_json()
-            
-            personas = data.get('personas', [])
-            message = data.get('message')
-            image_data = data.get('image_data')
-            persona_styles = data.get('persona_styles', {})
-            
-            if not personas:
-                return jsonify({'status': 'error', 'error': 'At least one persona is required'}), 400
-            
-            if not message and not image_data:
-                return jsonify({'status': 'error', 'error': 'Either message or image is required'}), 400
-            
-            # Create simulator
-            simulator = FocusGroupSimulator(
-                personas_details=personas,
-                stimulus_message=message,
-                stimulus_image_data=image_data
-            )
-            
-            # Set persona styles
-            for persona_idx_str, style_str in persona_styles.items():
-                try:
-                    persona_idx = int(persona_idx_str)
-                    style = PersonaStyle(style_str)
-                    simulator.set_persona_style(persona_idx, style)
-                except (ValueError, KeyError):
-                    app_logger.warning(f"Invalid persona style: {persona_idx_str}={style_str}")
-            
-            # Generate simulation ID and store
-            simulation_id = str(uuid.uuid4())
-            active_simulations[simulation_id] = simulator
-            
-            # Run initial reactions only (round 0)
-            result = simulator.run_simulation(0)  # 0 discussion rounds = initial reactions only
-            
             return jsonify({
-                'status': 'live_started',
                 'simulation_id': simulation_id,
-                'initial_transcript': result.get('transcript', []),
-                'state': simulator.get_simulation_state()
+                'status': 'completed',
+                'results': simulation_results
             })
-            
-        except Exception as e:
-            app_logger.error(f"Error starting live simulation: {str(e)}", exc_info=True)
-            return jsonify({'status': 'error', 'error': str(e)}), 500
 
-    @focus_group_bp.route('/<simulation_id>/inject_question', methods=['POST'])
-    def inject_moderator_question(simulation_id):
-        """Inject a moderator question into a live simulation."""
+        except Exception as e:
+            app_logger.error(f"Error in focus group simulation: {e}", exc_info=True)
+            return jsonify({'error': 'Internal server error during simulation', 'status': 'error'}), 500
+
+    @focus_group_bp.route('/continue/<simulation_id>', methods=['POST'])
+    def continue_simulation(simulation_id):
         try:
             if simulation_id not in active_simulations:
-                return jsonify({'status': 'error', 'error': 'Simulation not found or not active'}), 404
-            
+                return jsonify({'error': 'Simulation not found', 'status': 'error'}), 404
+
             data = request.get_json()
-            question = data.get('question')
+            message = data.get('message', '')
             
-            if not question:
-                return jsonify({'status': 'error', 'error': 'Question is required'}), 400
-            
+            if not message:
+                return jsonify({'error': 'Message is required', 'status': 'error'}), 400
+
             simulator = active_simulations[simulation_id]
-            result = simulator.inject_question(question)
+            
+            # Add moderator message and get responses
+            responses = simulator.add_moderator_message(message)
             
             return jsonify({
-                'status': 'success',
-                'result': result,
-                'state': simulator.get_simulation_state()
+                'simulation_id': simulation_id,
+                'status': 'continued',
+                'responses': responses
             })
-            
-        except Exception as e:
-            app_logger.error(f"Error injecting question: {str(e)}", exc_info=True)
-            return jsonify({'status': 'error', 'error': str(e)}), 500
 
-    @focus_group_bp.route('/<simulation_id>/continue_round', methods=['POST'])
-    def continue_discussion_round(simulation_id):
-        """Continue with the next discussion round in a live simulation."""
+        except Exception as e:
+            app_logger.error(f"Error continuing simulation {simulation_id}: {e}", exc_info=True)
+            return jsonify({'error': 'Error continuing simulation', 'status': 'error'}), 500
+
+    @focus_group_bp.route('/status/<simulation_id>', methods=['GET'])
+    def get_simulation_status(simulation_id):
         try:
             if simulation_id not in active_simulations:
-                return jsonify({'status': 'error', 'error': 'Simulation not found or not active'}), 404
-            
-            simulator = active_simulations[simulation_id]
-            
-            # Continue with one more discussion round
-            result = simulator.run_simulation(1)
-            
-            # Clean up if completed
-            if result.get('status') == 'completed':
-                del active_simulations[simulation_id]
-            
-            return jsonify({
-                'status': 'success',
-                'result': result,
-                'state': simulator.get_simulation_state()
-            })
-            
-        except Exception as e:
-            app_logger.error(f"Error continuing discussion round: {str(e)}", exc_info=True)
-            return jsonify({'status': 'error', 'error': str(e)}), 500
+                return jsonify({'error': 'Simulation not found', 'status': 'error'}), 404
 
-    @focus_group_bp.route('/<simulation_id>/pause', methods=['POST'])
-    def pause_simulation(simulation_id):
-        """Pause a live simulation."""
-        try:
-            if simulation_id not in active_simulations:
-                return jsonify({'status': 'error', 'error': 'Simulation not found or not active'}), 404
-            
             simulator = active_simulations[simulation_id]
-            simulator.pause_simulation()
             
             return jsonify({
-                'status': 'success',
-                'message': 'Simulation paused',
-                'state': simulator.get_simulation_state()
+                'simulation_id': simulation_id,
+                'status': simulator.state.value,
+                'current_round': simulator.current_round,
+                'transcript_length': len(simulator.transcript)
             })
-            
-        except Exception as e:
-            app_logger.error(f"Error pausing simulation: {str(e)}", exc_info=True)
-            return jsonify({'status': 'error', 'error': str(e)}), 500
 
-    @focus_group_bp.route('/<simulation_id>/resume', methods=['POST'])
-    def resume_simulation(simulation_id):
-        """Resume a paused simulation."""
-        try:
-            if simulation_id not in active_simulations:
-                return jsonify({'status': 'error', 'error': 'Simulation not found or not active'}), 404
-            
-            simulator = active_simulations[simulation_id]
-            simulator.resume_simulation()
-            
-            return jsonify({
-                'status': 'success',
-                'message': 'Simulation resumed',
-                'state': simulator.get_simulation_state()
-            })
-            
         except Exception as e:
-            app_logger.error(f"Error resuming simulation: {str(e)}", exc_info=True)
-            return jsonify({'status': 'error', 'error': str(e)}), 500
+            app_logger.error(f"Error getting simulation status {simulation_id}: {e}", exc_info=True)
+            return jsonify({'error': 'Error getting simulation status', 'status': 'error'}), 500
 
-    @focus_group_bp.route('/<simulation_id>/state', methods=['GET'])
-    def get_simulation_state(simulation_id):
-        """Get the current state of a live simulation."""
+    @focus_group_bp.route('/city_audiences', methods=['GET'])
+    def get_city_audiences():
+        """Get list of available city audiences."""
         try:
-            if simulation_id not in active_simulations:
-                return jsonify({'status': 'error', 'error': 'Simulation not found or not active'}), 404
-            
-            simulator = active_simulations[simulation_id]
-            
-            return jsonify({
-                'status': 'success',
-                'state': simulator.get_simulation_state(),
-                'transcript': simulator.transcript
-            })
-            
+            cities = data_service.get_all_cities()
+            return jsonify({'cities': cities})
         except Exception as e:
-            app_logger.error(f"Error getting simulation state: {str(e)}", exc_info=True)
-            return jsonify({'status': 'error', 'error': str(e)}), 500
+            app_logger.error(f"Error getting city audiences: {e}")
+            return jsonify({'error': 'Failed to get city audiences'}), 500
 
-    @focus_group_bp.route('/<simulation_id>/analytics', methods=['GET'])
-    def get_simulation_analytics(simulation_id):
-        """Get analytics for a simulation (active or completed)."""
+    # Legacy endpoints for backward compatibility
+    @focus_group_bp.route('/personas/<audience_id>', methods=['GET'])
+    def get_personas_for_audience(audience_id):
         try:
-            if simulation_id not in active_simulations:
-                return jsonify({'status': 'error', 'error': 'Simulation not found or not active'}), 404
-            
-            simulator = active_simulations[simulation_id]
-            analytics = simulator._generate_analytics()
-            
-            return jsonify({
-                'status': 'success',
-                'analytics': analytics
-            })
-            
+            # Check if this is a city audience first
+            if audience_id in ["Manchester", "Birmingham", "Liverpool", "London", "Leeds", "Newcastle", "Cardiff", "Oxford", "Norwich"]:
+                city_audience = data_service.create_city_audience(audience_id)
+                return jsonify({
+                    'personas': city_audience['personas'],
+                    'description': city_audience['description']
+                })
+            else:
+                personas = audience_service.sample_personas_from_audience(audience_id, count=8)
+                return jsonify({'personas': personas})
         except Exception as e:
-            app_logger.error(f"Error getting analytics: {str(e)}", exc_info=True)
-            return jsonify({'status': 'error', 'error': str(e)}), 500
-
-    @focus_group_bp.route('/<simulation_id>/complete', methods=['POST'])
-    def complete_simulation(simulation_id):
-        """Manually complete and cleanup a simulation."""
-        try:
-            if simulation_id not in active_simulations:
-                return jsonify({'status': 'error', 'error': 'Simulation not found or not active'}), 404
-            
-            simulator = active_simulations[simulation_id]
-            analytics = simulator._generate_analytics()
-            
-            # Cleanup
-            del active_simulations[simulation_id]
-            
-            return jsonify({
-                'status': 'success',
-                'message': 'Simulation completed and cleaned up',
-                'final_analytics': analytics
-            })
-            
-        except Exception as e:
-            app_logger.error(f"Error completing simulation: {str(e)}", exc_info=True)
-            return jsonify({'status': 'error', 'error': str(e)}), 500
+            app_logger.error(f"Error getting personas for {audience_id}: {e}")
+            return jsonify({'error': f'Failed to get personas for {audience_id}'}), 500
 
     return focus_group_bp 

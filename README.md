@@ -4,14 +4,23 @@ This project provides a Flask-based API for analyzing marketing messages using p
 
 ## Configuration
 
-Create a `.env` file in the project root to hold any secrets or settings.  The
+Create a `.env` file in the project root to hold any secrets or settings. The
 application uses `python-dotenv` so values in this file are loaded
-automatically.  At minimum specify your OpenAI key:
+automatically. At minimum specify your OpenAI key:
 
 ```bash
 cp .env.example .env
 echo "OPENAI_API_KEY=your-openai-key" >> .env
 ```
+
+### Required Environment Variables
+
+- `OPENAI_API_KEY`: Your OpenAI API key for AI operations
+- `CHROMADB_API_KEY`: (Optional) ChromaDB cloud API key
+- `CHROMADB_TENANT`: (Optional) ChromaDB cloud tenant ID
+- `CHROMADB_DATABASE`: (Optional) ChromaDB database name (defaults to "Audience Signal")
+
+### Optional Configuration
 
 Additional configuration options such as `DEBUG`, `HOST`, `PORT`,
 `CORS_ORIGINS`, and model defaults are defined in `src/config.py`.
@@ -22,10 +31,10 @@ Install the dependencies listed in `requirements.txt` and start the Flask app:
 
 ```bash
 pip install -r requirements.txt
- python src/app.py
+python src/app.py
 ```
 
-By default this launches the development configuration.  For a production
+By default this launches the development configuration. For a production
 deployment switch `config['default']` in `src/config.py` to use
 `ProductionConfig` and run the server with a WSGI container such as
 `gunicorn`.
@@ -36,5 +45,14 @@ Pytest is used for automated testing. After installing the dependencies you can 
 
 ```bash
 pytest
-
 ```
+
+## Project Structure
+
+- `src/`: Main application code
+  - `services/`: Business logic services
+  - `routes/`: API endpoint definitions
+  - `utils/`: Utility functions and helpers
+- `frontend/`: Static HTML/CSS/JS files
+- `tools/`: Utility scripts for data ingestion
+- `tests/`: Test files

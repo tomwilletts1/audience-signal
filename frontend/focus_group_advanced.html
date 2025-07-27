@@ -31,7 +31,7 @@
       border-radius: 1.5rem;
       background: rgba(255,255,255,0.25);
       box-shadow: 0 8px 32px 0 rgba(31,38,135,0.10);
-      border: 1.5px solid rgba(255,255,255,0.22);
+      border: 1.5px solid rgba(255, 255, 255, 0.22);
       overflow: hidden;
       backdrop-filter: blur(16px) saturate(180%);
       -webkit-backdrop-filter: blur(16px) saturate(180%);
@@ -54,6 +54,65 @@
     .sidebar-collapsed .sidebar-icon { display: inline-block !important; }
     .sidebar-expanded .sidebar-label { display: inline-block !important; }
     .sidebar-expanded .sidebar-icon { display: inline-block !important; }
+    
+    /* Chroma gradient backgrounds */
+    .chroma-focus-group {
+      background: linear-gradient(135deg, #7f5af0 0%, #00c6fb 100%);
+      background-size: 200% 200%;
+      animation: chroma-move 6s ease-in-out infinite;
+      position: relative;
+      overflow: hidden;
+    }
+    .chroma-polling {
+      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      background-size: 200% 200%;
+      animation: chroma-move 6s ease-in-out infinite;
+      position: relative;
+      overflow: hidden;
+    }
+    .chroma-test-content {
+      background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+      background-size: 200% 200%;
+      animation: chroma-move 6s ease-in-out infinite;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    @keyframes chroma-move {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    /* Audience card selection states */
+    .audience-card {
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .audience-card.selected {
+      transform: scale(1.02);
+      box-shadow: 0 20px 40px 0 rgba(31, 38, 135, 0.25);
+      border: 2px solid rgba(99, 102, 241, 0.5);
+    }
+    
+    .audience-card.selected::before {
+      content: '✓';
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #6366f1;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body class="min-h-screen flex bg-white">
@@ -90,64 +149,252 @@
   <!-- Main Content -->
   <main class="flex-1 flex flex-col items-center justify-between py-12 px-6 gap-8 relative z-10" style="min-height: 80vh;">
     <!-- Wizard Steps (top) -->
-    <div class="w-full max-w-2xl mx-auto" style="flex: 0 0 auto;">
-      <!-- Step 1: Welcome -->
+    <div class="w-full max-w-6xl mx-auto" style="flex: 0 0 auto;">
+      <!-- Step 1: Choose Audience (Full Page) -->
       <div class="glass-card wizard-step active p-10 mb-8" id="step-1">
-        <h2 class="text-3xl font-bold mb-4">Ready to start your focus group?</h2>
-        <p class="mb-6 text-gray-700">Let’s get your audience together and start the conversation.</p>
-        <button class="px-6 py-3 bg-indigo-500 text-white rounded-lg font-semibold text-lg shadow hover:bg-indigo-600 transition" onclick="nextStep(2)">Start the Focus Group</button>
-      </div>
-      <!-- Step 2: Choose Audience -->
-      <div class="glass-card wizard-step p-10 mb-8" id="step-2">
-        <h2 class="text-2xl font-bold mb-4">Who do you want to speak to?</h2>
-        <form id="audience-form" class="mb-6">
-          <label class="block mb-2"><input type="radio" name="audience" value="Young Professionals" checked> Young Professionals</label>
-          <label class="block mb-2"><input type="radio" name="audience" value="Parents with Young Children"> Parents with Young Children</label>
-          <label class="block mb-2"><input type="radio" name="audience" value="Retirees"> Retirees</label>
-        </form>
-        <div class="flex gap-4">
-          <button class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold text-lg shadow hover:bg-gray-300 transition" onclick="nextStep(1)">Back</button>
-          <button class="px-6 py-3 bg-indigo-500 text-white rounded-lg font-semibold text-lg shadow hover:bg-indigo-600 transition" onclick="nextStep(3)">Next</button>
-        </div>
-      </div>
-      <!-- Step 3: Settings -->
-      <div class="glass-card wizard-step p-10 mb-8" id="step-3">
-        <h2 class="text-2xl font-bold mb-4">Want to tweak how it runs?</h2>
-        <details class="mb-6">
-          <summary class="cursor-pointer text-indigo-500 font-semibold">Show advanced options</summary>
-          <div class="mt-4">
-            <label class="block mb-2">Group size: <input type="number" min="3" max="8" value="5" class="ml-2 border rounded px-2 py-1"></label>
-            <label class="block mb-2">Amount of questions: <input type="number" min="1" max="8" value="5" class="ml-2 border rounded px-2 py-1"></label>
-            <label class="flex items-center gap-2 mt-4">
-              <input type="checkbox" class="form-checkbox">
-              <span>Open discussion?</span>
-            </label>
-            <div class="text-gray-500 text-sm ml-6 mb-2">Enable this to allow users to continue talking to the focus group after the initial session has ended.</div>
+        <h2 class="text-3xl font-bold mb-8 text-center">Choose your audience</h2>
+        
+        <!-- Audience Selection Grid - All tiles same size -->
+        <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 mb-8">
+          <!-- Young Professionals -->
+          <div class="audience-card glass-card p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl h-32 flex items-center justify-center" onclick="selectAudience('Young Professionals')">
+            <div class="text-center">
+              <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-3 mx-auto">
+                <span class="text-indigo-600 font-bold text-lg">YP</span>
+              </div>
+              <h3 class="text-base font-semibold">Young Professionals</h3>
+            </div>
+            <input type="radio" name="audience" value="Young Professionals" class="hidden" checked>
           </div>
-        </details>
-        <div class="flex gap-4">
-          <button class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold text-lg shadow hover:bg-gray-300 transition" onclick="nextStep(2)">Back</button>
-          <button class="px-6 py-3 bg-indigo-500 text-white rounded-lg font-semibold text-lg shadow hover:bg-indigo-600 transition" onclick="nextStep(4)">Next</button>
+          
+          <!-- Parents with Young Children -->
+          <div class="audience-card glass-card p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl h-32 flex items-center justify-center" onclick="selectAudience('Parents with Young Children')">
+            <div class="text-center">
+              <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3 mx-auto">
+                <span class="text-blue-600 font-bold text-lg">P</span>
+              </div>
+              <h3 class="text-base font-semibold">Parents with Young Children</h3>
+            </div>
+            <input type="radio" name="audience" value="Parents with Young Children" class="hidden">
+          </div>
+          
+          <!-- Retirees -->
+          <div class="audience-card glass-card p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl h-32 flex items-center justify-center" onclick="selectAudience('Retirees')">
+            <div class="text-center">
+              <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3 mx-auto">
+                <span class="text-green-600 font-bold text-lg">R</span>
+              </div>
+              <h3 class="text-base font-semibold">Retirees</h3>
+            </div>
+            <input type="radio" name="audience" value="Retirees" class="hidden">
+          </div>
+          
+          <!-- UK Retail Audiences -->
+          <div class="audience-card glass-card p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl h-32 flex items-center justify-center" onclick="selectAudience('UK Retail Audiences')">
+            <div class="text-center">
+              <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-3 mx-auto">
+                <span class="text-purple-600 font-bold text-lg">UK</span>
+              </div>
+              <h3 class="text-base font-semibold">UK Retail Audiences</h3>
+            </div>
+            <input type="radio" name="audience" value="UK Retail Audiences" class="hidden">
+          </div>
+          
+          <!-- Manchester -->
+          <div class="audience-card glass-card p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl h-32 flex items-center justify-center" onclick="selectAudience('Manchester')">
+            <div class="text-center">
+              <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-3 mx-auto">
+                <span class="text-red-600 font-bold text-lg">M</span>
+              </div>
+              <h3 class="text-base font-semibold">Manchester</h3>
+            </div>
+            <input type="radio" name="audience" value="Manchester" class="hidden">
+          </div>
+          
+          <!-- Birmingham -->
+          <div class="audience-card glass-card p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl h-32 flex items-center justify-center" onclick="selectAudience('Birmingham')">
+            <div class="text-center">
+              <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-3 mx-auto">
+                <span class="text-orange-600 font-bold text-lg">B</span>
+              </div>
+              <h3 class="text-base font-semibold">Birmingham</h3>
+            </div>
+            <input type="radio" name="audience" value="Birmingham" class="hidden">
+          </div>
+          
+          <!-- Liverpool -->
+          <div class="audience-card glass-card p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl h-32 flex items-center justify-center" onclick="selectAudience('Liverpool')">
+            <div class="text-center">
+              <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mb-3 mx-auto">
+                <span class="text-yellow-600 font-bold text-lg">L</span>
+              </div>
+              <h3 class="text-base font-semibold">Liverpool</h3>
+            </div>
+            <input type="radio" name="audience" value="Liverpool" class="hidden">
+          </div>
+          
+          <!-- London -->
+          <div class="audience-card glass-card p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl h-32 flex items-center justify-center" onclick="selectAudience('London')">
+            <div class="text-center">
+              <div class="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center mb-3 mx-auto">
+                <span class="text-pink-600 font-bold text-lg">L</span>
+              </div>
+              <h3 class="text-base font-semibold">London</h3>
+            </div>
+            <input type="radio" name="audience" value="London" class="hidden">
+          </div>
+          
+          <!-- Leeds -->
+          <div class="audience-card glass-card p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl h-32 flex items-center justify-center" onclick="selectAudience('Leeds')">
+            <div class="text-center">
+              <div class="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mb-3 mx-auto">
+                <span class="text-teal-600 font-bold text-lg">L</span>
+              </div>
+              <h3 class="text-base font-semibold">Leeds</h3>
+            </div>
+            <input type="radio" name="audience" value="Leeds" class="hidden">
+          </div>
+          
+          <!-- Newcastle -->
+          <div class="audience-card glass-card p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl h-32 flex items-center justify-center" onclick="selectAudience('Newcastle')">
+            <div class="text-center">
+              <div class="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center mb-3 mx-auto">
+                <span class="text-cyan-600 font-bold text-lg">N</span>
+              </div>
+              <h3 class="text-base font-semibold">Newcastle</h3>
+            </div>
+            <input type="radio" name="audience" value="Newcastle" class="hidden">
+          </div>
+          
+          <!-- Cardiff -->
+          <div class="audience-card glass-card p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl h-32 flex items-center justify-center" onclick="selectAudience('Cardiff')">
+            <div class="text-center">
+              <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mb-3 mx-auto">
+                <span class="text-emerald-600 font-bold text-lg">C</span>
+              </div>
+              <h3 class="text-base font-semibold">Cardiff</h3>
+            </div>
+            <input type="radio" name="audience" value="Cardiff" class="hidden">
+          </div>
+          
+          <!-- Oxford -->
+          <div class="audience-card glass-card p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl h-32 flex items-center justify-center" onclick="selectAudience('Oxford')">
+            <div class="text-center">
+              <div class="w-12 h-12 bg-violet-100 rounded-full flex items-center justify-center mb-3 mx-auto">
+                <span class="text-violet-600 font-bold text-lg">O</span>
+              </div>
+              <h3 class="text-base font-semibold">Oxford</h3>
+            </div>
+            <input type="radio" name="audience" value="Oxford" class="hidden">
+          </div>
+          
+          <!-- Norwich -->
+          <div class="audience-card glass-card p-6 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl h-32 flex items-center justify-center" onclick="selectAudience('Norwich')">
+            <div class="text-center">
+              <div class="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center mb-3 mx-auto">
+                <span class="text-rose-600 font-bold text-lg">N</span>
+              </div>
+              <h3 class="text-base font-semibold">Norwich</h3>
+            </div>
+            <input type="radio" name="audience" value="Norwich" class="hidden">
+          </div>
+        </div>
+        
+        <!-- City Info Panel -->
+        <div id="city-info" class="hidden mb-8">
+          <div class="glass-card p-8 border border-blue-200/50">
+            <h3 class="font-semibold text-blue-800 mb-4 text-xl" id="city-info-title">City Data</h3>
+            <div class="text-base text-blue-700 space-y-3" id="city-info-content">
+              <!-- City data will be populated by JavaScript -->
+      </div>
+          </div>
+        </div>
+        
+        <div class="flex justify-center">
+          <button class="px-8 py-4 bg-indigo-500 text-white rounded-lg font-semibold text-lg shadow hover:bg-indigo-600 transition" onclick="nextStep(2)">Continue</button>
         </div>
       </div>
-      <!-- Step 4: Add Questions -->
-      <div class="glass-card wizard-step p-10 mb-8" id="step-4">
-        <h2 class="text-2xl font-bold mb-4">What questions do you want to ask?</h2>
-        <form class="flex gap-2 mb-4" onsubmit="addQuestion(); return false;">
-          <input type="text" id="question-input" class="w-full border rounded px-3 py-2" placeholder="Type your question..." autocomplete="off">
-          <button type="submit" class="send-btn">Add</button>
-        </form>
-        <ul id="questions-list" class="mb-6 space-y-2"></ul>
-        <div class="flex gap-4">
-          <button class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold text-lg shadow hover:bg-gray-300 transition" onclick="nextStep(3)">Back</button>
-          <button class="px-6 py-3 bg-indigo-500 text-white rounded-lg font-semibold text-lg shadow hover:bg-indigo-600 transition" onclick="nextStep(5)">Next</button>
+      
+      <!-- Step 2: Configuration -->
+      <div class="wizard-step mb-8" id="step-2">
+        <h2 class="text-2xl font-bold mb-6 text-center">Want to tweak how it runs?</h2>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <!-- Configuration Options - Left Glass Tile -->
+          <div class="glass-card p-8">
+            <h3 class="text-xl font-semibold mb-6 text-indigo-700">Configuration Settings</h3>
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Group Size</label>
+                <select id="group-size" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" onchange="checkConfigurationComplete()">
+                  <option value="3">3 participants</option>
+                  <option value="4">4 participants</option>
+                  <option value="5" selected>5 participants</option>
+                  <option value="6">6 participants</option>
+                  <option value="7">7 participants</option>
+                  <option value="8">8 participants</option>
+                </select>
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Number of Questions</label>
+                <select id="question-count" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" onchange="checkConfigurationComplete()">
+                  <option value="3">3 questions</option>
+                  <option value="4">4 questions</option>
+                  <option value="5" selected>5 questions</option>
+                  <option value="6">6 questions</option>
+                  <option value="7">7 questions</option>
+                  <option value="8">8 questions</option>
+                </select>
+              </div>
+              
+              <div class="flex items-center">
+                <input type="checkbox" id="open-discussion" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" onchange="checkConfigurationComplete()">
+                <label for="open-discussion" class="ml-3 text-sm text-gray-700">
+                  Enable open discussion
+            </label>
+              </div>
+              <p class="text-sm text-gray-500 ml-7">Allow participants to continue talking after the initial session ends.</p>
+            </div>
+          </div>
+          
+          <!-- Questions Section - Right Glass Tile (Initially Hidden) -->
+          <div id="questions-section" class="glass-card p-6 flex flex-col hidden" style="height: 400px;">
+            <h3 class="text-xl font-semibold mb-4 text-indigo-700">What questions do you want to ask?</h3>
+            <div class="flex-1 space-y-4">
+              <form class="flex gap-2" onsubmit="addQuestion(); return false;">
+                <input type="text" id="question-input" class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Type your question..." autocomplete="off">
+                <button type="submit" class="send-btn px-4 py-2 rounded-lg">Add</button>
+              </form>
+              <div class="flex-1 overflow-y-auto">
+                <ul id="questions-list" class="space-y-2"></ul>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Placeholder - Right Glass Tile (Initially Visible) -->
+          <div id="placeholder-section" class="glass-card p-6 flex flex-col items-center justify-center" style="height: 400px;">
+            <div class="text-center text-gray-500">
+              <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                <span class="text-gray-400 text-2xl">?</span>
+              </div>
+              <h3 class="text-lg font-semibold mb-2">Complete Configuration</h3>
+              <p class="text-sm">Select group size, number of questions, and open discussion option to start adding questions.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex gap-4 justify-center">
+          <button class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold text-lg shadow hover:bg-gray-300 transition" onclick="nextStep(1)">Back</button>
+          <button id="next-button" class="px-6 py-3 bg-gray-400 text-white rounded-lg font-semibold text-lg shadow transition cursor-not-allowed" disabled onclick="nextStep(3)">Next</button>
         </div>
       </div>
-      <!-- Step 5: Launch -->
-      <div class="glass-card wizard-step p-10 mb-8" id="step-5">
+      
+      <!-- Step 3: Launch -->
+      <div class="glass-card wizard-step p-10 mb-8" id="step-3">
         <h2 class="text-2xl font-bold mb-4">All set! Ready to launch?</h2>
         <div class="flex gap-4">
-          <button class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold text-lg shadow hover:bg-gray-300 transition" onclick="nextStep(4)">Back</button>
+          <button class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold text-lg shadow hover:bg-gray-300 transition" onclick="nextStep(2)">Back</button>
           <button id="launch-btn" class="px-6 py-3 bg-green-500 text-white rounded-lg font-semibold text-lg shadow hover:bg-green-600 transition" onclick="launchFocusGroup()">Launch Focus Group</button>
         </div>
         <div id="launch-loading" class="mt-4 text-gray-500 hidden flex flex-col items-center">
@@ -155,16 +402,6 @@
           <span>Launching focus group, please wait...</span>
         </div>
       </div>
-    </div>
-    <!-- Chatbox (bottom, fills remaining space) -->
-    <div class="glass-card chatbox flex flex-col w-full max-w-2xl mx-auto mt-8" style="flex: 1 1 0; min-height: 320px;">
-      <div class="chat-messages" id="chat-messages">
-        <div class="mb-4"><span class="font-semibold text-indigo-500">Moderator:</span> Welcome! I’ll be here to help you run your focus group.</div>
-      </div>
-      <form class="chat-input" onsubmit="sendMessage(); return false;">
-        <input type="text" id="chat-input" class="w-full border rounded px-3 py-2" placeholder="Type a message..." autocomplete="off">
-        <button type="submit" class="send-btn">Send</button>
-      </form>
     </div>
   </main>
   <script>
@@ -174,170 +411,232 @@
       sidebar.classList.toggle('sidebar-collapsed');
       sidebar.classList.toggle('sidebar-expanded');
     }
+    
+    // Select audience and handle card selection
+    function selectAudience(audienceName) {
+      // Remove selected class from all cards
+      document.querySelectorAll('.audience-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      
+      // Add selected class to clicked card
+      const selectedCard = event.currentTarget;
+      selectedCard.classList.add('selected');
+      
+      // Update radio button
+      const radioButton = selectedCard.querySelector('input[type="radio"]');
+      radioButton.checked = true;
+      
+      // Show city info if it's a city audience
+      const cityNames = ['Manchester', 'Birmingham', 'Liverpool', 'London', 'Leeds', 'Newcastle', 'Cardiff', 'Oxford', 'Norwich'];
+      if (cityNames.includes(audienceName)) {
+        showCityInfo(audienceName);
+      } else {
+        // Hide city info for non-city audiences
+        document.getElementById('city-info').classList.add('hidden');
+      }
+    }
+    
+    // Show city information
+    function showCityInfo(cityName) {
+      const cityInfo = document.getElementById('city-info');
+      const cityInfoTitle = document.getElementById('city-info-title');
+      const cityInfoContent = document.getElementById('city-info-content');
+
+      const cityData = {
+        'Manchester': {
+          title: 'Manchester City Data',
+          population: '586,100 (2021)',
+          employment: '71.4%',
+          weeklyPay: '£580',
+          artsEngagement: '68%',
+          museumVisits: '45%'
+        },
+        'Birmingham': {
+          title: 'Birmingham City Data',
+          population: '1,157,603 (2022)',
+          employment: '65.9%',
+          weeklyPay: '£520',
+          artsEngagement: '72%',
+          museumVisits: '38%'
+        },
+        'Liverpool': {
+          title: 'Liverpool City Data',
+          population: '495,849 (2022)',
+          employment: '67.5%',
+          weeklyPay: '£540',
+          artsEngagement: '75%',
+          museumVisits: '52%'
+        },
+        'London': {
+          title: 'London City Data',
+          population: '8,982,000 (2022)',
+          employment: '75.2%',
+          weeklyPay: '£720',
+          artsEngagement: '92%',
+          museumVisits: '78%'
+        },
+        'Leeds': {
+          title: 'Leeds City Data',
+          population: '789,000 (2022)',
+          employment: '69.8%',
+          weeklyPay: '£560',
+          artsEngagement: '70%',
+          museumVisits: '42%'
+        },
+        'Newcastle': {
+          title: 'Newcastle City Data',
+          population: '322,000 (2022)',
+          employment: '68.1%',
+          weeklyPay: '£540',
+          artsEngagement: '73%',
+          museumVisits: '48%'
+        },
+        'Cardiff': {
+          title: 'Cardiff City Data',
+          population: '481,000 (2022)',
+          employment: '70.3%',
+          weeklyPay: '£550',
+          artsEngagement: '71%',
+          museumVisits: '44%'
+        },
+        'Oxford': {
+          title: 'Oxford City Data',
+          population: '162,000 (2022)',
+          employment: '72.6%',
+          weeklyPay: '£620',
+          artsEngagement: '85%',
+          museumVisits: '65%'
+        },
+        'Norwich': {
+          title: 'Norwich City Data',
+          population: '213,000 (2022)',
+          employment: '71.9%',
+          weeklyPay: '£530',
+          artsEngagement: '69%',
+          museumVisits: '41%'
+        }
+      };
+
+      if (cityData[cityName]) {
+        const data = cityData[cityName];
+        cityInfoTitle.textContent = data.title;
+        cityInfoContent.innerHTML = `
+          <p><strong>Population:</strong> ${data.population}</p>
+          <p><strong>Employment Rate:</strong> ${data.employment}</p>
+          <p><strong>Median Weekly Pay:</strong> ${data.weeklyPay}</p>
+          <p><strong>Arts Engagement:</strong> ${data.artsEngagement}</p>
+          <p><strong>Museum Visits:</strong> ${data.museumVisits}</p>
+        `;
+        cityInfo.classList.remove('hidden');
+      } else {
+        cityInfo.classList.add('hidden');
+      }
+    }
+    
     // Wizard navigation
     function nextStep(step) {
-      document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
-      document.getElementById('step-' + step).classList.add('active');
+      // Hide all steps
+      document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+      // Show target step
+      document.getElementById(`step-${step}`).classList.add('active');
     }
-    // Chatbox send
-    function sendMessage() {
-      const input = document.getElementById('chat-input');
-      const msg = input.value.trim();
-      if (!msg) return;
-      const chat = document.getElementById('chat-messages');
-      const div = document.createElement('div');
-      div.className = 'mb-4 text-right';
-      div.innerHTML = `<span class="font-semibold text-gray-700">You:</span> ${msg}`;
-      chat.appendChild(div);
-      input.value = '';
-      chat.scrollTop = chat.scrollHeight;
-    }
+    
     // Add question to list
     function addQuestion() {
       const input = document.getElementById('question-input');
       const question = input.value.trim();
-      if (!question) return;
-
-      const questionsList = document.getElementById('questions-list');
-      
-      // Check if we already have 8 questions
-      if (questionsList.children.length >= 8) {
-        alert('Maximum of 8 questions allowed');
-        return;
-      }
-
+      if (question) {
+        const list = document.getElementById('questions-list');
       const li = document.createElement('li');
-      li.className = 'flex items-center justify-between bg-gray-100 p-2 rounded-md';
+        li.className = 'flex items-center justify-between p-3 bg-gray-50 rounded';
       li.innerHTML = `
         <span>${question}</span>
-        <button onclick="removeQuestion(this)" class="text-red-500 hover:text-red-700 text-lg ml-2">×</button>
+          <button onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700">Remove</button>
       `;
-      questionsList.appendChild(li);
+        list.appendChild(li);
       input.value = '';
+      }
     }
-
-    // Remove question from list
-    function removeQuestion(button) {
-      button.parentElement.remove();
+    
+    // Send chat message
+    function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const message = input.value.trim();
+      if (message) {
+        const messages = document.getElementById('chat-messages');
+        const div = document.createElement('div');
+        div.className = 'mb-4';
+        div.innerHTML = `
+          <span class="font-semibold text-gray-600">You:</span> 
+          <span class="text-gray-700">${message}</span>
+        `;
+        messages.appendChild(div);
+        input.value = '';
+        messages.scrollTop = messages.scrollHeight;
+      }
     }
-
-    // Add a global variable to store personas_details
-    let personas_details = [];
-
+    
+    // Launch focus group
     function launchFocusGroup() {
-      const launchBtn = document.getElementById('launch-btn');
-      const loadingMsg = document.getElementById('launch-loading');
-      launchBtn.disabled = true;
-      loadingMsg.classList.remove('hidden');
-
-      // Gather wizard data
-      // Step 2: Audience
-      let audience = document.querySelector('input[name="audience"]:checked');
-      audience = audience ? audience.value : null;
-      // Step 3: Settings
-      let groupSize = document.querySelector('input[type="number"]');
-      groupSize = groupSize ? parseInt(groupSize.value) : 8;
-      let openDiscussion = document.querySelector('input[type="checkbox"]').checked;
-      // Step 4: Questions
-      let questions = [];
-      document.querySelectorAll('#questions-list li span:first-child').forEach(span => {
-        questions.push(span.textContent);
-      });
-      // Use audience as audience_id so backend samples unique personas
-      const payload = {
-        audience_id: audience,
-        message: 'Welcome to the focus group!',
-        questions: questions,
-        group_size: groupSize,
-        open_discussion: openDiscussion
-      };
-      // Store personas_details for later use (simulate API call)
-      personas_details = [];
-      fetch('/api/focus_group/simulate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(data => {
-        console.log('Focus group response:', data); // Debug log
-        loadingMsg.classList.add('hidden');
-        launchBtn.disabled = false;
-        // Try to extract personas_details from transcript if available
-        if (data && data.transcript && data.transcript.length > 0) {
-          personas_details = data.transcript
-            .filter(e => e.persona_details)
-            .map(e => e.persona_details);
-        }
-        // Remove any previous completion banner
-        const prevBanner = document.getElementById('completion-banner');
-        if (prevBanner) prevBanner.remove();
-        if (data && data.transcript) {
-          // Show transcript in chat
-          const chat = document.getElementById('chat-messages');
-          chat.innerHTML = ''; // Clear previous transcript
-          data.transcript.forEach((entry, idx) => {
-            // Use content or response_text, whichever is present
-            const message = entry.content !== undefined ? entry.content : entry.response_text;
-            if (!message || message === 'undefined') return; // Skip empty/undefined content
-            let roleClass = 'text-gray-700';
-            let roleName = 'Persona';
-            if (entry.role === 'moderator') {
-              roleClass = 'text-indigo-500 font-semibold';
-              roleName = 'Moderator';
-            } else if (entry.persona_name && entry.persona_name !== 'undefined') {
-              roleName = entry.persona_name;
-            } else if (entry.persona_index !== undefined && personas_details && personas_details[entry.persona_index]) {
-              roleName = personas_details[entry.persona_index].split(',')[0];
-            } else if (entry.persona_index !== undefined) {
-              roleName = `Persona ${entry.persona_index + 1}`;
-            }
-            chat.innerHTML += `<div class='mb-4'><span class='${roleClass}'>${roleName}:</span> ${message}</div>`;
-          });
-          chat.scrollTop = chat.scrollHeight;
-          // Show completion message with analytics button
-          if (data.status === 'completed' && data.analytics) {
-            sessionStorage.setItem('focusGroupAnalytics', JSON.stringify(data.analytics));
-            sessionStorage.setItem('focusGroupTranscript', JSON.stringify(data.transcript));
-            // Insert glass-card completion banner above chat
-            const main = document.querySelector('main');
-            const banner = document.createElement('div');
-            banner.id = 'completion-banner';
-            banner.className = 'glass-card p-6 mb-6 flex flex-col items-center border border-green-200 shadow';
-            banner.innerHTML = `
-              <div class="flex items-center mb-2">
-                <span class="text-green-600 text-2xl mr-2">✅</span>
-                <span class="text-lg font-semibold text-green-700">Focus group completed!</span>
-              </div>
-              <button onclick="viewAnalytics()" class="mt-2 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 font-semibold transition">
-                View Analytics
-              </button>
-            `;
-            // Insert before the chatbox
-            const chatbox = document.querySelector('.chatbox');
-            main.insertBefore(banner, chatbox);
-            // End chat if open discussion is not enabled
-            if (!payload.open_discussion) {
-              chat.innerHTML += `<div class='mb-4'><span class='text-indigo-500 font-semibold'>Moderator:</span> Thank you for taking part in today's focus group. I'm now bringing an end to the discussion.</div>`;
-              document.getElementById('chat-input').disabled = true;
-              document.querySelector('.send-btn').disabled = true;
-            }
-          }
+      const loading = document.getElementById('launch-loading');
+      const button = document.getElementById('launch-btn');
+      
+      loading.classList.remove('hidden');
+      button.disabled = true;
+      button.textContent = 'Launching...';
+      
+      // Simulate API call
+      setTimeout(() => {
+        loading.classList.add('hidden');
+        button.disabled = false;
+        button.textContent = 'Launch Focus Group';
+        alert('Focus group launched successfully!');
+      }, 2000);
+    }
+    
+    // Check if configuration is complete to enable questions section
+    function checkConfigurationComplete() {
+      const groupSize = document.getElementById('group-size').value;
+      const questionCount = document.getElementById('question-count').value;
+      const openDiscussion = document.getElementById('open-discussion').checked;
+      const nextButton = document.getElementById('next-button');
+      const questionsSection = document.getElementById('questions-section');
+      const placeholderSection = document.getElementById('placeholder-section');
+      
+      // All fields are considered complete if they have values (checkbox can be unchecked)
+      const isComplete = groupSize && questionCount;
+      
+      if (isComplete) {
+        // Show questions section and hide placeholder
+        questionsSection.classList.remove('hidden');
+        placeholderSection.classList.add('hidden');
+        
+        // Enable next button
+        nextButton.disabled = false;
+        nextButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+        nextButton.classList.add('bg-indigo-500', 'hover:bg-indigo-600', 'cursor-pointer');
         } else {
-          alert('Focus group failed to launch or returned no transcript.');
-        }
-      })
-      .catch(err => {
-        loadingMsg.classList.add('hidden');
-        launchBtn.disabled = false;
-        alert('Error launching focus group: ' + err);
-      });
+        // Show placeholder and hide questions section
+        questionsSection.classList.add('hidden');
+        placeholderSection.classList.remove('hidden');
+        
+        // Disable next button
+        nextButton.disabled = true;
+        nextButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+        nextButton.classList.remove('bg-indigo-500', 'hover:bg-indigo-600', 'cursor-pointer');
+      }
     }
-
-    // Function to redirect to analytics page
-    function viewAnalytics() {
-      window.location.href = '/data.html';
-    }
+    
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      // Set default selected audience
+      const defaultCard = document.querySelector('.audience-card input[checked]').closest('.audience-card');
+      defaultCard.classList.add('selected');
+      
+      // Check initial configuration state
+      checkConfigurationComplete();
+    });
   </script>
 </body>
 </html>

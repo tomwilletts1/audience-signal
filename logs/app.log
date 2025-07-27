@@ -690,3 +690,1291 @@ sqlite3.ProgrammingError: SQLite objects created in a thread can only be used in
 2025-07-27 13:22:24,938 - app_logger - INFO - focus_group_service:459 - Round 1, turn for persona 3: Chloe Brown, a 35-year-old lawyer living in United...
 2025-07-27 13:22:27,013 - app_logger - INFO - focus_group_service:334 - Generated discussion response for persona Chloe Brown, a 35-year-old law... Output: Thank you for the warm welcome! As Chloe Brown, I must say it's a pleasure to join this focus group alongside such insightful individuals. Coming from a legal background, I appreciate the importance of diverse perspectives, much like in a court where multiple viewpoints help shape a robust understan...
 2025-07-27 13:22:27,014 - app_logger - INFO - focus_group_service:481 - Focus group simulation completed.
+2025-07-27 13:44:43,929 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 13:44:43,947 - app_logger - INFO - app:28 - Application startup sequence initiated.
+2025-07-27 13:44:43,952 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 13:44:43,952 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 13:44:43,953 - app_logger - INFO - app:34 - Initializing services...
+2025-07-27 13:44:44,764 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 13:44:44,765 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 13:44:44,766 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 13:44:44,766 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 13:44:44,766 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 13:44:44,766 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 13:44:44,766 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 13:44:44,767 - app_logger - INFO - app:44 - All services initialized.
+2025-07-27 13:44:44,767 - app_logger - INFO - app:50 - Flask app configured with CORS.
+2025-07-27 13:44:44,768 - app_logger - INFO - app:53 - Registering blueprints...
+2025-07-27 13:44:44,773 - app_logger - INFO - app:63 - All blueprints registered.
+2025-07-27 13:44:44,775 - app_logger - INFO - app:97 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 14:05:12,957 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 14:05:12,985 - app_logger - INFO - app:28 - Application startup sequence initiated.
+2025-07-27 14:05:12,993 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 14:05:12,997 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 14:05:12,998 - app_logger - INFO - app:34 - Initializing services...
+2025-07-27 14:05:13,937 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 14:05:13,942 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 14:05:13,943 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 14:05:13,943 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 14:05:13,943 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 14:05:13,944 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 14:05:13,944 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 14:05:13,944 - app_logger - INFO - app:44 - All services initialized.
+2025-07-27 14:05:13,947 - app_logger - INFO - app:50 - Flask app configured with CORS.
+2025-07-27 14:05:13,947 - app_logger - INFO - app:53 - Registering blueprints...
+2025-07-27 14:05:13,953 - app_logger - INFO - app:63 - All blueprints registered.
+2025-07-27 14:05:13,955 - app_logger - INFO - app:97 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 15:43:34,409 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 15:43:34,447 - app_logger - INFO - app:28 - Application startup sequence initiated.
+2025-07-27 15:43:34,460 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 15:43:34,472 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 15:43:34,473 - app_logger - INFO - app:34 - Initializing services...
+2025-07-27 15:43:35,692 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 15:43:35,697 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 15:43:35,697 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 15:43:35,697 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 15:43:35,697 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 15:43:35,697 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 15:43:35,697 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 15:43:35,697 - app_logger - INFO - app:44 - All services initialized.
+2025-07-27 15:43:35,700 - app_logger - INFO - app:50 - Flask app configured with CORS.
+2025-07-27 15:43:35,701 - app_logger - INFO - app:53 - Registering blueprints...
+2025-07-27 15:43:35,708 - app_logger - INFO - app:63 - All blueprints registered.
+2025-07-27 15:43:35,709 - app_logger - INFO - app:97 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 15:48:22,094 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 15:48:22,120 - app_logger - INFO - app:28 - Application startup sequence initiated.
+2025-07-27 15:48:22,129 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 15:48:22,136 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 15:48:22,137 - app_logger - INFO - app:34 - Initializing services...
+2025-07-27 15:48:23,266 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 15:48:23,272 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 15:48:23,273 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 15:48:23,273 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 15:48:23,273 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 15:48:23,274 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 15:48:23,274 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 15:48:23,274 - app_logger - INFO - app:44 - All services initialized.
+2025-07-27 15:48:23,276 - app_logger - INFO - app:50 - Flask app configured with CORS.
+2025-07-27 15:48:23,276 - app_logger - INFO - app:53 - Registering blueprints...
+2025-07-27 15:48:23,283 - app_logger - INFO - app:63 - All blueprints registered.
+2025-07-27 15:48:23,286 - app_logger - INFO - app:97 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 15:48:55,192 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 15:48:55,216 - app_logger - INFO - app:28 - Application startup sequence initiated.
+2025-07-27 15:48:55,230 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 15:48:55,239 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 15:48:55,240 - app_logger - INFO - app:34 - Initializing services...
+2025-07-27 15:48:56,601 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 15:48:56,611 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 15:48:56,612 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 15:48:56,612 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 15:48:56,613 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 15:48:56,614 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 15:48:56,614 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 15:48:56,614 - app_logger - INFO - app:44 - All services initialized.
+2025-07-27 15:48:56,617 - app_logger - INFO - app:50 - Flask app configured with CORS.
+2025-07-27 15:48:56,617 - app_logger - INFO - app:53 - Registering blueprints...
+2025-07-27 15:48:56,631 - app_logger - INFO - app:63 - All blueprints registered.
+2025-07-27 15:48:56,634 - app_logger - INFO - app:97 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 15:49:17,204 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 15:49:17,222 - app_logger - INFO - app:28 - Application startup sequence initiated.
+2025-07-27 15:49:17,226 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 15:49:17,228 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 15:49:17,229 - app_logger - INFO - app:34 - Initializing services...
+2025-07-27 15:49:18,218 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 15:49:18,220 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 15:49:18,220 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 15:49:18,220 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 15:49:18,220 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 15:49:18,221 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 15:49:18,221 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 15:49:18,221 - app_logger - INFO - app:44 - All services initialized.
+2025-07-27 15:49:18,222 - app_logger - INFO - app:50 - Flask app configured with CORS.
+2025-07-27 15:49:18,223 - app_logger - INFO - app:53 - Registering blueprints...
+2025-07-27 15:49:18,228 - app_logger - INFO - app:63 - All blueprints registered.
+2025-07-27 15:49:18,230 - app_logger - INFO - app:97 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 15:49:44,614 - app_logger - INFO - migrate_city_data:11 - Adding city data tables...
+2025-07-27 15:49:44,640 - app_logger - INFO - migrate_city_data:72 - City data tables created successfully.
+2025-07-27 15:50:10,577 - app_logger - INFO - ingest_city_data:31 - Successfully ingested data for Manchester
+2025-07-27 15:51:53,379 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 15:51:53,400 - app_logger - INFO - app:28 - Application startup sequence initiated.
+2025-07-27 15:51:53,405 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 15:51:53,406 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 15:51:53,406 - app_logger - INFO - app:34 - Initializing services...
+2025-07-27 15:51:54,309 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 15:51:54,311 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 15:51:54,311 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 15:51:54,312 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 15:51:54,312 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 15:51:54,312 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 15:51:54,313 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 15:51:54,313 - app_logger - INFO - app:44 - All services initialized.
+2025-07-27 15:51:54,315 - app_logger - INFO - app:50 - Flask app configured with CORS.
+2025-07-27 15:51:54,315 - app_logger - INFO - app:53 - Registering blueprints...
+2025-07-27 15:51:54,325 - app_logger - INFO - app:63 - All blueprints registered.
+2025-07-27 15:51:54,327 - app_logger - INFO - app:97 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 15:57:43,352 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 15:57:43,370 - app_logger - INFO - app:28 - Application startup sequence initiated.
+2025-07-27 15:57:43,376 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 15:57:43,377 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 15:57:43,378 - app_logger - INFO - app:34 - Initializing services...
+2025-07-27 15:57:44,267 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 15:57:44,268 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 15:57:44,269 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 15:57:44,269 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 15:57:44,269 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 15:57:44,269 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 15:57:44,269 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 15:57:44,269 - app_logger - INFO - app:44 - All services initialized.
+2025-07-27 15:57:44,272 - app_logger - INFO - app:50 - Flask app configured with CORS.
+2025-07-27 15:57:44,272 - app_logger - INFO - app:53 - Registering blueprints...
+2025-07-27 15:57:44,279 - app_logger - INFO - app:63 - All blueprints registered.
+2025-07-27 15:57:44,280 - app_logger - INFO - app:97 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 15:58:25,478 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 15:58:25,492 - app_logger - INFO - app:28 - Application startup sequence initiated.
+2025-07-27 15:58:25,498 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 15:58:25,499 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 15:58:25,500 - app_logger - INFO - app:34 - Initializing services...
+2025-07-27 15:58:26,282 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 15:58:26,284 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 15:58:26,284 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 15:58:26,284 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 15:58:26,285 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 15:58:26,285 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 15:58:26,285 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 15:58:26,285 - app_logger - INFO - app:44 - All services initialized.
+2025-07-27 15:58:26,287 - app_logger - INFO - app:50 - Flask app configured with CORS.
+2025-07-27 15:58:26,287 - app_logger - INFO - app:53 - Registering blueprints...
+2025-07-27 15:58:26,297 - app_logger - INFO - app:63 - All blueprints registered.
+2025-07-27 15:58:26,298 - app_logger - INFO - app:97 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 15:58:38,132 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 15:58:38,157 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 15:58:38,162 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 15:58:38,163 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 15:58:38,164 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 15:58:39,015 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 15:58:39,016 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 15:58:39,016 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 15:58:39,017 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 15:58:39,017 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 15:58:39,017 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 15:58:39,017 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 15:58:39,017 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 15:58:39,019 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 15:58:39,020 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 15:58:39,027 - app_logger - INFO - app:64 - All blueprints registered.
+2025-07-27 15:58:39,028 - app_logger - INFO - app:98 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 15:58:47,452 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 15:58:47,473 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 15:58:47,478 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 15:58:47,479 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 15:58:47,480 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 15:58:48,420 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 15:58:48,421 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 15:58:48,422 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 15:58:48,422 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 15:58:48,422 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 15:58:48,422 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 15:58:48,422 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 15:58:48,423 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 15:58:48,424 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 15:58:48,424 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 15:58:48,432 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 15:58:48,434 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:00:23,073 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 16:00:23,094 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 16:00:23,099 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 16:00:23,100 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 16:00:23,100 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 16:00:23,979 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 16:00:23,980 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 16:00:23,980 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 16:00:23,981 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 16:00:23,981 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 16:00:23,981 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 16:00:23,981 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 16:00:23,981 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 16:00:23,982 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 16:00:23,983 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 16:00:23,991 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 16:00:23,992 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:03:25,526 - app_logger - INFO - ingest_multiple_cities:31 - Successfully ingested data for Manchester
+2025-07-27 16:03:25,534 - app_logger - INFO - ingest_multiple_cities:31 - Successfully ingested data for Birmingham
+2025-07-27 16:03:25,542 - app_logger - INFO - ingest_multiple_cities:31 - Successfully ingested data for Leeds
+2025-07-27 16:06:00,831 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 16:06:00,857 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 16:06:00,864 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 16:06:00,864 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 16:06:00,864 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 16:06:01,753 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 16:06:01,754 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 16:06:01,754 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 16:06:01,755 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 16:06:01,755 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 16:06:01,755 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 16:06:01,755 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 16:06:01,755 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 16:06:01,757 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 16:06:01,757 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 16:06:01,765 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 16:06:01,766 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:06:15,273 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 16:06:15,294 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 16:06:15,298 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 16:06:15,299 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 16:06:15,299 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 16:06:16,221 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 16:06:16,222 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 16:06:16,222 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 16:06:16,223 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 16:06:16,223 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 16:06:16,223 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 16:06:16,223 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 16:06:16,223 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 16:06:16,224 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 16:06:16,224 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 16:06:16,234 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 16:06:16,235 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:06:24,587 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 16:06:24,611 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 16:06:24,617 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 16:06:24,618 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 16:06:24,618 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 16:06:25,404 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 16:06:25,405 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 16:06:25,405 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 16:06:25,405 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 16:06:25,406 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 16:06:25,406 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 16:06:25,406 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 16:06:25,406 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 16:06:25,408 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 16:06:25,408 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 16:06:25,414 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 16:06:25,416 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:17:07,877 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 16:17:07,910 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 16:17:07,915 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 16:17:07,916 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 16:17:07,917 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 16:17:08,846 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 16:17:08,847 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 16:17:08,848 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 16:17:08,848 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 16:17:08,849 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 16:17:08,849 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 16:17:08,849 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 16:17:08,849 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 16:17:08,852 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 16:17:08,852 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 16:17:08,860 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 16:17:08,862 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:17:21,287 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 16:17:21,318 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 16:17:21,325 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 16:17:21,326 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 16:17:21,327 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 16:17:22,195 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 16:17:22,196 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 16:17:22,197 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 16:17:22,197 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 16:17:22,197 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 16:17:22,197 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 16:17:22,198 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 16:17:22,198 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 16:17:22,199 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 16:17:22,199 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 16:17:22,207 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 16:17:22,209 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:18:26,465 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 16:18:26,495 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 16:18:26,500 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 16:18:26,502 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 16:18:26,502 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 16:18:27,338 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 16:18:27,339 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 16:18:27,339 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 16:18:27,339 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 16:18:27,340 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 16:18:27,340 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 16:18:27,340 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 16:18:27,340 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 16:18:27,341 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 16:18:27,342 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 16:18:27,349 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 16:18:27,350 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:35:32,026 - app_logger - INFO - focus_group:39 - Simulating focus group for audience_id: Manchester
+2025-07-27 16:35:32,038 - app_logger - INFO - focus_group:49 - Using city audience for Manchester: 3 personas
+2025-07-27 16:35:32,038 - app_logger - INFO - focus_group_service:58 - Added moderator question after round 0: What do you think of the oasis reunion tour...
+2025-07-27 16:35:32,039 - app_logger - INFO - focus_group_service:44 - FocusGroupSimulator initialized for 3 personas. Group size: 3, Open discussion: False, Questions: 1
+2025-07-27 16:35:32,039 - app_logger - INFO - focus_group_service:388 - Starting focus group simulation with 1 discussion round(s).
+2025-07-27 16:35:32,039 - app_logger - INFO - focus_group_service:400 - Generating initial reactions (Round 0).
+2025-07-27 16:35:37,631 - app_logger - INFO - focus_group_service:285 - Generated initial reaction for persona Sarah Mitchell, 32, Digital Ma... Output: Hello, I'm Sarah Mitchell. It's great to be here with all of you for this focus group. I'm always intrigued by these sessions because they offer such a unique opportunity to share perspectives and learn from each other. Being a Digital Marketing Manager, I'm naturally curious about how messages are ...
+2025-07-27 16:35:40,928 - app_logger - INFO - focus_group_service:285 - Generated initial reaction for persona James Thompson, 28, Software D... Output: Hello, I'm James Thompson. It's great to be part of this focus group. I find these sessions quite intriguing as they often bring diverse perspectives together. As someone who's engaged with cultural activities and tech, I'm curious about the topics we'll explore and how they might intersect with my ...
+2025-07-27 16:35:43,430 - app_logger - INFO - focus_group_service:285 - Generated initial reaction for persona Emma Wilson, 35, Healthcare Wo... Output: Hello, I'm Emma Wilson. It's great to be part of this focus group. I always find it interesting to hear different perspectives and share my own thoughts, especially when it comes to topics that impact the community. Being in healthcare, I see firsthand how important it is to exchange ideas and work ...
+2025-07-27 16:35:43,431 - app_logger - INFO - focus_group_service:415 - Processing 1 moderator questions.
+2025-07-27 16:35:43,431 - app_logger - INFO - focus_group_service:419 - Asking moderator question: What do you think of the oasis reunion tour
+2025-07-27 16:35:43,432 - app_logger - INFO - focus_group_service:424 - Getting response from persona 1 to question: What do you think of the oasis reunion tour...
+2025-07-27 16:35:47,235 - app_logger - INFO - focus_group_service:380 - Generated moderator response for persona Sarah Mitchell, 32, Digital Ma... Output: As Sarah Mitchell, I’d say that the Oasis reunion tour is quite an exciting prospect. Growing up in Manchester, Oasis has always been a big part of the local music scene and culture, so the idea of them coming back together stirs up a lot of nostalgia. I remember their songs being almost like anthem...
+2025-07-27 16:35:47,236 - app_logger - INFO - focus_group_service:424 - Getting response from persona 2 to question: What do you think of the oasis reunion tour...
+2025-07-27 16:35:54,468 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 16:35:54,492 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 16:35:54,497 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 16:35:54,499 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 16:35:54,499 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 16:35:55,331 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 16:35:55,331 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 16:35:55,332 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 16:35:55,332 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 16:35:55,332 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 16:35:55,332 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 16:35:55,333 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 16:35:55,333 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 16:35:55,334 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 16:35:55,334 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 16:35:55,342 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 16:35:55,343 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:38:12,680 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 16:38:12,706 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 16:38:12,710 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 16:38:12,712 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 16:38:12,712 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 16:38:13,519 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 16:38:13,520 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 16:38:13,520 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 16:38:13,520 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 16:38:13,520 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 16:38:13,521 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 16:38:13,521 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 16:38:13,521 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 16:38:13,522 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 16:38:13,522 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 16:38:13,531 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 16:38:13,532 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:41:36,608 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 16:41:36,625 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 16:41:36,630 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 16:41:36,632 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 16:41:36,632 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 16:41:37,499 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 16:41:37,500 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 16:41:37,500 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 16:41:37,500 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 16:41:37,501 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 16:41:37,501 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 16:41:37,501 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 16:41:37,501 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 16:41:37,502 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 16:41:37,502 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 16:41:37,511 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 16:41:37,512 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:46:41,217 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 16:46:41,221 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 16:46:41,223 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 16:46:41,223 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 16:46:42,083 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 16:46:42,085 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 16:46:42,085 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 16:46:42,085 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 16:46:42,085 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 16:46:42,085 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 16:46:42,085 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 16:46:42,085 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 16:46:42,086 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 16:46:42,086 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 16:46:42,097 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 16:46:42,099 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:46:47,886 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 16:46:47,916 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 16:46:47,921 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 16:46:47,922 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 16:46:47,923 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 16:46:48,834 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 16:46:48,835 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 16:46:48,835 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 16:46:48,836 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 16:46:48,836 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 16:46:48,836 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 16:46:48,836 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 16:46:48,836 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 16:46:48,838 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 16:46:48,839 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 16:46:48,847 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 16:46:48,848 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:46:54,575 - app_logger - INFO - focus_group:39 - Simulating focus group for audience_id: Manchester
+2025-07-27 16:46:54,584 - app_logger - INFO - focus_group:49 - Using city audience for Manchester: 3 personas
+2025-07-27 16:46:54,584 - app_logger - INFO - focus_group_service:44 - FocusGroupSimulator initialized for 3 personas. Group size: 3, Open discussion: False, Questions: 0
+2025-07-27 16:46:54,585 - app_logger - INFO - focus_group_service:388 - Starting focus group simulation with 1 discussion round(s).
+2025-07-27 16:46:54,585 - app_logger - INFO - focus_group_service:400 - Generating initial reactions (Round 0).
+2025-07-27 16:46:58,804 - app_logger - INFO - focus_group_service:285 - Generated initial reaction for persona Sarah Mitchell, 32, Digital Ma... Output: As Sarah Mitchell, my first thoughts about the new city center development are a mix of curiosity and cautious optimism. Living and working in Manchester city centre, I see the potential such projects have to enhance our urban environment and improve our daily lives. I’m particularly interested in h...
+2025-07-27 16:47:03,737 - app_logger - INFO - focus_group_service:285 - Generated initial reaction for persona James Thompson, 28, Software D... Output: As James Thompson, my first thoughts about the new city center development are a mix of curiosity and cautious optimism. Living and working in Manchester's tech district, I often think about how developments like these can impact our community, both positively and negatively.
+
+On the positive side, ...
+2025-07-27 16:47:07,905 - app_logger - INFO - focus_group_service:285 - Generated initial reaction for persona Emma Wilson, 35, Healthcare Wo... Output: As Emma Wilson, my initial thoughts about the new city center development are a mix of curiosity and cautious optimism. Living in the Manchester suburbs and working in healthcare, I see the city center as a hub that could offer more amenities and opportunities for the community. I'm particularly int...
+2025-07-27 16:47:07,906 - app_logger - INFO - focus_group_service:415 - Processing 0 moderator questions.
+2025-07-27 16:47:07,906 - app_logger - INFO - focus_group_service:445 - Starting discussion round 1.
+2025-07-27 16:47:07,906 - app_logger - INFO - focus_group_service:459 - Round 1, turn for persona 1: Sarah Mitchell, 32, Digital Marketing Manager, Man...
+2025-07-27 16:47:09,863 - app_logger - INFO - focus_group_service:334 - Generated discussion response for persona Sarah Mitchell, 32, Digital Ma... Output: As Sarah Mitchell, I think the new city center development is quite exciting, especially from a digital marketing perspective. The potential for increased foot traffic could really boost local businesses and provide more opportunities for creative campaigns and collaborations. However, I am also awa...
+2025-07-27 16:47:09,864 - app_logger - INFO - focus_group_service:459 - Round 1, turn for persona 2: James Thompson, 28, Software Developer, Manchester...
+2025-07-27 16:47:13,503 - app_logger - INFO - focus_group_service:334 - Generated discussion response for persona James Thompson, 28, Software D... Output: As James Thompson, I find the new city center development intriguing from a technological perspective. Working in the tech district, I've seen firsthand how innovation can drive progress and enhance our daily lives. However, I share Sarah's concerns about maintaining the unique character of Manchest...
+2025-07-27 16:47:13,503 - app_logger - INFO - focus_group_service:459 - Round 1, turn for persona 3: Emma Wilson, 35, Healthcare Worker, Manchester sub...
+2025-07-27 16:47:16,952 - app_logger - INFO - focus_group_service:334 - Generated discussion response for persona Emma Wilson, 35, Healthcare Wo... Output: As Emma Wilson, I have mixed feelings about the new city center development. On one hand, I can see the potential benefits it could bring, particularly in terms of job opportunities and improved facilities, which are always a plus for someone like me working in healthcare. Improved infrastructure co...
+2025-07-27 16:47:16,953 - app_logger - INFO - focus_group_service:481 - Focus group simulation completed.
+2025-07-27 16:48:54,148 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 16:48:54,166 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 16:48:54,170 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 16:48:54,171 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 16:48:54,172 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 16:48:54,477 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 16:48:54,497 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 16:48:54,502 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 16:48:54,503 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 16:48:54,504 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 16:48:55,113 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 16:48:55,115 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 16:48:55,115 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 16:48:55,115 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 16:48:55,115 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 16:48:55,116 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 16:48:55,116 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 16:48:55,116 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 16:48:55,117 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 16:48:55,118 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 16:48:55,127 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 16:48:55,128 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:48:55,426 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 16:48:55,427 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 16:48:55,427 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 16:48:55,427 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 16:48:55,428 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 16:48:55,428 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 16:48:55,428 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 16:48:55,428 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 16:48:55,429 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 16:48:55,430 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 16:48:55,438 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 16:48:55,441 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:49:17,731 - app_logger - INFO - ingest_city_data:31 - Successfully ingested data for Manchester
+2025-07-27 16:52:06,049 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 16:52:06,050 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 16:52:06,072 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 16:52:06,078 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 16:52:06,079 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 16:52:06,079 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 16:52:06,079 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 16:52:06,079 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 16:52:06,080 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 16:52:07,245 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 16:52:07,246 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 16:52:07,246 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 16:52:07,247 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 16:52:07,247 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 16:52:07,247 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 16:52:07,248 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 16:52:07,248 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 16:52:07,249 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 16:52:07,250 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 16:52:07,267 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 16:52:07,270 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:52:07,309 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 16:52:07,311 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 16:52:07,312 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 16:52:07,312 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 16:52:07,312 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 16:52:07,313 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 16:52:07,313 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 16:52:07,313 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 16:52:07,315 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 16:52:07,316 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 16:52:07,334 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 16:52:07,336 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:52:52,595 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 16:52:52,625 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 16:52:52,630 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 16:52:52,632 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 16:52:52,632 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 16:52:53,127 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 16:52:53,151 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 16:52:53,155 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 16:52:53,157 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 16:52:53,158 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 16:52:53,952 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 16:52:53,953 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 16:52:53,954 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 16:52:53,954 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 16:52:53,954 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 16:52:53,955 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 16:52:53,955 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 16:52:53,956 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 16:52:53,958 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 16:52:53,958 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 16:52:53,969 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 16:52:53,973 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:52:54,500 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 16:52:54,501 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 16:52:54,501 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 16:52:54,501 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 16:52:54,502 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 16:52:54,502 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 16:52:54,502 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 16:52:54,503 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 16:52:54,504 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 16:52:54,504 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 16:52:54,513 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 16:52:54,515 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 16:53:09,404 - app_logger - INFO - focus_group:39 - Simulating focus group for audience_id: Manchester
+2025-07-27 16:53:09,409 - app_logger - INFO - focus_group:49 - Using city audience for Manchester: 3 personas
+2025-07-27 16:53:09,410 - app_logger - INFO - focus_group_service:44 - FocusGroupSimulator initialized for 3 personas. Group size: 3, Open discussion: False, Questions: 0
+2025-07-27 16:53:09,410 - app_logger - INFO - focus_group_service:388 - Starting focus group simulation with 1 discussion round(s).
+2025-07-27 16:53:09,410 - app_logger - INFO - focus_group_service:400 - Generating initial reactions (Round 0).
+2025-07-27 16:53:13,005 - app_logger - INFO - focus_group_service:285 - Generated initial reaction for persona Sarah Mitchell, 32, Digital Ma... Output: As Sarah Mitchell, I'm quite enthusiastic about new community arts programs. Living in Manchester city centre, I've seen firsthand how engaging the arts scene can be, and with an arts engagement rate of 88%, it's clear that many people here share that appreciation. Community arts programs are a fant...
+2025-07-27 16:53:17,289 - app_logger - INFO - focus_group_service:285 - Generated initial reaction for persona James Thompson, 28, Software D... Output: As James Thompson, I find the idea of new community arts programs quite exciting. Living in Manchester's tech district, I often see how technology and culture can intersect in interesting ways. I believe that community arts programs have the potential to enrich our local culture, offering diverse fo...
+2025-07-27 16:53:19,955 - app_logger - INFO - focus_group_service:285 - Generated initial reaction for persona Emma Wilson, 35, Healthcare Wo... Output: As Emma Wilson, my first thoughts about new community arts programs are quite positive. Living in the Manchester suburbs and being someone who values a community-focused lifestyle, I see these programs as a wonderful opportunity to bring people together and enrich our local culture. Arts programs ca...
+2025-07-27 16:53:19,955 - app_logger - INFO - focus_group_service:415 - Processing 0 moderator questions.
+2025-07-27 16:53:19,956 - app_logger - INFO - focus_group_service:445 - Starting discussion round 1.
+2025-07-27 16:53:19,956 - app_logger - INFO - focus_group_service:459 - Round 1, turn for persona 1: Sarah Mitchell, 32, Digital Marketing Manager, Man...
+2025-07-27 16:53:22,285 - app_logger - INFO - focus_group_service:334 - Generated discussion response for persona Sarah Mitchell, 32, Digital Ma... Output: As Sarah Mitchell, I find new community arts programs incredibly beneficial, especially given my strong engagement with the arts. Living and working in Manchester city centre, I've seen firsthand how these programs can enrich our community by providing accessible creative outlets for people of all a...
+2025-07-27 16:53:22,286 - app_logger - INFO - focus_group_service:459 - Round 1, turn for persona 2: James Thompson, 28, Software Developer, Manchester...
+2025-07-27 16:53:26,161 - app_logger - INFO - focus_group_service:334 - Generated discussion response for persona James Thompson, 28, Software D... Output: As James Thompson, I completely agree with Sarah's points about the benefits of community arts programs. Being someone who lives and works in the Manchester tech district, I see a lot of value in creating spaces where creativity and technology can intersect. These programs can indeed enrich our comm...
+2025-07-27 16:53:26,162 - app_logger - INFO - focus_group_service:459 - Round 1, turn for persona 3: Emma Wilson, 35, Healthcare Worker, Manchester sub...
+2025-07-27 16:53:30,361 - app_logger - INFO - focus_group_service:334 - Generated discussion response for persona Emma Wilson, 35, Healthcare Wo... Output: As Emma Wilson, I really appreciate what both Sarah and James have mentioned about the benefits of community arts programs. Living in the suburbs and working as a healthcare worker, I see these programs as a wonderful way to support mental health and well-being, providing people with an outlet for e...
+2025-07-27 16:53:30,362 - app_logger - INFO - focus_group_service:481 - Focus group simulation completed.
+2025-07-27 16:59:29,765 - app_logger - INFO - focus_group:39 - Simulating focus group for audience_id: Manchester
+2025-07-27 16:59:29,772 - app_logger - INFO - focus_group:49 - Using city audience for Manchester: 3 personas
+2025-07-27 16:59:29,772 - app_logger - INFO - focus_group_service:58 - Added moderator question after round 0: What do you think of the recent Oasis Gigs in Heat...
+2025-07-27 16:59:29,772 - app_logger - INFO - focus_group_service:58 - Added moderator question after round 0: What song would you like to hear the most from an ...
+2025-07-27 16:59:29,772 - app_logger - INFO - focus_group_service:44 - FocusGroupSimulator initialized for 3 personas. Group size: 3, Open discussion: False, Questions: 2
+2025-07-27 16:59:29,773 - app_logger - INFO - focus_group_service:388 - Starting focus group simulation with 1 discussion round(s).
+2025-07-27 16:59:29,773 - app_logger - INFO - focus_group_service:400 - Generating initial reactions (Round 0).
+2025-07-27 16:59:32,789 - app_logger - INFO - focus_group_service:285 - Generated initial reaction for persona Sarah Mitchell, 32, Digital Ma... Output: Hi there! I'm Sarah Mitchell, and I'm really excited to be part of this focus group. As someone who works in digital marketing, I find it fascinating to see how different messages resonate with people. When I hear "Welcome to the focus group!", it makes me feel like I'm entering a space where divers...
+2025-07-27 16:59:34,861 - app_logger - INFO - focus_group_service:285 - Generated initial reaction for persona James Thompson, 28, Software D... Output: Hello, I'm James Thompson. It's great to be here for the focus group. I always find these sessions intriguing because they offer a chance to hear different perspectives and engage in constructive dialogue. Given my background as a software developer in Manchester’s tech district, I'm naturally curio...
+2025-07-27 16:59:36,874 - app_logger - INFO - focus_group_service:285 - Generated initial reaction for persona Emma Wilson, 35, Healthcare Wo... Output: Thank you for the warm welcome! As Emma Wilson, I'm quite excited to be part of this focus group. Living in the Manchester suburbs and working in healthcare, I see a lot of value in community efforts and discussions like these. I think they can really help bring about positive changes. I'm curious t...
+2025-07-27 16:59:36,875 - app_logger - INFO - focus_group_service:415 - Processing 2 moderator questions.
+2025-07-27 16:59:36,875 - app_logger - INFO - focus_group_service:419 - Asking moderator question: What do you think of the recent Oasis Gigs in Heaton Park
+2025-07-27 16:59:36,875 - app_logger - INFO - focus_group_service:424 - Getting response from persona 1 to question: What do you think of the recent Oasis Gigs in Heat...
+2025-07-27 16:59:40,350 - app_logger - INFO - focus_group_service:380 - Generated moderator response for persona Sarah Mitchell, 32, Digital Ma... Output: As Sarah Mitchell, I'd say that the recent Oasis gigs in Heaton Park were quite the event! Being a Mancunian, there's always been this sense of pride and nostalgia attached to Oasis because they are such a big part of Manchester's music scene. I didn't get the chance to attend this time, but I've he...
+2025-07-27 16:59:40,351 - app_logger - INFO - focus_group_service:424 - Getting response from persona 2 to question: What do you think of the recent Oasis Gigs in Heat...
+2025-07-27 16:59:44,958 - app_logger - INFO - focus_group_service:380 - Generated moderator response for persona James Thompson, 28, Software D... Output: As James Thompson, I have to admit the recent Oasis gigs in Heaton Park were incredible from what I've gathered. While I wasn't able to attend myself, a few of my mates went, and they couldn't stop talking about how amazing it was to see such an iconic band back in action right here in Manchester. I...
+2025-07-27 16:59:44,959 - app_logger - INFO - focus_group_service:424 - Getting response from persona 3 to question: What do you think of the recent Oasis Gigs in Heat...
+2025-07-27 16:59:51,403 - app_logger - INFO - focus_group_service:380 - Generated moderator response for persona Emma Wilson, 35, Healthcare Wo... Output: As Emma Wilson, I think the recent Oasis gigs in Heaton Park were a fantastic highlight for our community. Living in the Manchester suburbs, I've always felt a strong connection to the city's musical roots, and Oasis is such a big part of that legacy. While I didn't attend the gigs myself, I've hear...
+2025-07-27 16:59:51,404 - app_logger - INFO - focus_group_service:419 - Asking moderator question: What song would you like to hear the most from an Oasis gig
+2025-07-27 16:59:51,404 - app_logger - INFO - focus_group_service:424 - Getting response from persona 1 to question: What song would you like to hear the most from an ...
+2025-07-27 16:59:55,601 - app_logger - INFO - focus_group_service:380 - Generated moderator response for persona Sarah Mitchell, 32, Digital Ma... Output: As Sarah Mitchell, I'd say that if I could hear just one song from an Oasis gig, it would have to be "Don't Look Back in Anger." There's something incredibly powerful about that song; it has this anthemic quality that really brings people together. It's one of those tracks that, despite hearing it c...
+2025-07-27 16:59:55,602 - app_logger - INFO - focus_group_service:424 - Getting response from persona 2 to question: What song would you like to hear the most from an ...
+2025-07-27 16:59:59,489 - app_logger - INFO - focus_group_service:380 - Generated moderator response for persona James Thompson, 28, Software D... Output: As James Thompson, if I could pick just one song to hear at an Oasis gig, it would definitely be "Live Forever." That song has always resonated with me, maybe because it captures that quintessential Oasis spirit of resilience and hope. It's got this timeless quality that feels both nostalgic and upl...
+2025-07-27 16:59:59,489 - app_logger - INFO - focus_group_service:424 - Getting response from persona 3 to question: What song would you like to hear the most from an ...
+2025-07-27 17:00:04,601 - app_logger - INFO - focus_group_service:380 - Generated moderator response for persona Emma Wilson, 35, Healthcare Wo... Output: As Emma Wilson, if I were to choose just one song to hear at an Oasis gig, it would have to be "Wonderwall." It's one of those songs that's become almost synonymous with Manchester and has this timeless appeal. Even after all these years, it still manages to evoke a strong emotional response, whethe...
+2025-07-27 17:00:04,601 - app_logger - INFO - focus_group_service:445 - Starting discussion round 1.
+2025-07-27 17:00:04,602 - app_logger - INFO - focus_group_service:459 - Round 1, turn for persona 1: Sarah Mitchell, 32, Digital Marketing Manager, Man...
+2025-07-27 17:00:06,497 - app_logger - INFO - focus_group_service:334 - Generated discussion response for persona Sarah Mitchell, 32, Digital Ma... Output: As Sarah Mitchell, I appreciate the warm welcome to the focus group. It's always interesting to engage in discussions like these, especially given my background in digital marketing. I believe having a diverse group of individuals brings a variety of perspectives, which can lead to more insightful c...
+2025-07-27 17:00:06,498 - app_logger - INFO - focus_group_service:459 - Round 1, turn for persona 2: James Thompson, 28, Software Developer, Manchester...
+2025-07-27 17:00:08,280 - app_logger - INFO - focus_group_service:334 - Generated discussion response for persona James Thompson, 28, Software D... Output: As James Thompson, I also appreciate the warm welcome to the focus group. It's great to be part of a discussion where different perspectives can really enrich the conversation. As a software developer working in Manchester's tech district, I see firsthand how technology and culture intersect in our ...
+2025-07-27 17:00:08,280 - app_logger - INFO - focus_group_service:459 - Round 1, turn for persona 3: Emma Wilson, 35, Healthcare Worker, Manchester sub...
+2025-07-27 17:00:11,355 - app_logger - INFO - focus_group_service:334 - Generated discussion response for persona Emma Wilson, 35, Healthcare Wo... Output: As Emma Wilson, I'm grateful for the warm welcome as well! It's lovely to hear from both Sarah and James about their experiences in the heart of Manchester. Living in the suburbs, I appreciate the quieter side of life, but I do enjoy the occasional trip into the city. Working in healthcare, I often ...
+2025-07-27 17:00:11,356 - app_logger - INFO - focus_group_service:481 - Focus group simulation completed.
+2025-07-27 17:05:54,660 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:05:54,660 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:05:54,712 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:05:54,713 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:05:54,724 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:05:54,732 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:05:54,733 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:05:54,745 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:05:54,746 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:05:56,307 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:05:56,307 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:05:56,315 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:05:56,315 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:05:56,315 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:05:56,316 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:05:56,316 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:05:56,316 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:05:56,316 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:05:56,316 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:05:56,316 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:05:56,318 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:05:56,318 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:05:56,318 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:05:56,319 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:05:56,322 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:05:56,322 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:05:56,323 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:05:56,323 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:05:56,340 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:05:56,341 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:05:56,342 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:05:56,343 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:06:12,838 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:06:12,840 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:06:12,858 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:06:12,860 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:06:12,863 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:06:12,865 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:06:12,864 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:06:12,865 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:06:12,866 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:06:12,866 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:06:14,066 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:06:14,067 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:06:14,067 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:06:14,067 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:06:14,067 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:06:14,068 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:06:14,068 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:06:14,068 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:06:14,069 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:06:14,070 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:06:14,077 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:06:14,078 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:06:14,086 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:06:14,087 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:06:14,087 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:06:14,087 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:06:14,088 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:06:14,088 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:06:14,088 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:06:14,088 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:06:14,089 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:06:14,090 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:06:14,098 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:06:14,099 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:06:21,001 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:06:21,019 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:06:21,022 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:06:21,023 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:06:21,024 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:06:21,024 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:06:21,040 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:06:21,047 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:06:21,048 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:06:21,049 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:06:21,990 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:06:21,992 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:06:21,992 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:06:21,992 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:06:21,992 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:06:21,992 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:06:21,992 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:06:21,992 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:06:21,993 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:06:21,993 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:06:21,993 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:06:21,993 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:06:21,993 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:06:21,993 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:06:21,993 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:06:21,994 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:06:21,994 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:06:21,994 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:06:21,994 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:06:21,995 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:06:22,003 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:06:22,005 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:06:22,008 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:06:22,011 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:09:17,955 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:09:17,955 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:09:17,981 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:09:17,981 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:09:17,986 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:09:17,987 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:09:17,987 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:09:17,988 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:09:17,988 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:09:17,989 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:09:19,090 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:09:19,092 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:09:19,092 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:09:19,093 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:09:19,093 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:09:19,093 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:09:19,093 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:09:19,094 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:09:19,095 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:09:19,096 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:09:19,103 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:09:19,105 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:09:19,105 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:09:19,106 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:09:19,106 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:09:19,106 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:09:19,107 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:09:19,107 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:09:19,108 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:09:19,109 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:09:19,109 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:09:19,111 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:09:19,121 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:09:19,123 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:18:27,407 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:18:27,408 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:18:27,427 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:18:27,427 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:18:27,431 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:18:27,432 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:18:27,432 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:18:27,433 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:18:27,433 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:18:27,433 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:18:28,655 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:18:28,655 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:18:28,656 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:18:28,656 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:18:28,656 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:18:28,657 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:18:28,657 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:18:28,657 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:18:28,657 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:18:28,657 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:18:28,657 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:18:28,657 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:18:28,657 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:18:28,658 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:18:28,658 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:18:28,658 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:18:28,659 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:18:28,659 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:18:28,659 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:18:28,660 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:18:28,672 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:18:28,671 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:18:28,674 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:18:28,674 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:18:35,193 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:18:35,200 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:18:35,222 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:18:35,228 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:18:35,229 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:18:35,229 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:18:35,230 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:18:35,233 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:18:35,234 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:18:35,234 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:18:36,194 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:18:36,195 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:18:36,195 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:18:36,195 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:18:36,195 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:18:36,195 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:18:36,196 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:18:36,196 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:18:36,197 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:18:36,197 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:18:36,204 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:18:36,206 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:18:36,224 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:18:36,225 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:18:36,226 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:18:36,226 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:18:36,226 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:18:36,227 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:18:36,227 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:18:36,227 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:18:36,228 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:18:36,229 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:18:36,236 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:18:36,238 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:18:49,483 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:18:49,507 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:18:49,513 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:18:49,513 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:18:49,514 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:18:50,392 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:18:50,393 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:18:50,394 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:18:50,394 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:18:50,394 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:18:50,395 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:18:50,395 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:18:50,395 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:18:50,396 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:18:50,396 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:18:50,407 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:18:50,409 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:18:50,545 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:18:50,564 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:18:50,568 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:18:50,570 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:18:50,570 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:18:51,432 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:18:51,434 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:18:51,435 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:18:51,435 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:18:51,435 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:18:51,436 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:18:51,436 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:18:51,436 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:18:51,438 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:18:51,438 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:18:51,446 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:18:51,448 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:19:30,246 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:19:30,261 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:19:30,278 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:19:30,282 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:19:30,284 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:19:30,285 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:19:30,289 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:19:30,295 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:19:30,296 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:19:30,297 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:19:31,439 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:19:31,441 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:19:31,441 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:19:31,441 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:19:31,442 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:19:31,442 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:19:31,442 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:19:31,442 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:19:31,443 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:19:31,443 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:19:31,443 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:19:31,443 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:19:31,443 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:19:31,444 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:19:31,444 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:19:31,444 - app_logger - INFO - app:45 - All services initialized.
+ORS.
+2025-07-27 17:19:31,444 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:19:31,445 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:19:31,446 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:19:31,459 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:19:31,461 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:19:31,461 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:19:31,462 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:23:14,419 - app_logger - INFO - ingest_multiple_cities:31 - Successfully ingested data for Birmingham
+2025-07-27 17:23:14,425 - app_logger - INFO - ingest_multiple_cities:31 - Successfully ingested data for Liverpool
+2025-07-27 17:23:59,560 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:23:59,561 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:23:59,584 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:23:59,584 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:23:59,589 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:23:59,590 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:23:59,590 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:23:59,592 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:23:59,592 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:23:59,592 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:24:00,855 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:24:00,856 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:24:00,856 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:24:00,856 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:24:00,857 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:24:00,857 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:24:00,857 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:24:00,858 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:24:00,860 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:24:00,860 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:24:00,875 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:24:00,876 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:24:00,886 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:24:00,888 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:24:00,888 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:24:00,889 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:24:00,889 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:24:00,889 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:24:00,890 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:24:00,890 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:24:00,891 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:24:00,892 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:24:00,902 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:24:00,904 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:24:56,424 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:24:56,425 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:24:56,440 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:24:56,440 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:24:56,444 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:24:56,445 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:24:56,445 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:24:56,446 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:24:56,446 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:24:56,447 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:24:57,379 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:24:57,380 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:24:57,380 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:24:57,381 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:24:57,381 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:24:57,381 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:24:57,381 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:24:57,381 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:24:57,383 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:24:57,384 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:24:57,391 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:24:57,393 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:24:57,438 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:24:57,439 - app_logger - INFO - ons_data_service:29 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:24:57,439 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:24:57,440 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:24:57,440 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:24:57,440 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:24:57,440 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:24:57,441 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:24:57,442 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:24:57,442 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:24:57,453 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:24:57,455 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:52:52,097 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:52:52,104 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:52:52,110 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:52:52,111 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:52:53,180 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:52:53,184 - app_logger - INFO - ons_data_service:30 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:52:53,184 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:52:53,185 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:52:53,185 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:52:53,185 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:52:53,185 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:52:53,186 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:52:53,188 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:52:53,189 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:52:53,203 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:52:53,207 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:52:59,084 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:52:59,102 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:52:59,107 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:52:59,108 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:52:59,109 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:53:00,164 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:53:00,165 - app_logger - INFO - ons_data_service:30 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:53:00,165 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:53:00,166 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:53:00,166 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:53:00,166 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:53:00,166 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:53:00,167 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:53:00,169 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:53:00,169 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:53:00,182 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:53:00,186 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 17:55:42,801 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 17:55:42,829 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 17:55:42,835 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 17:55:42,836 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 17:55:42,837 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 17:55:43,772 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 17:55:43,773 - app_logger - INFO - ons_data_service:30 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 17:55:43,773 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 17:55:43,773 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 17:55:43,774 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 17:55:43,774 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 17:55:43,774 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 17:55:43,774 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 17:55:43,775 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 17:55:43,776 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 17:55:43,787 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 17:55:43,790 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 18:15:39,234 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 18:15:39,260 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 18:15:39,270 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 18:15:39,277 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 18:15:39,278 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 18:15:40,221 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 18:15:40,225 - app_logger - INFO - ons_data_service:30 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 18:15:40,225 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 18:15:40,225 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 18:15:40,226 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 18:15:40,226 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 18:15:40,226 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 18:15:40,226 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 18:15:40,228 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 18:15:40,228 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 18:15:40,235 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 18:15:40,237 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 18:17:40,669 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 18:17:40,684 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 18:17:40,689 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 18:17:40,690 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 18:17:40,691 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 18:17:41,514 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 18:17:41,515 - app_logger - INFO - ons_data_service:30 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 18:17:41,515 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 18:17:41,516 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 18:17:41,516 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 18:17:41,516 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 18:17:41,516 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 18:17:41,516 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 18:17:41,518 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 18:17:41,518 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 18:17:41,527 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 18:17:41,529 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 18:19:28,542 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 18:19:28,571 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 18:19:28,575 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 18:19:28,577 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 18:19:28,578 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 18:19:29,814 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 18:19:29,821 - app_logger - INFO - ons_data_service:30 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 18:19:29,821 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 18:19:29,822 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 18:19:29,822 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 18:19:29,822 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 18:19:29,822 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 18:19:29,823 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 18:19:29,826 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 18:19:29,827 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 18:19:29,835 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 18:19:29,836 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 18:19:43,370 - app_logger - ERROR - ingest_new_cities:36 - Failed to ingest London: table cities has no column named name
+Traceback (most recent call last):
+  File "C:\Users\TomWilletts\Repositories\audience-engine-1\ingest_new_cities.py", line 19, in ingest_city_data
+    city_id = self._insert_city(city_data)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TomWilletts\Repositories\audience-engine-1\ingest_new_cities.py", line 69, in _insert_city
+    self.cursor.execute(insert_sql, (
+sqlite3.OperationalError: table cities has no column named name
+2025-07-27 18:19:43,379 - app_logger - ERROR - ingest_new_cities:36 - Failed to ingest Leeds: table cities has no column named name
+Traceback (most recent call last):
+  File "C:\Users\TomWilletts\Repositories\audience-engine-1\ingest_new_cities.py", line 19, in ingest_city_data
+    city_id = self._insert_city(city_data)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TomWilletts\Repositories\audience-engine-1\ingest_new_cities.py", line 69, in _insert_city
+    self.cursor.execute(insert_sql, (
+sqlite3.OperationalError: table cities has no column named name
+2025-07-27 18:19:43,380 - app_logger - ERROR - ingest_new_cities:36 - Failed to ingest Newcastle upon Tyne: table cities has no column named name
+Traceback (most recent call last):
+  File "C:\Users\TomWilletts\Repositories\audience-engine-1\ingest_new_cities.py", line 19, in ingest_city_data
+    city_id = self._insert_city(city_data)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TomWilletts\Repositories\audience-engine-1\ingest_new_cities.py", line 69, in _insert_city
+    self.cursor.execute(insert_sql, (
+sqlite3.OperationalError: table cities has no column named name
+2025-07-27 18:19:43,381 - app_logger - ERROR - ingest_new_cities:36 - Failed to ingest Cardiff: table cities has no column named name
+Traceback (most recent call last):
+  File "C:\Users\TomWilletts\Repositories\audience-engine-1\ingest_new_cities.py", line 19, in ingest_city_data
+    city_id = self._insert_city(city_data)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TomWilletts\Repositories\audience-engine-1\ingest_new_cities.py", line 69, in _insert_city
+    self.cursor.execute(insert_sql, (
+sqlite3.OperationalError: table cities has no column named name
+2025-07-27 18:19:43,382 - app_logger - ERROR - ingest_new_cities:36 - Failed to ingest Oxford: table cities has no column named name
+Traceback (most recent call last):
+  File "C:\Users\TomWilletts\Repositories\audience-engine-1\ingest_new_cities.py", line 19, in ingest_city_data
+    city_id = self._insert_city(city_data)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TomWilletts\Repositories\audience-engine-1\ingest_new_cities.py", line 69, in _insert_city
+    self.cursor.execute(insert_sql, (
+sqlite3.OperationalError: table cities has no column named name
+2025-07-27 18:19:43,383 - app_logger - ERROR - ingest_new_cities:36 - Failed to ingest Norwich: table cities has no column named name
+Traceback (most recent call last):
+  File "C:\Users\TomWilletts\Repositories\audience-engine-1\ingest_new_cities.py", line 19, in ingest_city_data
+    city_id = self._insert_city(city_data)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TomWilletts\Repositories\audience-engine-1\ingest_new_cities.py", line 69, in _insert_city
+    self.cursor.execute(insert_sql, (
+sqlite3.OperationalError: table cities has no column named name
+2025-07-27 18:19:43,970 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 18:19:43,996 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 18:19:44,001 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 18:19:44,002 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 18:19:44,003 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 18:19:45,097 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 18:19:45,098 - app_logger - INFO - ons_data_service:30 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 18:19:45,099 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 18:19:45,099 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 18:19:45,099 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 18:19:45,100 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 18:19:45,100 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 18:19:45,100 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 18:19:45,101 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 18:19:45,102 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 18:19:45,115 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 18:19:45,117 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 18:22:26,078 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 18:22:26,100 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 18:22:26,105 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 18:22:26,107 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 18:22:26,107 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 18:22:27,039 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 18:22:27,040 - app_logger - INFO - ons_data_service:30 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 18:22:27,040 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 18:22:27,041 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 18:22:27,041 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 18:22:27,041 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 18:22:27,041 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 18:22:27,041 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 18:22:27,042 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 18:22:27,043 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 18:22:27,050 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 18:22:27,052 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 18:22:45,220 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 18:22:45,235 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 18:22:45,239 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 18:22:45,242 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 18:22:45,242 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 18:22:46,050 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 18:22:46,051 - app_logger - INFO - ons_data_service:30 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 18:22:46,051 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 18:22:46,051 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 18:22:46,052 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 18:22:46,052 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 18:22:46,052 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 18:22:46,052 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 18:22:46,053 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 18:22:46,054 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 18:22:46,065 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 18:22:46,067 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 18:23:03,998 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 18:23:04,017 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 18:23:04,021 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 18:23:04,023 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 18:23:04,023 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 18:23:04,854 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 18:23:04,855 - app_logger - INFO - ons_data_service:30 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 18:23:04,856 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 18:23:04,856 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 18:23:04,856 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 18:23:04,857 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 18:23:04,857 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 18:23:04,857 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 18:23:04,859 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 18:23:04,860 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 18:23:04,867 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 18:23:04,869 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 18:23:18,664 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 18:23:18,683 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 18:23:18,688 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 18:23:18,690 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 18:23:18,692 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 18:23:19,563 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 18:23:19,564 - app_logger - INFO - ons_data_service:30 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 18:23:19,565 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 18:23:19,565 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 18:23:19,565 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 18:23:19,565 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 18:23:19,565 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 18:23:19,565 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 18:23:19,567 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 18:23:19,567 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 18:23:19,576 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 18:23:19,578 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 18:23:23,682 - app_logger - INFO - ingest_new_cities:31 - Successfully ingested data for London
+2025-07-27 18:23:23,688 - app_logger - INFO - ingest_new_cities:31 - Successfully ingested data for Leeds
+2025-07-27 18:23:23,695 - app_logger - INFO - ingest_new_cities:31 - Successfully ingested data for Newcastle upon Tyne
+2025-07-27 18:23:23,701 - app_logger - INFO - ingest_new_cities:31 - Successfully ingested data for Cardiff
+2025-07-27 18:23:23,709 - app_logger - INFO - ingest_new_cities:31 - Successfully ingested data for Oxford
+2025-07-27 18:23:23,717 - app_logger - INFO - ingest_new_cities:31 - Successfully ingested data for Norwich
+2025-07-27 18:29:19,637 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 18:29:19,667 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 18:29:19,671 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 18:29:19,674 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 18:29:19,675 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 18:29:20,901 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 18:29:20,903 - app_logger - INFO - ons_data_service:30 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 18:29:20,905 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 18:29:20,906 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 18:29:20,907 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 18:29:20,907 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 18:29:20,907 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 18:29:20,908 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 18:29:20,910 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 18:29:20,911 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 18:29:20,927 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 18:29:20,929 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 18:46:54,302 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 18:46:54,325 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 18:46:54,334 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 18:46:54,339 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 18:46:54,339 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 18:46:55,290 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 18:46:55,294 - app_logger - INFO - ons_data_service:30 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 18:46:55,295 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 18:46:55,295 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 18:46:55,296 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 18:46:55,296 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 18:46:55,296 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 18:46:55,297 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 18:46:55,299 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 18:46:55,300 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 18:46:55,309 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 18:46:55,310 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 18:50:50,034 - app_logger - INFO - persona:23 - OpenAI API Key re-checked/set in persona service.
+2025-07-27 18:50:50,053 - app_logger - INFO - app:29 - Application startup sequence initiated.
+2025-07-27 18:50:50,058 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 18:50:50,060 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 18:50:50,060 - app_logger - INFO - app:35 - Initializing services...
+2025-07-27 18:50:50,842 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 18:50:50,843 - app_logger - INFO - ons_data_service:30 - ONSDataService initialized with data from 'data/ons_demographics.csv'.
+2025-07-27 18:50:50,843 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 18:50:50,844 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 18:50:50,844 - app_logger - INFO - client_data_service:19 - ClientDataService initialized.
+2025-07-27 18:50:50,844 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 18:50:50,844 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 18:50:50,844 - app_logger - INFO - app:45 - All services initialized.
+2025-07-27 18:50:50,846 - app_logger - INFO - app:51 - Flask app configured with CORS.
+2025-07-27 18:50:50,846 - app_logger - INFO - app:54 - Registering blueprints...
+2025-07-27 18:50:50,852 - app_logger - INFO - app:65 - All blueprints registered.
+2025-07-27 18:50:50,854 - app_logger - INFO - app:99 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 19:16:00,360 - app_logger - INFO - app:22 - Application startup sequence initiated.
+2025-07-27 19:16:00,367 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 19:16:00,373 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 19:16:00,374 - app_logger - INFO - app:28 - Initializing services...
+2025-07-27 19:16:01,417 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 19:16:01,423 - app_logger - INFO - data_service:29 - ONS data loaded successfully with 12 records.
+2025-07-27 19:16:01,424 - app_logger - INFO - data_service:14 - DataService initialized with ONS, City, and Client data capabilities.
+2025-07-27 19:16:01,424 - app_logger - INFO - ai_service:14 - AIService initialized for vision and summary operations.
+2025-07-27 19:16:01,424 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 19:16:01,424 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 19:16:01,425 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 19:16:01,425 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 19:16:01,425 - app_logger - INFO - app:42 - All services initialized.
+2025-07-27 19:16:01,427 - app_logger - INFO - app:47 - Flask app configured with CORS.
+2025-07-27 19:16:01,427 - app_logger - INFO - app:50 - Registering blueprints...
+2025-07-27 19:16:01,433 - app_logger - INFO - data_service:29 - ONS data loaded successfully with 12 records.
+2025-07-27 19:16:01,434 - app_logger - INFO - data_service:14 - DataService initialized with ONS, City, and Client data capabilities.
+2025-07-27 19:16:01,436 - app_logger - INFO - app:54 - All blueprints registered.
+2025-07-27 19:16:01,438 - app_logger - INFO - app:91 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 19:16:07,443 - app_logger - INFO - app:22 - Application startup sequence initiated.
+2025-07-27 19:16:07,447 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 19:16:07,448 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 19:16:07,449 - app_logger - INFO - app:28 - Initializing services...
+2025-07-27 19:16:08,303 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 19:16:08,304 - app_logger - INFO - data_service:29 - ONS data loaded successfully with 12 records.
+2025-07-27 19:16:08,305 - app_logger - INFO - data_service:14 - DataService initialized with ONS, City, and Client data capabilities.
+2025-07-27 19:16:08,305 - app_logger - INFO - ai_service:14 - AIService initialized for vision and summary operations.
+2025-07-27 19:16:08,305 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 19:16:08,305 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 19:16:08,305 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 19:16:08,306 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 19:16:08,306 - app_logger - INFO - app:42 - All services initialized.
+2025-07-27 19:16:08,307 - app_logger - INFO - app:47 - Flask app configured with CORS.
+2025-07-27 19:16:08,307 - app_logger - INFO - app:50 - Registering blueprints...
+2025-07-27 19:16:08,311 - app_logger - INFO - data_service:29 - ONS data loaded successfully with 12 records.
+2025-07-27 19:16:08,311 - app_logger - INFO - data_service:14 - DataService initialized with ONS, City, and Client data capabilities.
+2025-07-27 19:16:08,313 - app_logger - INFO - app:54 - All blueprints registered.
+2025-07-27 19:16:08,316 - app_logger - INFO - app:91 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 19:17:17,590 - app_logger - INFO - app:22 - Application startup sequence initiated.
+2025-07-27 19:17:17,597 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 19:17:17,598 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 19:17:17,599 - app_logger - INFO - app:28 - Initializing services...
+2025-07-27 19:17:18,387 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 19:17:18,388 - app_logger - INFO - data_service:29 - ONS data loaded successfully with 12 records.
+2025-07-27 19:17:18,388 - app_logger - INFO - data_service:14 - DataService initialized with ONS, City, and Client data capabilities.
+2025-07-27 19:17:18,388 - app_logger - INFO - ai_service:14 - AIService initialized for vision and summary operations.
+2025-07-27 19:17:18,388 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 19:17:18,388 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 19:17:18,389 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 19:17:18,389 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 19:17:18,389 - app_logger - INFO - app:42 - All services initialized.
+2025-07-27 19:17:18,390 - app_logger - INFO - app:47 - Flask app configured with CORS.
+2025-07-27 19:17:18,390 - app_logger - INFO - app:50 - Registering blueprints...
+2025-07-27 19:17:18,394 - app_logger - INFO - data_service:29 - ONS data loaded successfully with 12 records.
+2025-07-27 19:17:18,394 - app_logger - INFO - data_service:14 - DataService initialized with ONS, City, and Client data capabilities.
+2025-07-27 19:17:18,396 - app_logger - INFO - app:54 - All blueprints registered.
+2025-07-27 19:17:18,399 - app_logger - INFO - app:91 - Starting Flask app on 0.0.0.0:5000
+2025-07-27 19:17:22,936 - app_logger - INFO - app:22 - Application startup sequence initiated.
+2025-07-27 19:17:22,941 - app_logger - INFO - database:18 - Checking and creating database tables...
+2025-07-27 19:17:22,942 - app_logger - INFO - database:59 - Database tables created successfully.
+2025-07-27 19:17:22,942 - app_logger - INFO - app:28 - Initializing services...
+2025-07-27 19:17:23,771 - app_logger - INFO - embedding_service:21 - EmbeddingService initialized with ChromaDB collection 'persona_embeddings'.
+2025-07-27 19:17:23,772 - app_logger - INFO - data_service:29 - ONS data loaded successfully with 12 records.
+2025-07-27 19:17:23,772 - app_logger - INFO - data_service:14 - DataService initialized with ONS, City, and Client data capabilities.
+2025-07-27 19:17:23,772 - app_logger - INFO - ai_service:14 - AIService initialized for vision and summary operations.
+2025-07-27 19:17:23,772 - app_logger - INFO - history_manager:10 - HistoryManager initialized.
+2025-07-27 19:17:23,773 - app_logger - INFO - persona_service:21 - PersonaService initialized.
+2025-07-27 19:17:23,773 - app_logger - INFO - audience_service:19 - AudienceService initialized.
+2025-07-27 19:17:23,773 - app_logger - INFO - content_test_service:20 - ContentTestService initialized.
+2025-07-27 19:17:23,773 - app_logger - INFO - app:42 - All services initialized.
+2025-07-27 19:17:23,775 - app_logger - INFO - app:47 - Flask app configured with CORS.
+2025-07-27 19:17:23,775 - app_logger - INFO - app:50 - Registering blueprints...
+2025-07-27 19:17:23,779 - app_logger - INFO - data_service:29 - ONS data loaded successfully with 12 records.
+2025-07-27 19:17:23,779 - app_logger - INFO - data_service:14 - DataService initialized with ONS, City, and Client data capabilities.
+2025-07-27 19:17:23,781 - app_logger - INFO - app:54 - All blueprints registered.
+2025-07-27 19:17:23,783 - app_logger - INFO - app:91 - Starting Flask app on 0.0.0.0:5000

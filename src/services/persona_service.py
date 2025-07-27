@@ -6,109 +6,50 @@ class PersonaService:
     """
     Handles the generation and management of individual AI personas.
     """
-    def __init__(self, db_connection, embedding_service, ons_data_service):
+    def __init__(self, db_connection, embedding_service, data_service):
         """
         Initializes the PersonaService.
 
         Args:
             db_connection: An active database connection/session.
             embedding_service: Service for vector database operations.
-            ons_data_service: Service for ONS demographic data.
+            data_service: Service for demographic and city data operations.
         """
         self.db = db_connection
         self.embedding_service = embedding_service
-        self.ons_data_service = ons_data_service
+        self.data_service = data_service
         app_logger.info("PersonaService initialized.")
 
-    def create_and_store_persona(self, audience_id: str, region: str, source: str = 'ons'):
+    def create_persona(self, persona_id: str, region: str = "UK") -> dict:
         """
-        Generates a persona, its embedding, and stores it in the database.
+        Creates a new persona with realistic demographic characteristics.
 
         Args:
-            audience_id (str): The audience this persona belongs to.
-            region (str): The geographical region for the persona.
-            source (str): The source of the persona data ('ons', 'client').
+            persona_id (str): Unique identifier for the persona.
+            region (str): Geographic region to sample demographics from.
 
         Returns:
-            dict: The created persona's data.
+            dict: Generated persona with demographics and description.
         """
-        app_logger.info(f"Creating persona for audience {audience_id} in {region}.")
-
-        # 1. Get a demographic profile from the ONS data service
-        demographics = self.ons_data_service.sample_profile(region)
-
-        # 2. Generate a text description for this persona
+        # Sample demographics from data service
+        demographics = self.data_service.sample_ons_profile(region)
+        
+        # Generate persona description
         description = self._generate_persona_description(demographics)
-
-        # 3. Generate an embedding for the description
-        # This will be an actual call to an embedding model like OpenAI's
-        embedding_vector = [0.1, 0.2, 0.3] # Placeholder
-
-        # 4. Store the persona in the SQL database
-        cursor = self.db.cursor()
-        cursor.execute(
-            "INSERT INTO personas (audience_id, demographics, embedding_id, description, source) VALUES (?, ?, ?, ?, ?)",
-            (audience_id, json.dumps(demographics), None, description, source)
-        )
-        self.db.commit()
-        persona_id = cursor.lastrowid
-
-        # 5. Store the embedding in ChromaDB
-        self.embedding_service.add_persona_embedding(str(persona_id), embedding_vector, metadata=demographics)
         
-        return {"id": persona_id, "description": description, "demographics": demographics}
-
-    def generate_ephemeral_persona(self, region: str) -> dict:
-        """
-        Generates a persona's data without storing it in the database.
-        This is ideal for on-the-fly sampling for focus groups.
-        """
-        app_logger.info(f"Generating ephemeral persona for {region}.")
+        # Generate embeddings for the persona (placeholder for future RAG)
+        embedding = self._generate_persona_embedding(description)
         
-        try:
-            demographics = self.ons_data_service.sample_profile(region)
-            
-            # Handle case where ONS service returns an error
-            if isinstance(demographics, dict) and "error" in demographics:
-                demographics = self._generate_fallback_demographics(region)
-            
-            # Ensure we have a name
-            if 'name' not in demographics or not demographics['name']:
-                import random
-                names = ['Alex', 'Sam', 'Jordan', 'Taylor', 'Casey', 'Morgan', 'Riley', 'Avery']
-                demographics['name'] = random.choice(names)
-            
-            description = self._generate_persona_description(demographics)
-            return {"description": description, "demographics": demographics}
-            
-        except Exception as e:
-            app_logger.error(f"Error generating ephemeral persona for {region}: {e}")
-            # Return a fallback persona to prevent simulation failure
-            return {
-                "description": "Alex, a 30-year-old professional living in the UK. They are a person with an income of £35000 per year.",
-                "demographics": {"name": "Alex", "age": 30, "occupation": "professional", "gender": "person", "region": region, "income": 35000}
-            }
-
-    def _generate_fallback_demographics(self, region: str) -> dict:
-        """Generate fallback demographics when ONS data is unavailable."""
-        import random
-        ages = [22, 25, 28, 32, 35, 38, 42, 45, 48, 52, 55, 58, 62, 65]
-        occupations = ['teacher', 'engineer', 'manager', 'designer', 'consultant', 'analyst', 'developer', 'nurse', 'accountant', 'chef', 'artist', 'lawyer']
-        genders = ['male', 'female']
-        
-        # Generate a unique name by combining first and last names
-        first_names = ['Alex', 'Sam', 'Jordan', 'Taylor', 'Casey', 'Morgan', 'Riley', 'Avery', 'Jamie', 'Blake', 'Cameron', 'Dana', 'Ellis', 'Finley', 'Harper', 'Jesse', 'Kelly', 'Logan', 'Max', 'Noel', 'Parker', 'Quinn', 'River', 'Sage', 'Tatum', 'Val', 'Wren', 'Zion', 'Adrian', 'Bailey', 'Chloe', 'Dylan', 'Emma', 'Felix', 'Grace', 'Henry', 'Iris', 'Jack']
-        last_names = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin']
-        name = f"{random.choice(first_names)} {random.choice(last_names)}"
-        
-        return {
-            'name': name,
-            'age': random.choice(ages),
-            'occupation': random.choice(occupations),
-            'gender': random.choice(genders),
-            'region': region,
-            'income': random.randint(25000, 65000)
+        persona = {
+            'id': persona_id,
+            'demographics': demographics,
+            'description': description,
+            'embedding': embedding,
+            'region': region
         }
+        
+        app_logger.debug(f"Created persona {persona_id} for region {region}")
+        return persona
 
     def _generate_persona_description(self, demographics: dict) -> str:
         """
@@ -123,22 +64,108 @@ class PersonaService:
         )
         return desc
 
-    def get_persona_response_to_stimulus(self, persona_id: str, stimulus: dict):
+    def _generate_persona_embedding(self, description: str):
         """
-        Generates a response from a specific persona to a given stimulus (message/image).
-        This will use the RAG pattern by retrieving context.
-
-        Args:
-            persona_id (str): The ID of the persona responding.
-            stimulus (dict): The stimulus material.
-
-        Returns:
-            str: The AI-generated response.
+        Generates vector embeddings for the persona description.
+        This enables similarity searches and persona clustering.
         """
-        app_logger.info(f"Generating response from persona {persona_id}.")
-        # TODO:
-        # 1. Fetch persona details (demographics, description) from the database.
-        # 2. Fetch relevant cultural context using the persona's embedding via EmbeddingService (RAG).
-        # 3. Construct a detailed prompt for the LLM including persona, stimulus, and context.
-        # 4. Call the LLM and return the response.
-        return f"This is a simulated response from persona {persona_id}." 
+        try:
+            # Use embedding service to generate vectors
+            embedding = self.embedding_service.generate_embedding(description)
+            return embedding
+        except Exception as e:
+            app_logger.warning(f"Failed to generate embedding for persona: {e}")
+            return None
+
+    def get_persona_response_to_stimulus(self, persona_data: dict, stimulus: str) -> str:
+        """
+        Generates a persona's response to a marketing stimulus.
+        This is a placeholder that would use an LLM service in practice.
+        """
+        # TODO: Implement actual LLM call through AI service
+        app_logger.debug(f"Generating response for persona {persona_data.get('id', 'unknown')}")
+        
+        # Placeholder response
+        response = (
+            f"As {persona_data['description']}, I think this stimulus is interesting. "
+            f"It relates to my background because..."
+        )
+        return response
+
+    def store_persona(self, persona: dict):
+        """
+        Stores a persona in the database.
+        """
+        try:
+            cursor = self.db.cursor()
+            cursor.execute("""
+                INSERT OR REPLACE INTO personas 
+                (id, demographics, description, embedding, region, created_at)
+                VALUES (?, ?, ?, ?, ?, datetime('now'))
+            """, (
+                persona['id'],
+                json.dumps(persona['demographics']),
+                persona['description'],
+                json.dumps(persona.get('embedding', [])),
+                persona['region']
+            ))
+            self.db.commit()
+            app_logger.info(f"Stored persona {persona['id']} in database")
+        except Exception as e:
+            app_logger.error(f"Error storing persona {persona['id']}: {e}", exc_info=True)
+            raise
+
+    def retrieve_persona(self, persona_id: str) -> dict:
+        """
+        Retrieves a persona from the database.
+        """
+        try:
+            cursor = self.db.cursor()
+            cursor.execute("""
+                SELECT id, demographics, description, embedding, region, created_at
+                FROM personas WHERE id = ?
+            """, (persona_id,))
+            
+            result = cursor.fetchone()
+            if result:
+                return {
+                    'id': result[0],
+                    'demographics': json.loads(result[1]),
+                    'description': result[2],
+                    'embedding': json.loads(result[3]),
+                    'region': result[4],
+                    'created_at': result[5]
+                }
+            return None
+        except Exception as e:
+            app_logger.error(f"Error retrieving persona {persona_id}: {e}", exc_info=True)
+            raise
+
+    def list_personas_by_region(self, region: str) -> list:
+        """
+        Lists all personas from a specific region.
+        """
+        try:
+            cursor = self.db.cursor()
+            cursor.execute("""
+                SELECT id, demographics, description, region, created_at
+                FROM personas WHERE region = ?
+                ORDER BY created_at DESC
+            """, (region,))
+            
+            results = cursor.fetchall()
+            personas = []
+            for result in results:
+                personas.append({
+                    'id': result[0],
+                    'demographics': json.loads(result[1]),
+                    'description': result[2],
+                    'region': result[3],
+                    'created_at': result[4]
+                })
+            
+            app_logger.debug(f"Retrieved {len(personas)} personas for region {region}")
+            return personas
+        except Exception as e:
+            app_logger.error(f"Error listing personas for region {region}: {e}", exc_info=True)
+            raise 
