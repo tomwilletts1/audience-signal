@@ -1,608 +1,712 @@
 # src/services/focus_group_service.py
-import openai
+import json
+import uuid
+from datetime import datetime
+from typing import Dict, List, Optional
 from enum import Enum
-from typing import List
-from src.config import config
+from src.services.ai_service import AIService
 from src.utils.logger import app_logger
 
-class PersonaStyle(Enum):
-    AGREEABLE = "agreeable"
-    CONTRARIAN = "contrarian"
-    ANALYTICAL = "analytical"
-    EMOTIONAL = "emotional"
-    NEUTRAL = "neutral"
-
 class SimulationState(Enum):
-    RUNNING = "running"
+    INITIALIZING = "initializing"
+    ACTIVE = "active"
     PAUSED = "paused"
     COMPLETED = "completed"
     ERROR = "error"
 
 class FocusGroupSimulator:
-    def __init__(self, personas_details: list[str], stimulus_message: str = None, stimulus_image_data: str = None, questions: list = None, group_size: int = None, open_discussion: bool = False):
-        if not personas_details:
-            raise ValueError("At least one persona is required for a focus group.")
-        if not stimulus_message and not stimulus_image_data:
-            raise ValueError("A stimulus (message or image) is required.")
-
-        self.personas_details = personas_details
-        self.stimulus_message = stimulus_message
-        self.stimulus_image_data = stimulus_image_data
-        self.transcript = []
+    """
+    Focus Group Simulator that accepts personas and runs interactive simulations.
+    
+    This simulator takes pre-built personas and runs focus group discussions,
+    allowing for interactive moderator questions and open discussions.
+    """
+    
+    def __init__(self, *args, **kwargs):
+        """
+        Initialize the focus group simulator with backward compatibility.
+        
+        Two calling patterns supported:
+        1. NEW: FocusGroupSimulator(personas_details=..., stimulus_message=..., ...)
+        2. OLD: FocusGroupSimulator(data_service, ai_service)
+        
+        Args:
+            For NEW pattern:
+                personas_details: List of persona dictionaries with demographics and descriptions
+                stimulus_message: Initial message or topic to discuss
+                stimulus_image_data: Optional image data for visual stimulus
+                moderator_questions: List of questions for the moderator to ask
+                open_discussion: Whether to allow open discussion between participants
+            
+            For OLD pattern:
+                data_service: DataService instance
+                ai_service: AIService instance
+        """
+        # Detect calling pattern
+        if len(args) == 2 and len(kwargs) == 0:
+            # Old pattern: FocusGroupSimulator(data_service, ai_service)
+            data_service, ai_service = args
+            self._init_old_pattern(data_service, ai_service)
+        else:
+            # New pattern: FocusGroupSimulator(personas_details=..., ...)
+            personas_details = args[0] if args else kwargs.get('personas_details', [])
+            stimulus_message = kwargs.get('stimulus_message')
+            stimulus_image_data = kwargs.get('stimulus_image_data')
+            moderator_questions = kwargs.get('moderator_questions', [])
+            open_discussion = kwargs.get('open_discussion', False)
+            self._init_new_pattern(personas_details, stimulus_message, stimulus_image_data, 
+                                 moderator_questions, open_discussion)
+    
+    def _init_old_pattern(self, data_service, ai_service):
+        """Initialize using the old hybrid pattern."""
+        from src.services.hybrid_audience_service import HybridAudienceService
+        
+        self.data_service = data_service
+        self.ai_service = ai_service
+        self.hybrid_service = HybridAudienceService(data_service, ai_service)
+        self.active_simulations = {}
+        
+        # Set default values for new pattern attributes
+        self.personas_details = []
+        self.stimulus_message = ""
+        self.stimulus_image_data = None
         self.moderator_questions = []
-        self.persona_styles = {}  # Map persona_index to PersonaStyle
+        self.open_discussion = False
+        self.state = SimulationState.INITIALIZING
         self.current_round = 0
-        self.state = SimulationState.RUNNING
-        self.sentiment_scores = []  # Track sentiment for each response
-        self.topics_identified = []  # Track emerging topics
-        self.group_size = group_size
+        self.transcript = []
+        self.simulation_id = str(uuid.uuid4())
+        
+        app_logger.info("FocusGroupSimulator initialized with hybrid services (old pattern)")
+    
+    def _init_new_pattern(self, personas_details, stimulus_message, stimulus_image_data, 
+                         moderator_questions, open_discussion):
+        """Initialize using the new direct pattern."""
+        self.personas_details = personas_details or []
+        self.stimulus_message = stimulus_message or ""
+        self.stimulus_image_data = stimulus_image_data
+        self.moderator_questions = moderator_questions or []
         self.open_discussion = open_discussion
-        # If questions are provided, add them as moderator questions for after_round=0
-        if questions:
-            for q in questions:
-                self.add_moderator_question(q, after_round=0)
-        app_logger.info(f"FocusGroupSimulator initialized for {len(personas_details)} personas. Group size: {group_size}, Open discussion: {open_discussion}, Questions: {len(questions) if questions else 0}")
-
-    def set_persona_style(self, persona_index: int, style: PersonaStyle):
-        """Set interaction style for a specific persona."""
-        self.persona_styles[persona_index] = style
-        app_logger.info(f"Set persona {persona_index} style to {style.value}")
-
-    def add_moderator_question(self, question: str, after_round: int = None):
-        """Add a moderator question to be asked after a specific round."""
-        self.moderator_questions.append({
-            'question': question,
-            'after_round': after_round or self.current_round,
-            'asked': False
-        })
-        app_logger.info(f"Added moderator question after round {after_round}: {question[:50]}...")
-
-    def pause_simulation(self):
-        """Pause the simulation."""
-        self.state = SimulationState.PAUSED
-        app_logger.info("Simulation paused")
-
-    def resume_simulation(self):
-        """Resume the simulation."""
-        self.state = SimulationState.RUNNING
-        app_logger.info("Simulation resumed")
-
-    def inject_question(self, question: str) -> dict:
-        """Inject a question mid-conversation and get immediate responses."""
-        if self.state != SimulationState.RUNNING:
-            raise ValueError("Cannot inject question when simulation is not running")
         
-        app_logger.info(f"Injecting moderator question: {question[:50]}...")
+        # Simulation state
+        self.state = SimulationState.INITIALIZING
+        self.current_round = 0
+        self.transcript = []
+        self.simulation_id = str(uuid.uuid4())
+        self.current_question_index = 0  # Track which moderator question is next
         
-        # Add moderator entry to transcript
-        moderator_entry = {
-            'type': 'moderator',
-            'question': question,
-            'round': self.current_round,
-            'timestamp': self._get_timestamp()
-        }
-        self.transcript.append(moderator_entry)
+        # Initialize AI service for generating responses
+        self.ai_service = AIService()
         
-        # Get responses from all personas
-        responses = []
-        for p_idx, p_details in enumerate(self.personas_details):
-            response = self._get_llm_moderator_response(p_details, question, p_idx)
-            response_entry = {
-                'persona_index': p_idx,
-                'persona_details': p_details,
-                'response_text': response,
-                'round': self.current_round,
-                'type': 'moderator_response',
-                'sentiment': self._analyze_sentiment(response)
+        # Set None for old pattern attributes
+        self.data_service = None
+        self.hybrid_service = None
+        self.active_simulations = None
+        
+        app_logger.info(f"Initialized FocusGroupSimulator with {len(self.personas_details)} personas (new pattern)")
+        
+    def run_simulation(self, num_discussion_rounds=None):
+        """
+        Run the complete focus group simulation.
+        Args:
+            num_discussion_rounds: Number of discussion rounds to run (if None, use all moderator questions)
+        Returns:
+            Dict with simulation results
+        """
+        try:
+            self.state = SimulationState.ACTIVE
+            app_logger.info(f"Starting focus group simulation with {len(self.personas_details)} personas")
+            app_logger.info(f"Moderator questions received: {self.moderator_questions}")
+
+            results = {
+                'simulation_id': self.simulation_id,
+                'personas': self.personas_details,
+                'stimulus_message': self.stimulus_message,
+                'rounds': [],
+                'transcript': [],
+                'summary': {}
             }
-            self.transcript.append(response_entry)
-            responses.append(response_entry)
-        
-        return {'moderator_question': moderator_entry, 'responses': responses}
 
-    def _get_timestamp(self):
-        """Get current timestamp for transcript entries."""
-        import datetime
-        return datetime.datetime.now().isoformat()
+            # Initial stimulus round if provided
+            if self.stimulus_message:
+                stimulus_round = self._run_stimulus_round()
+                results['rounds'].append(stimulus_round)
+                self.transcript.extend(stimulus_round.get('responses', []))
 
-    def _get_style_prompt_modifier(self, persona_index: int) -> str:
-        """Get prompt modification based on persona style."""
-        style = self.persona_styles.get(persona_index, PersonaStyle.NEUTRAL)
+            # Always use all moderator questions if present
+            questions_to_ask = self.moderator_questions if self.moderator_questions else []
+            for i, question in enumerate(questions_to_ask):
+                question_round = self._run_question_round(question, i + 1)
+                results['rounds'].append(question_round)
+                self.transcript.extend(question_round.get('responses', []))
+                self.current_round += 1
+
+            # Generate simulation summary
+            results['summary'] = self._generate_simulation_summary()
+            results['transcript'] = self.transcript
+
+            self.state = SimulationState.COMPLETED
+            app_logger.info(f"Completed focus group simulation {self.simulation_id}")
+
+            return results
+
+        except Exception as e:
+            self.state = SimulationState.ERROR
+            app_logger.error(f"Error in focus group simulation: {e}", exc_info=True)
+            raise
+    
+    def add_moderator_message(self, message):
+        """
+        Add a moderator message and get responses from all personas.
         
-        style_prompts = {
-            PersonaStyle.AGREEABLE: "You tend to be agreeable and supportive, often building on others' ideas while remaining authentic to your persona.",
-            PersonaStyle.CONTRARIAN: "You tend to be more questioning and critical, often presenting alternative viewpoints or playing devil's advocate while staying true to your persona.",
-            PersonaStyle.ANALYTICAL: "You tend to be analytical and data-driven, asking for evidence and breaking down ideas systematically.",
-            PersonaStyle.EMOTIONAL: "You tend to respond more emotionally and personally, sharing feelings and personal experiences.",
-            PersonaStyle.NEUTRAL: "You respond naturally based on your persona without any particular bias toward agreement or disagreement."
+        Args:
+            message: Moderator message/question
+            
+        Returns:
+            List of persona responses
+        """
+        try:
+            app_logger.info(f"Adding moderator message: {message}")
+            
+            responses = []
+            for persona in self.personas_details:
+                response = self._generate_persona_response(persona, message)
+                responses.append(response)
+                
+            # Add to transcript
+            moderator_entry = {
+                'type': 'moderator',
+                'message': message,
+                'timestamp': datetime.now().isoformat()
+            }
+            self.transcript.append(moderator_entry)
+            
+            # Add responses to transcript
+            for response in responses:
+                self.transcript.append({
+                    'type': 'participant',
+                    'persona_id': response['persona_id'],
+                    'message': response['response'],
+                    'timestamp': datetime.now().isoformat()
+                })
+            
+            return responses
+            
+        except Exception as e:
+            app_logger.error(f"Error adding moderator message: {e}", exc_info=True)
+            raise
+    
+    def _run_stimulus_round(self):
+        """Run the initial stimulus round."""
+        app_logger.info("Running stimulus round")
+        
+        responses = []
+        for persona in self.personas_details:
+            response = self._generate_persona_response(persona, self.stimulus_message, is_stimulus=True)
+            responses.append(response)
+        
+        return {
+            'round_type': 'stimulus',
+            'stimulus': self.stimulus_message,
+            'responses': responses,
+            'timestamp': datetime.now().isoformat()
         }
+    
+    def _run_question_round(self, question, round_number):
+        """Run a moderator question round."""
+        app_logger.info(f"Running question round {round_number}: {question}")
         
-        return style_prompts[style]
-
-    def _analyze_sentiment(self, text: str) -> dict:
-        """Analyze sentiment of a response using simple keyword analysis."""
-        positive_words = ['good', 'great', 'excellent', 'love', 'like', 'amazing', 'wonderful', 'fantastic', 'positive', 'happy', 'excited']
-        negative_words = ['bad', 'terrible', 'hate', 'dislike', 'awful', 'horrible', 'negative', 'sad', 'angry', 'frustrated', 'concerned', 'worried']
+        responses = []
+        for persona in self.personas_details:
+            response = self._generate_persona_response(persona, question)
+            responses.append(response)
+        
+        return {
+            'round_type': 'question',
+            'round_number': round_number,
+            'question': question,
+            'responses': responses,
+            'timestamp': datetime.now().isoformat()
+        }
+    
+    def _generate_persona_response(self, persona, message, is_stimulus=False):
+        """
+        Generate a response from a specific persona to a message.
+        
+        Args:
+            persona: Persona dictionary with demographics/description OR string description
+            message: Message to respond to
+            is_stimulus: Whether this is a stimulus response
+            
+        Returns:
+            Dict with persona response
+        """
+        try:
+            # Handle both string personas (from city audiences) and dict personas (from other sources)
+            if isinstance(persona, str):
+                # String persona from city audience
+                persona_id = f"participant_{len(self.transcript) + 1}"
+                persona_description = persona
+                demographics = self._parse_string_persona(persona)
+            else:
+                # Dictionary persona from other sources
+                persona_id = persona.get('id', f"participant_{len(self.transcript) + 1}")
+                demographics = persona.get('demographics', {})
+                persona_description = persona.get('description', 'A focus group participant')
+            
+            # Build context for AI response
+            if isinstance(persona, str):
+                # For string personas, use the full description as context
+                context = f"""
+                You are a focus group participant: {persona_description}
+                
+                {"This is your initial reaction to the stimulus:" if is_stimulus else "Please respond to this question:"}
+                "{message}"
+                
+                Respond naturally as this person would, considering their background and characteristics.
+                Keep your response conversational and authentic (2-4 sentences).
+                """
+            else:
+                # For dict personas, use structured demographics
+                context = f"""
+                You are a focus group participant with the following characteristics:
+                
+                Demographics:
+                - Age: {demographics.get('age', 'Unknown')}
+                - Occupation: {demographics.get('occupation', 'Unknown')}
+                - Income: {demographics.get('income', 'Unknown')}
+                - Region: {demographics.get('region', 'Unknown')}
+                
+                Description: {persona_description}
+                
+                {"This is your initial reaction to the stimulus:" if is_stimulus else "Please respond to this question:"}
+                "{message}"
+                
+                Respond naturally as this person would, considering their background and characteristics.
+                Keep your response conversational and authentic (2-4 sentences).
+                """
+            
+            # Generate response using AI service - use focus group specific method
+            if isinstance(persona, str):
+                persona_context = persona
+            else:
+                # Build context from persona dict
+                demographics = persona.get('demographics', {})
+                description = persona.get('description', 'A focus group participant')
+                persona_context = f"{description}\nAge: {demographics.get('age', 'Unknown')}, Occupation: {demographics.get('occupation', 'Unknown')}, Region: {demographics.get('region', 'Unknown')}"
+            
+            ai_response = self.ai_service.generate_focus_group_response(
+                question=message,  # Pass the actual question directly
+                persona_details=persona_context,
+                temperature=0.8
+            )
+            
+            response_text = ai_response if ai_response else 'I have no comment on this.'
+            
+            return {
+                'persona_id': persona_id,
+                'persona_description': persona_description,
+                'demographics': demographics,
+                'response': response_text,
+                'sentiment': self._analyze_sentiment(response_text),
+                'timestamp': datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            app_logger.error(f"Error generating persona response: {e}", exc_info=True)
+            fallback_id = persona.get('id', 'unknown') if isinstance(persona, dict) else 'unknown'
+            return {
+                'persona_id': fallback_id,
+                'response': 'I prefer not to comment.',
+                'error': str(e),
+                'timestamp': datetime.now().isoformat()
+            }
+    
+    def _parse_string_persona(self, persona_str):
+        """
+        Parse a string persona into demographics dict.
+        
+        Args:
+            persona_str: String like "Sarah Mitchell, 32, Digital Marketing Manager, Manchester city centre, ..."
+            
+        Returns:
+            Dict with extracted demographics
+        """
+        try:
+            # Split the string and try to extract key info
+            parts = persona_str.split(', ')
+            
+            demographics = {}
+            
+            # Try to extract name (first part)
+            if len(parts) > 0:
+                demographics['name'] = parts[0]
+            
+            # Try to extract age (second part, if it's a number)
+            if len(parts) > 1:
+                try:
+                    age = int(parts[1])
+                    demographics['age'] = age
+                except ValueError:
+                    pass
+            
+            # Try to extract occupation (third part)
+            if len(parts) > 2:
+                demographics['occupation'] = parts[2]
+            
+            # Try to extract location (fourth part)
+            if len(parts) > 3:
+                demographics['region'] = parts[3]
+            
+            # Try to extract other info from remaining parts
+            for part in parts[4:]:
+                if '£' in part and ('pay' in part.lower() or 'income' in part.lower()):
+                    # Extract income info
+                    demographics['income_info'] = part
+                elif '%' in part:
+                    # Some percentage-based metric
+                    demographics['engagement_info'] = part
+            
+            return demographics
+            
+        except Exception as e:
+            app_logger.error(f"Error parsing string persona: {e}")
+            return {'description': persona_str}
+    
+    def _analyze_sentiment(self, text):
+        """Basic sentiment analysis of response text."""
+        positive_words = ['good', 'great', 'excellent', 'love', 'like', 'positive', 'amazing', 'wonderful']
+        negative_words = ['bad', 'terrible', 'hate', 'dislike', 'negative', 'awful', 'horrible', 'worst']
         
         text_lower = text.lower()
         positive_count = sum(1 for word in positive_words if word in text_lower)
         negative_count = sum(1 for word in negative_words if word in text_lower)
         
-        total_words = len(text.split())
-        positive_ratio = positive_count / max(total_words, 1)
-        negative_ratio = negative_count / max(total_words, 1)
-        
-        if positive_ratio > negative_ratio:
-            sentiment = "positive"
-            confidence = min(positive_ratio * 10, 1.0)
-        elif negative_ratio > positive_ratio:
-            sentiment = "negative"
-            confidence = min(negative_ratio * 10, 1.0)
+        if positive_count > negative_count:
+            return 'positive'
+        elif negative_count > positive_count:
+            return 'negative'
         else:
-            sentiment = "neutral"
-            confidence = 0.5
+            return 'neutral'
+    
+    def _generate_simulation_summary(self):
+        """Generate a summary of the simulation results."""
+        try:
+            total_responses = len([entry for entry in self.transcript if entry.get('type') == 'participant'])
+            
+            # Analyze sentiment distribution
+            sentiments = [self._analyze_sentiment(entry.get('message', '')) 
+                         for entry in self.transcript if entry.get('type') == 'participant']
+            
+            sentiment_counts = {
+                'positive': sentiments.count('positive'),
+                'neutral': sentiments.count('neutral'),
+                'negative': sentiments.count('negative')
+            }
+            
+            return {
+                'total_participants': len(self.personas_details),
+                'total_responses': total_responses,
+                'rounds_completed': self.current_round,
+                'sentiment_distribution': sentiment_counts,
+                'simulation_duration': len(self.transcript),
+                'key_themes': self._extract_key_themes(),
+                'completion_status': self.state.value
+            }
+            
+        except Exception as e:
+            app_logger.error(f"Error generating simulation summary: {e}", exc_info=True)
+            return {'error': 'Could not generate summary'}
+    
+    def _extract_key_themes(self):
+        """Extract key themes from the discussion."""
+        # Simple keyword extraction - could be enhanced with NLP
+        participant_messages = [entry.get('message', '') for entry in self.transcript 
+                              if entry.get('type') == 'participant']
+        
+        if not participant_messages:
+            return []
+        
+        # Combine all messages and extract common themes
+        all_text = ' '.join(participant_messages).lower()
+        
+        # Simple theme extraction based on common words
+        common_themes = []
+        if 'price' in all_text or 'cost' in all_text or 'expensive' in all_text:
+            common_themes.append('pricing_concerns')
+        if 'quality' in all_text or 'good' in all_text or 'bad' in all_text:
+            common_themes.append('quality_discussion')
+        if 'experience' in all_text or 'service' in all_text:
+            common_themes.append('experience_feedback')
+        
+        return common_themes[:5]  # Return top 5 themes 
+
+    def next_question_round(self):
+        """
+        Progress to the next moderator question and return persona responses.
+        Returns None if no more questions remain.
+        """
+        if self.current_question_index >= len(self.moderator_questions):
+            return None  # No more questions
+        question = self.moderator_questions[self.current_question_index]
+        self.current_question_index += 1
+        round_number = self.current_question_index
+        question_round = self._run_question_round(question, round_number)
+        self.transcript.extend(question_round.get('responses', []))
+        self.current_round += 1
+        return question_round
+
+    # === OLD PATTERN COMPATIBILITY METHODS ===
+    # These methods maintain backward compatibility with the hybrid demo and other files
+    
+    def start_simulation(self, config: Dict) -> str:
+        """
+        Start a focus group simulation with enhanced hybrid personas (OLD PATTERN).
+        
+        Args:
+            config: Simulation configuration including city, group size, questions
+            
+        Returns:
+            Simulation ID
+        """
+        if not hasattr(self, 'hybrid_service') or self.hybrid_service is None:
+            raise RuntimeError("start_simulation requires FocusGroupSimulator to be initialized with data_service and ai_service")
+            
+        try:
+            simulation_id = str(uuid.uuid4())
+            
+            # Extract configuration
+            city = config.get('city', 'Manchester')
+            group_size = min(int(config.get('group_size', 6)), 10)  # Cap at 10
+            questions = config.get('questions', [])
+            product_context = config.get('product_context', '')
+            
+            # Step 1: Create enhanced personas using hybrid approach
+            app_logger.info(f"Creating {group_size} enhanced personas for {city}")
+            personas = []
+            
+            for i in range(group_size):
+                enhanced_persona = self.hybrid_service.create_enhanced_persona(
+                    city=city,
+                    persona_criteria=config.get('persona_criteria', {})
+                )
+                
+                # Add persona to group with unique identifier
+                enhanced_persona['group_id'] = f"participant_{i+1}"
+                enhanced_persona['simulation_id'] = simulation_id
+                personas.append(enhanced_persona)
+            
+            # Step 2: Initialize simulation state
+            simulation_state = {
+                'id': simulation_id,
+                'city': city,
+                'config': config,
+                'personas': personas,
+                'questions': questions,
+                'current_question_index': 0,
+                'responses': [],
+                'status': 'active',
+                'created_at': datetime.now().isoformat(),
+                'data_layers': {
+                    'sqlite_foundation': True,
+                    'chromadb_enhancement': True,
+                    'ai_generation': True
+                }
+            }
+            
+            self.active_simulations[simulation_id] = simulation_state
+            
+            app_logger.info(f"Started hybrid focus group simulation {simulation_id} for {city} with {group_size} personas")
+            return simulation_id
+            
+        except Exception as e:
+            app_logger.error(f"Error starting simulation: {e}", exc_info=True)
+            raise
+    
+    def process_question(self, simulation_id: str, question: str = None) -> Dict:
+        """
+        Process a question using hybrid personas with rich context (OLD PATTERN).
+        
+        Args:
+            simulation_id: Active simulation ID
+            question: Question to ask (optional, will use next in queue)
+            
+        Returns:
+            Responses from all personas with enhanced context
+        """
+        if not hasattr(self, 'hybrid_service') or self.hybrid_service is None:
+            raise RuntimeError("process_question requires FocusGroupSimulator to be initialized with data_service and ai_service")
+            
+        try:
+            if simulation_id not in self.active_simulations:
+                raise ValueError(f"Simulation {simulation_id} not found")
+            
+            simulation = self.active_simulations[simulation_id]
+            
+            # Determine question to ask
+            if question is None:
+                questions = simulation['questions']
+                current_index = simulation['current_question_index']
+                
+                if current_index >= len(questions):
+                    return {'status': 'completed', 'message': 'All questions have been answered'}
+                
+                question = questions[current_index]
+                simulation['current_question_index'] += 1
+            
+            app_logger.info(f"Processing question for simulation {simulation_id}: {question}")
+            
+            # Generate responses from all personas using hybrid approach
+            persona_responses = []
+            
+            for persona in simulation['personas']:
+                # Use hybrid service for contextually rich responses
+                response = self.hybrid_service.generate_contextual_focus_group_response(
+                    persona=persona,
+                    question=question,
+                    product_context=simulation['config'].get('product_context', '')
+                )
+                
+                # Add simulation metadata
+                response_data = {
+                    'persona_id': persona['group_id'],
+                    'persona_description': persona.get('ai_description', 'Enhanced hybrid persona'),
+                    'question': question,
+                    'response': response.get('content', ''),
+                    'sentiment': response.get('sentiment', 'neutral'),
+                    'reasoning': response.get('reasoning', ''),
+                    'context_quality': response.get('context_quality', 'medium'),
+                    'data_sources': persona.get('data_sources', {}),
+                    'timestamp': datetime.now().isoformat(),
+                    'chromadb_response_id': response.get('chromadb_id'),
+                    'demographic_foundation': {
+                        'city': persona.get('demographics', {}).get('region', simulation['city']),
+                        'age': persona.get('demographics', {}).get('age'),
+                        'occupation': persona.get('demographics', {}).get('occupation'),
+                        'income': persona.get('demographics', {}).get('income')
+                    }
+                }
+                
+                persona_responses.append(response_data)
+            
+            # Store responses in simulation
+            question_session = {
+                'question': question,
+                'responses': persona_responses,
+                'asked_at': datetime.now().isoformat(),
+                'session_summary': self._generate_session_summary_old(persona_responses)
+            }
+            
+            simulation['responses'].append(question_session)
+            
+            return {
+                'status': 'success',
+                'simulation_id': simulation_id,
+                'question': question,
+                'responses': persona_responses,
+                'session_summary': question_session['session_summary'],
+                'progress': {
+                    'current_question': simulation['current_question_index'],
+                    'total_questions': len(simulation['questions']),
+                    'completed': simulation['current_question_index'] >= len(simulation['questions'])
+                },
+                'data_quality': self._assess_response_quality_old(persona_responses)
+            }
+            
+        except Exception as e:
+            app_logger.error(f"Error processing question: {e}", exc_info=True)
+            return {'status': 'error', 'message': str(e)}
+    
+    def get_simulation_insights(self, simulation_id: str) -> Dict:
+        """
+        Get comprehensive insights from the simulation using hybrid data analysis (OLD PATTERN).
+        """
+        if not hasattr(self, 'active_simulations') or self.active_simulations is None:
+            raise RuntimeError("get_simulation_insights requires FocusGroupSimulator to be initialized with data_service and ai_service")
+            
+        if simulation_id not in self.active_simulations:
+            raise ValueError(f"Simulation {simulation_id} not found")
+        
+        simulation = self.active_simulations[simulation_id]
+        return {
+            'simulation_id': simulation_id,
+            'city': simulation['city'],
+            'status': 'insights_generated',
+            'message': 'Hybrid insights available (old pattern compatibility)'
+        }
+    
+    def _generate_session_summary_old(self, responses: List[Dict]) -> Dict:
+        """Generate summary of responses for a question session (OLD PATTERN)."""
+        if not responses:
+            return {'themes': [], 'sentiment_distribution': {}, 'key_quotes': []}
+        
+        # Extract themes and sentiments
+        themes = []
+        sentiments = {'positive': 0, 'neutral': 0, 'negative': 0}
+        key_quotes = []
+        
+        for response in responses:
+            sentiment = response.get('sentiment', 'neutral')
+            sentiments[sentiment] = sentiments.get(sentiment, 0) + 1
+            
+            # Extract potential themes from reasoning
+            reasoning = response.get('reasoning', '')
+            if reasoning and len(reasoning) > 20:
+                themes.append(reasoning[:100] + '...' if len(reasoning) > 100 else reasoning)
+            
+            # Collect interesting quotes
+            response_text = response.get('response', '')
+            if len(response_text) > 50:
+                key_quotes.append({
+                    'persona': response.get('persona_id'),
+                    'quote': response_text[:150] + '...' if len(response_text) > 150 else response_text
+                })
         
         return {
-            'sentiment': sentiment,
-            'confidence': confidence,
-            'positive_count': positive_count,
-            'negative_count': negative_count
+            'themes': themes[:5],  # Top 5 themes
+            'sentiment_distribution': sentiments,
+            'key_quotes': key_quotes[:3],  # Top 3 quotes
+            'response_count': len(responses)
         }
-
-    def _extract_topics(self, responses: List[str]) -> List[str]:
-        """Extract main topics from responses using keyword analysis."""
-        all_text = " ".join(responses).lower()
+    
+    def _assess_response_quality_old(self, responses: List[Dict]) -> Dict:
+        """Assess the quality of generated responses (OLD PATTERN)."""
+        if not responses:
+            return {'overall': 'low', 'details': 'No responses generated'}
         
-        # Common marketing/brand topics
-        topic_keywords = {
-            'price': ['price', 'cost', 'expensive', 'cheap', 'value', 'money', 'budget'],
-            'quality': ['quality', 'premium', 'luxury', 'high-end', 'superior'],
-            'brand': ['brand', 'reputation', 'trust', 'credibility', 'image'],
-            'design': ['design', 'look', 'appearance', 'style', 'aesthetic'],
-            'functionality': ['function', 'feature', 'work', 'use', 'practical'],
-            'emotion': ['feel', 'emotion', 'love', 'hate', 'excited', 'worried'],
-            'social': ['social', 'friends', 'family', 'community', 'share'],
-            'convenience': ['convenient', 'easy', 'simple', 'quick', 'fast']
+        quality_indicators = {
+            'context_quality_high': 0,
+            'demographic_foundation': 0,
+            'chromadb_enhanced': 0,
+            'reasoning_provided': 0
         }
         
-        identified_topics = []
-        for topic, keywords in topic_keywords.items():
-            if any(keyword in all_text for keyword in keywords):
-                identified_topics.append(topic)
-        
-        return identified_topics
-
-    def _analyze_consensus(self, responses: List[dict]) -> dict:
-        """Analyze consensus vs disagreement in responses."""
-        if len(responses) < 2:
-            return {'consensus_level': 'insufficient_data', 'agreement_score': 0.0}
-        
-        sentiments = [r.get('sentiment', {}).get('sentiment', 'neutral') for r in responses]
-        positive_count = sentiments.count('positive')
-        negative_count = sentiments.count('negative')
-        neutral_count = sentiments.count('neutral')
+        for response in responses:
+            if response.get('context_quality') == 'high':
+                quality_indicators['context_quality_high'] += 1
+            
+            if response.get('demographic_foundation'):
+                quality_indicators['demographic_foundation'] += 1
+            
+            if response.get('chromadb_response_id'):
+                quality_indicators['chromadb_enhanced'] += 1
+            
+            if response.get('reasoning'):
+                quality_indicators['reasoning_provided'] += 1
         
         total_responses = len(responses)
+        quality_score = sum(quality_indicators.values()) / (total_responses * 4)  # 4 indicators
         
-        # Calculate agreement score based on sentiment distribution
-        if positive_count / total_responses >= 0.7:
-            consensus_level = 'strong_positive'
-            agreement_score = positive_count / total_responses
-        elif negative_count / total_responses >= 0.7:
-            consensus_level = 'strong_negative'
-            agreement_score = negative_count / total_responses
-        elif (positive_count + negative_count) / total_responses <= 0.3:
-            consensus_level = 'neutral_consensus'
-            agreement_score = neutral_count / total_responses
+        if quality_score >= 0.8:
+            overall = 'high'
+        elif quality_score >= 0.5:
+            overall = 'medium'
         else:
-            consensus_level = 'mixed_opinions'
-            agreement_score = 1.0 - (abs(positive_count - negative_count) / total_responses)
+            overall = 'low'
         
         return {
-            'consensus_level': consensus_level,
-            'agreement_score': agreement_score,
-            'sentiment_distribution': {
-                'positive': positive_count,
-                'negative': negative_count,
-                'neutral': neutral_count
-            }
-        }
-
-    def _get_llm_initial_reaction(self, persona_details: str, persona_index: int) -> str:
-        model = config['default'].DEFAULT_TEXT_MODEL
-        temperature = config['default'].DEFAULT_TEMPERATURE
-        max_tokens_config_key = 'DEFAULT_MAX_TOKENS_TEXT'
-        
-        messages = []
-        stimulus_description_for_prompt = "the provided materials"
-        
-        style_modifier = self._get_style_prompt_modifier(persona_index)
-        
-        # Extract persona name (first part before comma)
-        persona_name = persona_details.split(',')[0].strip()
-        name_enforcement = config['default'].PERSONA_NAME_ENFORCEMENT_PROMPT.format(name=persona_name)
-        
-        base_prompt_text = (
-            f"Persona Profile: {persona_details}\n"
-            f"{name_enforcement}\n"
-            f"\nInteraction Style: {style_modifier}\n\n"
-            "You are introducing yourself in a focus group. The moderator has just welcomed everyone. "
-            "Give a brief, natural introduction about yourself as this persona. "
-            "Keep it conversational and authentic to your character. "
-            "Please provide only your introduction as the persona."
-        )
-
-        if self.stimulus_image_data:
-            model = config['default'].DEFAULT_VISION_MODEL
-            max_tokens_config_key = 'DEFAULT_MAX_TOKENS_VISION'
-            
-            content_list = [{"type": "text", "text": base_prompt_text}]
-            if self.stimulus_message: 
-                stimulus_description_for_prompt = f"an image and the message: \"{self.stimulus_message}\""
-                base_prompt_text_updated = (
-                    f"Persona Profile: {persona_details}\n"
-                    f"{name_enforcement}\n"
-                    f"\nInteraction Style: {style_modifier}\n\n"
-                    "You are about to give your initial, independent thoughts for a focus group. "
-                    f"The topic is related to an image and the message: \"{self.stimulus_message}\". "
-                    "Be conversational. What are your very first, independent reactions and thoughts as this persona? "
-                    "Please provide only your response as the persona."
-                )
-                content_list = [{"type": "text", "text": base_prompt_text_updated}]
-
-            content_list.append({
-                "type": "image_url",
-                "image_url": {"url": f"data:image/jpeg;base64,{self.stimulus_image_data}"}
-            })
-            messages.append({"role": "user", "content": content_list})
-        
-        else: 
-            stimulus_description_for_prompt = f"the message: \"{self.stimulus_message}\""
-            base_prompt_text_updated = (
-                f"Persona Profile: {persona_details}\n"
-                f"{name_enforcement}\n"
-                f"\nInteraction Style: {style_modifier}\n\n"
-                "You are about to give your initial, independent thoughts for a focus group. "
-                f"The topic is related to the message: \"{self.stimulus_message}\". "
-                "Be conversational. What are your very first, independent reactions and thoughts as this persona? "
-                "Please provide only your response as the persona."
-            )
-            messages.append({"role": "user", "content": base_prompt_text_updated})
-
-        max_tokens = getattr(config['default'], max_tokens_config_key, 300)
-        prompt_str = str(messages)[:500]
-        app_logger.debug(f"Initial reaction prompt for {persona_details[:30]}... using model {model}: {prompt_str}...")
-
-        try:
-            # OpenAI client is instantiated implicitly here if OPENAI_API_KEY is in env
-            response = openai.chat.completions.create(
-                model=model,
-                messages=messages,
-                temperature=temperature,
-                max_tokens=max_tokens
-            )
-            content = response.choices[0].message.content.strip()
-            app_logger.info(f"Generated initial reaction for persona {persona_details[:30]}... Output: {content[:300]}...")
-            return content
-        except Exception as e:
-            app_logger.error(f"Error generating initial reaction for {persona_details[:30]}... Prompt: {prompt_str}... Error: {str(e)}", exc_info=True)
-            # Re-raise the exception to be caught by the main simulation loop
-            raise
-
-    def _get_llm_discussion_response(self, persona_details: str, conversation_history_str: str, persona_index: int) -> str:
-        model = config['default'].DEFAULT_TEXT_MODEL
-        temperature = config['default'].DEFAULT_TEMPERATURE
-        max_tokens = getattr(config['default'], 'DEFAULT_MAX_TOKENS_TEXT', 400)
-
-        stimulus_desc = "the previously shown materials"
-        if self.stimulus_message and not self.stimulus_image_data:
-            stimulus_desc = f"the message: \"{self.stimulus_message}\""
-        elif self.stimulus_image_data and not self.stimulus_message:
-             stimulus_desc = "the image shown earlier"
-        elif self.stimulus_image_data and self.stimulus_message:
-            stimulus_desc = f"the image and message: \"{self.stimulus_message}\" shown earlier"
-
-        style_modifier = self._get_style_prompt_modifier(persona_index)
-        persona_name = persona_details.split(',')[0].strip()
-        name_enforcement = config['default'].PERSONA_NAME_ENFORCEMENT_PROMPT.format(name=persona_name)
-
-        prompt = (
-            f"Persona Profile: {persona_details}\n"
-            f"{name_enforcement}\n"
-            f"\nInteraction Style: {style_modifier}\n\n"
-            f"You are in a focus group discussing {stimulus_desc}. "
-            "Be conversational. Consider what has been said previously and build upon it or offer a counterpoint. Explain your reasoning.\n\n"
-            "Conversation History:\n"
-            f"{conversation_history_str}\n\n"
-            "What are your thoughts now? Please provide only your response as this persona."
-        )
-        prompt_str = prompt[:500]
-        app_logger.debug(f"Discussion prompt for {persona_details[:30]}...: {prompt_str}...")
-
-        try:
-            # OpenAI client is instantiated implicitly here if OPENAI_API_KEY is in env
-            response = openai.chat.completions.create(
-                model=model,
-                messages=[
-                    {"role": "system", "content": "You are a participant in a focus group discussion."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=temperature,
-                max_tokens=max_tokens
-            )
-            content = response.choices[0].message.content.strip()
-            app_logger.info(f"Generated discussion response for persona {persona_details[:30]}... Output: {content[:300]}...")
-            return content
-        except Exception as e:
-            app_logger.error(f"Error generating discussion response for {persona_details[:30]}... Prompt: {prompt_str}... Error: {str(e)}", exc_info=True)
-            # Re-raise the exception to be caught by the main simulation loop
-            raise
-
-    def _get_llm_moderator_response(self, persona_details: str, moderator_question: str, persona_index: int) -> str:
-        """Generate response to a moderator question."""
-        model = config['default'].DEFAULT_TEXT_MODEL
-        temperature = config['default'].DEFAULT_TEMPERATURE
-        max_tokens = getattr(config['default'], 'DEFAULT_MAX_TOKENS_TEXT', 400)
-
-        style_modifier = self._get_style_prompt_modifier(persona_index)
-        persona_name = persona_details.split(',')[0].strip()
-        name_enforcement = config['default'].PERSONA_NAME_ENFORCEMENT_PROMPT.format(name=persona_name)
-
-        conversation_history_str = "\n".join([
-            f"{t['role'].title()}: {t['content']}" 
-            for t in self.transcript[-10:] if t.get('role') in ['moderator', 'persona']
-        ])
-
-        prompt = (
-            f"Persona Profile: {persona_details}\n"
-            f"{name_enforcement}\n"
-            f"\nInteraction Style: {style_modifier}\n\n"
-            f"You are in a focus group. The moderator has just asked: '{moderator_question}'\n\n"
-            "Previous conversation context:\n"
-            f"{conversation_history_str}\n\n"
-            "How do you respond to the moderator's question as this persona? Be conversational and authentic."
-        )
-        prompt_str = prompt[:500]
-        app_logger.debug(f"Moderator response prompt for {persona_details[:30]}...: {prompt_str}...")
-
-        try:
-            # OpenAI client is instantiated implicitly here if OPENAI_API_KEY is in env
-            response = openai.chat.completions.create(
-                model=model,
-                messages=[
-                    {"role": "system", "content": "You are simulating a focus group participant responding to a moderator question."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=temperature,
-                max_tokens=max_tokens
-            )
-            content = response.choices[0].message.content.strip()
-            app_logger.info(f"Generated moderator response for persona {persona_details[:30]}... Output: {content[:300]}...")
-            return content
-        except Exception as e:
-            app_logger.error(f"Error generating moderator response for {persona_details[:30]}... Prompt: {prompt_str}... Error: {str(e)}", exc_info=True)
-            # Re-raise the exception to be caught by the main simulation loop
-            raise
-
-    def run_simulation(self, num_discussion_rounds: int = 1) -> dict:
-        app_logger.info(f"Starting focus group simulation with {num_discussion_rounds} discussion round(s).")
-        self.current_round = 0
-        self.state = SimulationState.RUNNING
-
-        try:
-            # 1. Moderator Hello
-            self.transcript.append({
-                'role': 'moderator', 
-                'content': 'Hello and welcome to the focus group! Let\'s get started with some introductions.'
-            })
-
-            # 2. Initial Reactions (personas introduce themselves naturally)
-            app_logger.info("Generating initial reactions (Round 0).")
-            for p_idx, p_details in enumerate(self.personas_details):
-                reaction = self._get_llm_initial_reaction(p_details, p_idx)
-                persona_name = p_details.split(',')[0].strip()
-                if reaction and reaction != 'undefined':
-                    self.transcript.append({
-                        'role': 'persona',
-                        'content': reaction,
-                        'persona_index': p_idx,
-                        'persona_details': p_details,
-                        'persona_name': persona_name,
-                        'sentiment': self._analyze_sentiment(reaction)
-                    })
-
-            # 3. Moderator Q&A (runs immediately after intros/reactions)
-            app_logger.info(f"Processing {len(self.moderator_questions)} moderator questions.")
-            for question_data in self.moderator_questions:
-                if not question_data.get('asked', False):
-                    question = question_data['question']
-                    app_logger.info(f"Asking moderator question: {question}")
-                    self.transcript.append({'role': 'moderator', 'content': question})
-                    
-                    # Get response from each persona
-                    for p_idx, p_details in enumerate(self.personas_details):
-                        app_logger.info(f"Getting response from persona {p_idx + 1} to question: {question[:50]}...")
-                        response = self._get_llm_moderator_response(p_details, question, p_idx)
-                        persona_name = p_details.split(',')[0].strip()
-                        if response and response != 'undefined':
-                            self.transcript.append({
-                                'role': 'persona',
-                                'content': response,
-                                'persona_index': p_idx,
-                                'persona_details': p_details,
-                                'persona_name': persona_name,
-                                'sentiment': self._analyze_sentiment(response)
-                            })
-                    question_data['asked'] = True
-
-            # 4. Discussion Rounds (if any)
-            for i in range(num_discussion_rounds):
-                self.current_round = i + 1
-                if self.state == SimulationState.PAUSED:
-                    app_logger.info(f"Simulation paused before round {self.current_round}.")
-                    return self._current_simulation_status(f"Paused before round {self.current_round}")
-                
-                app_logger.info(f"Starting discussion round {self.current_round}.")
-                round_responses = [] # Store responses for this round for topic/consensus analysis
-
-                # Build conversation history string for this round
-                conversation_history_str = "\n".join([
-                    f"Persona {t.get('persona_index', '?')+1} ('{t.get('persona_details','').split(',')[0]}') said: {t.get('response_text','')}"
-                    for t in self.transcript if 'persona_index' in t and 'response_text' in t
-                ])
-
-                for p_idx, p_details in enumerate(self.personas_details):
-                    if self.state == SimulationState.PAUSED:
-                        app_logger.info(f"Simulation paused during round {self.current_round}.")
-                        return self._current_simulation_status(f"Paused during round {self.current_round}")
-
-                    app_logger.info(f"Round {self.current_round}, turn for persona {p_idx + 1}: {p_details[:50]}...")
-                    response_text = self._get_llm_discussion_response(p_details, conversation_history_str, p_idx)
-                    entry = {
-                        'persona_index': p_idx,
-                        'persona_details': p_details,
-                        'response_text': response_text,
-                        'round': self.current_round,
-                        'type': 'discussion_response',
-                        'timestamp': self._get_timestamp(),
-                        'sentiment': self._analyze_sentiment(response_text)
-                    }
-                    if response_text and response_text != 'undefined':
-                        self.transcript.append(entry)
-                        round_responses.append(entry)
-                    # Update conversation history for the next persona in the same round
-                    conversation_history_str += f"\nIn round {self.current_round}, Persona {p_idx + 1} ('{p_details.split(',')[0]}') said: {response_text}"
-                
-                current_topics = self._extract_topics([resp['response_text'] for resp in round_responses])
-                self.topics_identified.append({'round': self.current_round, 'topics': current_topics})
-                self.sentiment_scores.append({'round': self.current_round, 'sentiments': [r['sentiment'] for r in round_responses]})
-
-            self.state = SimulationState.COMPLETED
-            app_logger.info("Focus group simulation completed.")
-            return {
-                'status': 'completed',
-                'transcript': self.transcript,
-                'analytics': self._generate_analytics()
-            }
-        except openai.APIError as e:
-            app_logger.error(f"OpenAI API Error during simulation: {str(e)}", exc_info=True)
-            self.state = SimulationState.ERROR
-            return {
-                'status': 'error',
-                'error': str(e),
-                'error_type': 'OpenAI API Error',
-                'message': str(e),
-                'transcript': self.transcript  # Return partial transcript
-            }
-        except Exception as e:
-            app_logger.error(f"Unexpected error during simulation: {str(e)}", exc_info=True)
-            self.state = SimulationState.ERROR
-            return {
-                'status': 'error',
-                'error': str(e),
-                'error_type': 'Unexpected Simulation Error',
-                'message': str(e),
-                'transcript': self.transcript  # Return partial transcript
-            }
-
-    def _generate_analytics(self) -> dict:
-        """Generate comprehensive analytics for the simulation."""
-        # Only use fields that exist in the new transcript format
-        persona_responses = [t for t in self.transcript if t.get('role') == 'persona']
-        moderator_questions = [t for t in self.transcript if t.get('role') == 'moderator']
-        
-        if not persona_responses:
-            return {'error': 'No persona responses to analyze'}
-
-        # Sentiment analysis
-        sentiments = [r.get('sentiment', {}) for r in persona_responses if r.get('sentiment')]
-        
-        # Topic extraction from response content
-        response_texts = [r['content'] for r in persona_responses]
-        topics = self._extract_topics(response_texts)
-        
-        # Overall sentiment distribution
-        positive_count = sum(1 for s in sentiments if s.get('sentiment') == 'positive')
-        negative_count = sum(1 for s in sentiments if s.get('sentiment') == 'negative')
-        neutral_count = sum(1 for s in sentiments if s.get('sentiment') == 'neutral')
-        
-        # Key themes and insights
-        all_content = ' '.join(response_texts)
-        themes = self._extract_key_themes(all_content)
-        
-        return {
-            'total_responses': len(persona_responses),
-            'total_questions': len(moderator_questions),
-            'sentiment_summary': {
-                'positive_responses': positive_count,
-                'negative_responses': negative_count,
-                'neutral_responses': neutral_count,
-                'sentiment_distribution': {
-                    'positive': round((positive_count / len(sentiments)) * 100, 1) if sentiments else 0,
-                    'negative': round((negative_count / len(sentiments)) * 100, 1) if sentiments else 0,
-                    'neutral': round((neutral_count / len(sentiments)) * 100, 1) if sentiments else 0
-                },
-                'avg_confidence': round(sum(s.get('confidence', 0) for s in sentiments) / len(sentiments), 2) if sentiments else 0
-            },
-            'key_themes': themes,
-            'topics_identified': topics,
-            'personas_involved': list(set(r.get('persona_name', 'Unknown') for r in persona_responses)),
-            'response_lengths': {
-                'avg_words': round(sum(len(r['content'].split()) for r in persona_responses) / len(persona_responses), 1),
-                'longest_response': max(len(r['content'].split()) for r in persona_responses),
-                'shortest_response': min(len(r['content'].split()) for r in persona_responses)
-            }
-        }
-
-    def _extract_key_themes(self, content: str) -> list:
-        """Extract key themes from focus group content using OpenAI."""
-        try:
-            response = openai.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {
-                        "role": "system", 
-                        "content": "You are analyzing focus group transcript content to identify key themes. Return only the top 5 themes as a simple list, one theme per line. Be concise."
-                    },
-                    {
-                        "role": "user", 
-                        "content": f"Identify the key themes discussed in this focus group content:\n\n{content[:3000]}"  # Limit content length
-                    }
-                ],
-                temperature=0.3,
-                max_tokens=200
-            )
-            themes_text = response.choices[0].message.content.strip()
-            themes = [theme.strip() for theme in themes_text.split('\n') if theme.strip()]
-            return themes[:5]  # Limit to top 5 themes
-        except Exception as e:
-            app_logger.error(f"Error extracting themes: {e}")
-            return ["Themes analysis unavailable"]
-
-    def _get_dominant_sentiment(self, sentiments: List[dict]) -> str:
-        """Get the dominant sentiment from a list of sentiment analyses."""
-        sentiment_counts = {}
-        for s in sentiments:
-            sentiment = s.get('sentiment', 'neutral')
-            sentiment_counts[sentiment] = sentiment_counts.get(sentiment, 0) + 1
-        
-        return max(sentiment_counts.items(), key=lambda x: x[1])[0] if sentiment_counts else 'neutral'
-
-    def get_simulation_state(self) -> dict:
-        """Get current simulation state and progress."""
-        return {
-            'state': self.state.value,
-            'current_round': self.current_round,
-            'total_transcript_entries': len(self.transcript),
-            'moderator_questions_pending': sum(1 for q in self.moderator_questions if not q['asked']),
-            'persona_count': len(self.personas_details)
-        }
-
-    def _current_simulation_status(self, message: str) -> dict:
-        """Return a current simulation status dictionary with the given message."""
-        return {
-            'status': 'paused',
-            'message': message,
-            'transcript': self.transcript,
-            'current_round': self.current_round
+            'overall': overall,
+            'score': quality_score,
+            'indicators': quality_indicators,
+            'details': f"{quality_indicators['context_quality_high']}/{total_responses} high-quality context responses"
         } 

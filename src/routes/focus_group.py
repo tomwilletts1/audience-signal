@@ -1,6 +1,6 @@
 # src/routes/focus_group.py
 from flask import Blueprint, request, jsonify
-from src.services.focus_group_service import FocusGroupSimulator, PersonaStyle
+from src.services.focus_group_service import FocusGroupSimulator
 from src.utils.logger import app_logger
 import uuid
 from src.services.audience_service import AudienceService
@@ -25,6 +25,7 @@ def create_focus_group_blueprint(audience_service: AudienceService, data_service
             audience_id = data.get('audience_id')
             personas_details = data.get('personas') # For legacy or direct persona input
             questions = data.get('questions', [])
+            app_logger.info(f"Questions received in request: {questions}")
             group_size = data.get('group_size')
             open_discussion = data.get('open_discussion', False)
             
@@ -59,7 +60,8 @@ def create_focus_group_blueprint(audience_service: AudienceService, data_service
             stimulus_message = data.get('message', '')
             stimulus_image_data = data.get('image_data')
             moderator_questions = questions if questions else []
-            num_discussion_rounds = data.get('discussion_rounds', 1)
+            # Set discussion rounds to match number of questions
+            num_discussion_rounds = len(moderator_questions) if moderator_questions else 1
 
             # Generate simulation ID
             simulation_id = str(uuid.uuid4())
@@ -76,15 +78,33 @@ def create_focus_group_blueprint(audience_service: AudienceService, data_service
             # Store simulation for potential follow-up
             active_simulations[simulation_id] = simulator
 
-            # Run simulation
-            simulation_results = simulator.run_simulation(num_discussion_rounds=num_discussion_rounds)
-
+            # Run initial stimulus round if provided
+            simulation_results = {
+                'simulation_id': simulation_id,
+                'personas': personas_details,
+                'stimulus_message': stimulus_message,
+                'rounds': [],
+                'transcript': [],
+                'summary': {}
+            }
+            if stimulus_message:
+                stimulus_round = simulator._run_stimulus_round()
+                simulation_results['rounds'].append(stimulus_round)
+                simulator.transcript.extend(stimulus_round.get('responses', []))
+            # Run the first moderator question round if available
+            first_question_round = simulator.next_question_round()
+            if first_question_round:
+                simulation_results['rounds'].append(first_question_round)
+                simulator.transcript.extend(first_question_round.get('responses', []))
+            simulation_results['transcript'] = simulator.transcript
+            # Generate analytics
+            analytics = _generate_analytics(simulation_results)
             return jsonify({
                 'simulation_id': simulation_id,
-                'status': 'completed',
-                'results': simulation_results
+                'status': 'success',
+                'results': simulation_results,
+                'analytics': analytics
             })
-
         except Exception as e:
             app_logger.error(f"Error in focus group simulation: {e}", exc_info=True)
             return jsonify({'error': 'Internal server error during simulation', 'status': 'error'}), 500
@@ -94,24 +114,27 @@ def create_focus_group_blueprint(audience_service: AudienceService, data_service
         try:
             if simulation_id not in active_simulations:
                 return jsonify({'error': 'Simulation not found', 'status': 'error'}), 404
-
             data = request.get_json()
             message = data.get('message', '')
-            
-            if not message:
-                return jsonify({'error': 'Message is required', 'status': 'error'}), 400
-
             simulator = active_simulations[simulation_id]
-            
-            # Add moderator message and get responses
-            responses = simulator.add_moderator_message(message)
-            
-            return jsonify({
-                'simulation_id': simulation_id,
-                'status': 'continued',
-                'responses': responses
-            })
-
+            # If a custom message is provided, treat as ad-hoc moderator question
+            if message:
+                responses = simulator.add_moderator_message(message)
+                return jsonify({
+                    'simulation_id': simulation_id,
+                    'status': 'success',
+                    'responses': responses
+                })
+            # Otherwise, progress to the next question in the queue
+            next_round = simulator.next_question_round()
+            if next_round:
+                return jsonify({
+                    'simulation_id': simulation_id,
+                    'status': 'success',
+                    'round': next_round
+                })
+            else:
+                return jsonify({'simulation_id': simulation_id, 'status': 'completed', 'message': 'All questions have been asked.'})
         except Exception as e:
             app_logger.error(f"Error continuing simulation {simulation_id}: {e}", exc_info=True)
             return jsonify({'error': 'Error continuing simulation', 'status': 'error'}), 500
@@ -162,5 +185,66 @@ def create_focus_group_blueprint(audience_service: AudienceService, data_service
         except Exception as e:
             app_logger.error(f"Error getting personas for {audience_id}: {e}")
             return jsonify({'error': f'Failed to get personas for {audience_id}'}), 500
+
+    def _generate_analytics(simulation_results):
+        """Generate analytics from focus group results."""
+        try:
+            rounds = simulation_results.get('rounds', [])
+            all_responses = []
+            # Collect all responses
+            for round_data in rounds:
+                responses = round_data.get('responses', [])
+                all_responses.extend(responses)
+            # Calculate basic stats
+            total_responses = len(all_responses)
+            total_questions = len([r for r in rounds if r.get('round_type') == 'question'])
+            # Sentiment analysis
+            sentiments = [r.get('sentiment', 'neutral') for r in all_responses if r.get('sentiment')]
+            positive_count = len([s for s in sentiments if 'positive' in s.lower()])
+            negative_count = len([s for s in sentiments if 'negative' in s.lower()])
+            neutral_count = len(sentiments) - positive_count - negative_count
+            sentiment_distribution = {
+                'positive': round((positive_count / len(sentiments)) * 100, 1) if sentiments else 0,
+                'negative': round((negative_count / len(sentiments)) * 100, 1) if sentiments else 0,
+                'neutral': round((neutral_count / len(sentiments)) * 100, 1) if sentiments else 0
+            }
+            # Response length analysis
+            response_texts = [r.get('response', '') for r in all_responses if r.get('response')]
+            word_counts = [len(text.split()) for text in response_texts]
+            # Extract persona names
+            personas_involved = list(set([r.get('persona_description', '').split(',')[0] for r in all_responses if r.get('persona_description')]))
+            # Generate key themes (basic keyword extraction)
+            all_text = ' '.join(response_texts).lower()
+            common_words = ['experience', 'feel', 'think', 'like', 'good', 'bad', 'better', 'important', 'value', 'quality', 'service', 'product']
+            key_themes = [word for word in common_words if word in all_text][:5]
+            analytics = {
+                'total_responses': total_responses,
+                'total_questions': total_questions,
+                'sentiment_summary': {
+                    'positive_responses': positive_count,
+                    'negative_responses': negative_count,
+                    'neutral_responses': neutral_count,
+                    'sentiment_distribution': sentiment_distribution,
+                    'avg_confidence': 0.85  # Placeholder
+                },
+                'key_themes': key_themes or ['User feedback', 'Product discussion', 'Service evaluation'],
+                'personas_involved': personas_involved[:10],  # Limit to 10
+                'response_lengths': {
+                    'avg_words': round(sum(word_counts) / len(word_counts), 1) if word_counts else 0,
+                    'longest_response': max(word_counts) if word_counts else 0,
+                    'shortest_response': min(word_counts) if word_counts else 0
+                }
+            }
+            return analytics
+        except Exception as e:
+            app_logger.error(f"Error generating analytics: {e}")
+            return {
+                'total_responses': 0,
+                'total_questions': 0,
+                'sentiment_summary': {'positive_responses': 0, 'negative_responses': 0, 'neutral_responses': 0},
+                'key_themes': [],
+                'personas_involved': [],
+                'response_lengths': {'avg_words': 0, 'longest_response': 0, 'shortest_response': 0}
+            }
 
     return focus_group_bp 
